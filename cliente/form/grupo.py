@@ -13,11 +13,11 @@ class FormGrupo(QtWidgets.QWidget):
     def set_grupo(self, xmpp_var):
         self.xmpp_var = xmpp_var;
         self.xmpp_var.set_callback(self.evento_mensagem);
-        self.setWindowTitle( xmpp_var.jid_grupo );
-        self.xmpp_var.teste();
+        self.setWindowTitle( xmpp_var.grupo.jid );
+        self.xmpp_var.atualizar_entrada();
 
     def evento_mensagem(self, de, texto):
-        print("RECEBIDO", texto);
+        print("RECEBIDO HTML", texto);
     
     def __del__(self):
     	self.xmpp_var.disconnect();

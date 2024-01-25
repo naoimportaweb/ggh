@@ -1,4 +1,4 @@
-import sys;
+import sys, os, json;
 
 sys.path.append("../"); # estamos em /form, 
 
@@ -16,10 +16,20 @@ class FormLogin(QDialog):
         self.setGeometry(400, 400, 800, 500)
 
         self.form_main = parent;
-        self.jid_grupo = QLineEdit('nao.importa.web@jabb3r.de', self);
-        self.jid_pessoa = QLineEdit('hacker.cliente.1@xmpp.jp', self);
-        self.chave_criptografia = QLineEdit('1111111111111111', self);
-        self.password = QLineEdit('UmaSenhaIdiota', self);
+        self.jid_grupo = QLineEdit('', self);
+        self.jid_pessoa = QLineEdit('', self);
+        self.chave_criptografia = QLineEdit('', self);
+        self.password = QLineEdit('', self);
+
+        if os.path.exists(os.path.expanduser("~/.ggh_cliente_desenv.json")):
+            buffer_config = json.loads( open(os.path.expanduser("~/.ggh_cliente_desenv.json"), 'r').read() );
+            self.jid_grupo.setText( buffer_config["jid_grupo"] );
+            self.jid_pessoa.setText( buffer_config["jid_pessoa"] );
+            self.chave_criptografia.setText( buffer_config["chave_criptografia"] );
+            self.password.setText( buffer_config["password"] );
+
+            buffer_config = None;
+
 
         self.chave_criptografia.setEchoMode(QLineEdit.Password)
         self.password.setEchoMode(QLineEdit.Password)

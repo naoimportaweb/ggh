@@ -1,11 +1,21 @@
-
-import xmpp, time, traceback
+import xmpp, time, traceback, os, sys, inspect, traceback
 import threading, base64
+import importlib
+
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
-#import binascii
+
+CURRENTDIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())));
+ROOT = os.path.dirname(CURRENTDIR);
+
+sys.path.append(ROOT);
+sys.path.append(CURRENTDIR);
 
 from api.aeshelp import AesHelper;
+from api.cliente import Cliente;
+from api.mensagem import Mensagem;
+from api.grupo import Grupo
+from classes.conexao.comando import Comando;
 
 #   https://github.com/xmpppy/xmpppy                                                                        TEORIA
 #   https://stackoverflow.com/questions/16563200/connecting-to-jabber-server-via-proxy-in-python-xmppy      PROXY
@@ -14,78 +24,57 @@ class XMPPCliente:
 
     def __init__(self, jid_participante, password, jid_grupo, chave_criptografia):
         self.message_list_send = [];
-        self.jid_participante = jid_participante;
         self.password = password;
         self.connection = None;
         self.callback = None;
-        self.jid_grupo = jid_grupo;
+        self.grupo = Grupo(jid_grupo);
         self.chave_criptografia = chave_criptografia;
-        self.chave_servidor = None;
         self.thread_enviador = None;
         self.thread_recebedor = None;
         self.stop_enviador = True;
         self.stop_recebedor = True;
         # TODA VEZ QUE SE GERA O OBJETO CRIA UM PAR DE CHAVE DIFERENTE;
         #           https://cryptobook.nakov.com/asymmetric-key-ciphers/rsa-encrypt-decrypt-examples
-        self.key_pair = RSA.generate(3072);
+        self.cliente = Cliente( jid_participante, self.grupo  );
+        self.cliente.criar_chaves();
 
     def conectar(self):
-        jid = xmpp.protocol.JID( self.jid_participante );
+        jid = xmpp.protocol.JID( self.cliente.jid );
         self.connection = xmpp.Client(server=jid.getDomain(), debug=False);
         #self.connection.connect(proxy={'host':'127.0.0.1', 'port':'9051'});
         self.connection.connect();
         if self.connection.auth(user=jid.getNode(), password=self.password, resource=jid.getResource()) != None:
             self.connection.sendInitPresence();
             self.connection.RegisterHandler('message', self.processar_mensagem);
+
             self.stop_enviador = False;
             self.stop_recebedor = False;
             self.thread_recebedor = threading.Thread(target = self.escutar, args=());
             self.thread_recebedor.start();
             self.thread_enviador = threading.Thread(target = self.enviador, args=());
             self.thread_enviador.start();
+            comando = Comando("comandos.chave_simetrica"  ,"ChaveSimetrica", "execute", {"chave" : self.cliente.chave_publica() });
+            mensagem = Mensagem( self.cliente, self.cliente.jid, self.grupo.jid);
             # -------1-------------------------------- GERAR NOVA CHAVE PÚBLICA E ENVIAR AQUI------------------------->
-            public_key = self.key_pair.publickey();
-            pubKeyPEM = public_key.exportKey();
-            msg = xmpp.Message(to=self.jid_grupo, body=pubKeyPEM.decode());
-            msg.setAttr('type', 'chat');
-            self.connection.send(msg);
-            #if os.path.exists(self.path_to_public):
-            #    with open(self.path_to_public, "rb") as k:
-            #        self.key_pub = RSA.importKey(k.read());
+            msg_xmpp = xmpp.Message( to=self.grupo.jid, body=mensagem.criar( comando ) );
+            msg_xmpp.setAttr('type', 'chat');
+            self.connection.send( msg_xmpp );
             # <------2-------------------------------- RECEBER CHAVE SIMÉTRICA E GUARDAR, guardar em self.chave_servidor------------------------------
             return True;
         return False;
     
     def set_callback(self, callback):
         self.callback = callback;
+
+    def adicionar_mensagem(self, modulo, comando, funcao, data, criptografia="&2&"):
+        comando_objeto = Comando(modulo, comando, funcao, data);
+        mensagem_objeto = Mensagem( self.cliente, self.cliente.jid, self.grupo.jid, comando=comando_objeto);
+        self.message_list_send.append( mensagem_objeto );
+
+    # quando loga, tem que atualizar algumas coisas
+    def atualizar_entrada(self):
+        self.adicionar_mensagem( "comandos.html_get" ,"HtmlGet", "execute", {"path" : "regras.html"});
     
-    def __criptografar__(self, mensagem):
-        aes_help = AesHelper(key=self.chave_servidor );
-        return aes_help.encrypt(mensagem).decode();
-    
-    def __descriptografar__(self, mensagem_criptografada):
-        if self.chave_servidor == None:
-            # usar a chave privada para descriptografar
-            print("-----------------------------------------------------");
-            print(mensagem_criptografada);
-            print("-----------------------------------------------------");
-            decryptor = PKCS1_OAEP.new(self.key_pair)
-            decrypted = decryptor.decrypt( base64.b64decode( mensagem_criptografada.encode() ) ).decode();
-            print("A chave simétrica será: ", decrypted);
-            self.chave_servidor = decrypted;
-            #self.chave_servidor = "2222222222222222";
-            return None;
-        else:
-            # usar a chave simétrica para descripgrafar, ela é self.chave_servidor
-            aes_help = AesHelper(key=self.chave_servidor );
-            return aes_help.decrypt( mensagem_criptografada );
-
-    def adicionar_mensagem(self, xmpp_acao):
-        self.message_list_send.append( {"receiver" : self.jid_grupo, "message" : xmpp_acao.message } );
-
-    def teste(self):
-        self.message_list_send.append( {"receiver" : self.jid_grupo, "message" : '{"comando" : 1, "request" : "index.html" }' } );
-
     def escutar(self):
         while True:
             try:
@@ -103,14 +92,12 @@ class XMPPCliente:
             try:
                 if self.stop_enviador:
                     return;
-                if len(self.message_list_send) > 0 and self.chave_servidor != None:
-                    elemento = self.message_list_send.pop();
-                    if elemento != None:
-                        criptografado = self.__criptografar__(elemento["message"]);
-                        msg = xmpp.Message(to=elemento["receiver"], body=criptografado );
-                        print("será enviado: ", criptografado );
-                        msg.setAttr('type', 'chat')
-                        self.connection.send(msg)
+                if len(self.message_list_send) > 0 and self.cliente.chave_servidor != None:
+                    mensagem = self.message_list_send.pop();
+                    if mensagem != None:
+                        msg_xmpp = xmpp.Message( to=self.grupo.jid, body=mensagem.toString() );
+                        msg_xmpp.setAttr('type', 'chat');
+                        self.connection.send( msg_xmpp );
             except KeyboardInterrupt:
                 return;
             except:
@@ -126,9 +113,14 @@ class XMPPCliente:
             if text == None:
                 return;
             user=mess.getFrom();
-            retorno_descriptografado = self.__descriptografar__(text);
-            if retorno_descriptografado != None:
-                self.callback( user, retorno_descriptografado );
+            message = Mensagem( self.cliente, mess['to'], self.grupo.jid );
+            message.fromString( text );
+            js = message.toJson();
+            MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"]);
+            instance = MyClass();
+            retorno = instance.processar( self.cliente, message ); 
+            if retorno != None and self.callback != None:
+                self.callback( user, retorno );
         except KeyboardInterrupt:
             return;
         except:
@@ -139,16 +131,3 @@ class XMPPCliente:
         self.stop_recebedor = True;
         self.connection.disconnect();
 
-#xmpp_var = XMPPCliente("hacker.cliente.1@xmpp.jp", "UmaSenhaIdiota1!");
-#print(xmpp_var.conectar());
-#def processar_callback(jid_participante, message):
-#    print(jid_participante, message);
-#def main():
-#    xmpp = XMPPClient("hacker.cliente.1@xmpp.jp", "UmaSenhaIdiota1!");
-#    xmpp.conectar(processar_callback);
-#    for i in range(1000):
-#        print(i);
-#        xmpp.message_list_send.append({"receiver" : "nao.importa.web@jabb3r.de", "message" : "Teste 13 - " + str(i) });
-#        time.sleep(10);
-#if __name__ == "__main__":
-#    main()

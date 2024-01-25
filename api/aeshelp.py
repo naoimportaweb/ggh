@@ -28,9 +28,9 @@ class AesHelper(object):
     def _unpad(s):
         return s[:-ord(s[len(s)-1:])]
 
-if __name__ == "__main__":
-    ae = AesHelper(b'1234567890123456');
-    criptografado = ae.encrypt('{"comando" : 1, "request" : "index.html"}');
-    descriptografado = ae.decrypt(criptografado);
-    print("CRIPTOGRAFADO", type(criptografado), criptografado);
-    print("desCRIPTOGRAFADO", type(descriptografado), descriptografado);
+#if __name__ == "__main__":
+#    ae = AesHelper(b'1234567890123456');
+#    criptografado = ae.encrypt('{"comando" : 1, "request" : "index.html"}');
+#    descriptografado = ae.decrypt(criptografado);
+#    print("CRIPTOGRAFADO", type(criptografado), criptografado);
+#    print("desCRIPTOGRAFADO", type(descriptografado), descriptografado);
