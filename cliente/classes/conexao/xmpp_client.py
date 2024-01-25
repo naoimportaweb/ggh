@@ -1,6 +1,4 @@
-import xmpp, time, traceback, os, sys, inspect, traceback
-import threading, base64
-import importlib
+import xmpp, time, traceback, os, sys, inspect, traceback, threading, base64, importlib
 
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
@@ -119,7 +117,8 @@ class XMPPCliente:
             MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"]);
             instance = MyClass();
             #retorno = instance.processar( self.cliente, message ); 
-            retorno = getattr(instance, "retorno")( self.cliente, message );
+            #retorno = getattr(instance, "retorno")( self.cliente, message );
+            retorno = getattr(instance, js["funcao"])( self.cliente, self.grupo, message  );
             if retorno != None and self.callback != None:
                 self.callback( user, retorno );
         except KeyboardInterrupt:

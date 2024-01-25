@@ -1,6 +1,10 @@
 import uuid;
 
+from api.fsseguro import FsSeguro;
+
 class Html:
-	def retorno(self, cliente, mensagem):
-		js = mensagem.toJson();
-		return {"html" : js["html"], "path" : js["path"] };
+    def get(self, cliente, grupo, mensagem):
+        fs = FsSeguro( cliente.chave_servidor );
+        js = mensagem.toJson();
+        fs.escrever_raw( grupo.path_grupo_html + "/" + js["path"], js["html"]);
+        return js["path"];

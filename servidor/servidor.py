@@ -53,7 +53,7 @@ class ServidorGrupo(ClientXMPP):
             js = message.toJson();
             MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"])
             instance = MyClass()
-            retorno_metodo = getattr(instance, js["funcao"])( self.clientes[ nick ], message );
+            retorno_metodo = getattr(instance, js["funcao"])( self.clientes[ nick ], self.grupo, message );
             comando_retorno = Comando(js["modulo"], js["comando"], js["funcao"], retorno_metodo );
             mensagem_retorno = Mensagem( self.clientes[ nick ], self.clientes[ nick ].jid, self.grupo.jid);
             msg.reply( mensagem_retorno.criar( comando_retorno, criptografia="&1&" ) ).send();
