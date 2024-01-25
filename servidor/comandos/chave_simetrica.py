@@ -1,7 +1,7 @@
 import uuid;
 
 class ChaveSimetrica:
-	def execute(self, cliente, mensagem):
+	def gerar(self, cliente, mensagem):
 		js = mensagem.toJson();
 		cliente.chave_publica_salvar( js["chave"] );
 		cliente.chave_servidor = str( uuid.uuid5(uuid.NAMESPACE_URL, "-") )[0:16];

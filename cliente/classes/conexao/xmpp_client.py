@@ -12,10 +12,10 @@ sys.path.append(ROOT);
 sys.path.append(CURRENTDIR);
 
 from api.aeshelp import AesHelper;
-from api.cliente import Cliente;
+from classes.cliente import Cliente;
 from api.mensagem import Mensagem;
-from api.grupo import Grupo
-from classes.conexao.comando import Comando;
+from classes.grupo import Grupo
+from api.comando import Comando;
 
 #   https://github.com/xmpppy/xmpppy                                                                        TEORIA
 #   https://stackoverflow.com/questions/16563200/connecting-to-jabber-server-via-proxy-in-python-xmppy      PROXY
@@ -53,7 +53,7 @@ class XMPPCliente:
             self.thread_recebedor.start();
             self.thread_enviador = threading.Thread(target = self.enviador, args=());
             self.thread_enviador.start();
-            comando = Comando("comandos.chave_simetrica"  ,"ChaveSimetrica", "execute", {"chave" : self.cliente.chave_publica() });
+            comando = Comando("comandos.chave_simetrica"  ,"ChaveSimetrica", "gerar", {"chave" : self.cliente.chave_publica() });
             mensagem = Mensagem( self.cliente, self.cliente.jid, self.grupo.jid);
             # -------1-------------------------------- GERAR NOVA CHAVE PÚBLICA E ENVIAR AQUI------------------------->
             msg_xmpp = xmpp.Message( to=self.grupo.jid, body=mensagem.criar( comando ) );
@@ -73,7 +73,7 @@ class XMPPCliente:
 
     # quando loga, tem que atualizar algumas coisas
     def atualizar_entrada(self):
-        self.adicionar_mensagem( "comandos.html_get" ,"HtmlGet", "execute", {"path" : "regras.html"});
+        self.adicionar_mensagem( "comandos.html" ,"Html", "get", {"path" : "regras.html"});
     
     def escutar(self):
         while True:
@@ -118,7 +118,8 @@ class XMPPCliente:
             js = message.toJson();
             MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"]);
             instance = MyClass();
-            retorno = instance.processar( self.cliente, message ); 
+            #retorno = instance.processar( self.cliente, message ); 
+            retorno = getattr(instance, "retorno")( self.cliente, message );
             if retorno != None and self.callback != None:
                 self.callback( user, retorno );
         except KeyboardInterrupt:

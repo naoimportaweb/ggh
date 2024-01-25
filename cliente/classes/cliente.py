@@ -5,15 +5,15 @@ from Crypto.PublicKey import RSA
 from slixmpp import ClientXMPP;
 
 class Cliente:
-    def __init__(self, jid, grupo, private_key=None, public_key=None):
+    def __init__(self, jid, grupo):
         #jsonstr1 = json.dumps(jid.__dict__) ;
         #print("EU: ", jsonstr1);
         if type(jid) != type(""):
             raise Exception("JID do cliente tem que ser uma STRING.")
         self.id = str(jid).replace("/","-");
         self.jid = jid;
-        self.public_key = public_key;
-        self.private_key = private_key;
+        self.public_key = None;
+        self.private_key = None;
         self.chave_servidor = None;
         self.grupo = grupo;
         self.key_pair = None;
@@ -24,17 +24,24 @@ class Cliente:
         self.path_public_key = path_cliente + "/public_key.txt";
         self.path_private_key = path_cliente + "/private_key.txt";
         
-        if self.public_key != None:
-            with open(self.path_public_key, "w") as fb:
-                fb.write(self.public_key);
+        if not os.path.exists( self.path_private_key ):
+            self.criar_chaves();
         else:
-            if self.private_key != None:
-                if not os.path.exists( self.path_public_key ):
-                    public_key_buffer = self.private_key.publickey();
-                    with open(self.path_public_key, "w") as fb:
-                        fb.write(public_key_buffer.exportKey().decode());
-        if os.path.exists( self.path_public_key ):
-            self.public_key = open( self.path_public_key, "r").read();
+            with open(self.path_private_key, "rb") as k:
+                self.private_key = RSA.importKey( k.read() );
+
+
+        #if self.public_key != None:
+        #    with open(self.path_public_key, "w") as fb:
+        #        fb.write(self.public_key);
+        #else:
+        #    if self.private_key != None:
+        #        if not os.path.exists( self.path_public_key ):
+        #            public_key_buffer = self.private_key.publickey();
+        #            with open(self.path_public_key, "w") as fb:
+        #                fb.write(public_key_buffer.exportKey().decode());
+        #if os.path.exists( self.path_public_key ):
+        #    self.public_key = open( self.path_public_key, "r").read();
     
     def chave_publica(self):
     	if not os.path.exists( self.path_public_key ):
@@ -45,6 +52,7 @@ class Cliente:
         self.public_key = chave;
         with open( self.path_public_key , "w") as fb:
             fb.write( self.public_key );
+            self.public_key = self.public_key.publickey();
 
     def criar_chaves(self):
         self.key_pair = RSA.generate(3072);
