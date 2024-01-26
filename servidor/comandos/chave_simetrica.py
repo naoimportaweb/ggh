@@ -1,5 +1,7 @@
 import uuid;
 
+# servidor
+
 class ChaveSimetrica:
 	def gerar(self, cliente, grupo, mensagem):
 		js = mensagem.toJson();

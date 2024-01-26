@@ -2,6 +2,8 @@ import uuid;
 
 from api.fsseguro import FsSeguro;
 
+# no cliente
+
 class Html:
     def get(self, cliente, grupo, mensagem):
         fs = FsSeguro( cliente.chave_servidor );

@@ -11,6 +11,7 @@ class Grupo:
 		self.path_grupo = self.path_home + "/" + hashlib.md5( jid_grupo.encode() ).hexdigest();
 		self.path_grupo_html = self.path_grupo + "/html";
 		self.path_grupo_public_key = self.path_grupo + "/public_key";
+		self.path_grupo_apelidos = self.path_grupo + "/apelidos";
 
 		criar_diretorio_se_nao_existe(self.path_home);
 		criar_diretorio_se_nao_existe(self.path_grupo);

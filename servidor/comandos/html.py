@@ -1,5 +1,7 @@
 import uuid;
 
+# servidor
+
 class Html:	
 	def get(self, cliente, grupo, mensagem):
 		js = mensagem.toJson();
