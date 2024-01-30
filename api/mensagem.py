@@ -46,7 +46,6 @@ class Mensagem:
         else:
             buffer_json_envelope = json.loads(mensagem[8:].strip());
         self.mensagem = buffer_json_envelope["body"];
-        print( type(buffer_json_envelope["body"]),   buffer_json_envelope["body"] );
         self.id = buffer_json_envelope["head"]["id"];
         self.callback_retorno = buffer_json_envelope["head"]["callback"];
     
