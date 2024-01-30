@@ -33,7 +33,7 @@ class XMPPCliente:
         self.stop_recebedor = True;
         # TODA VEZ QUE SE GERA O OBJETO CRIA UM PAR DE CHAVE DIFERENTE;
         #           https://cryptobook.nakov.com/asymmetric-key-ciphers/rsa-encrypt-decrypt-examples
-        self.cliente = Cliente( jid_participante, self.grupo  );
+        self.cliente = Cliente( jid_participante, self.grupo, chave_local=chave_criptografia );
         self.cliente.criar_chaves();
 
     def conectar(self):
@@ -64,16 +64,16 @@ class XMPPCliente:
     def set_callback(self, callback):
         self.callback = callback;
 
-    def adicionar_mensagem(self, modulo, comando, funcao, data, criptografia="&2&"):
+    def adicionar_mensagem(self, modulo, comando, funcao, data, criptografia="&2&", callback_retorno=""):
         comando_objeto = Comando(modulo, comando, funcao, data);
-        mensagem_objeto = Mensagem( self.cliente, self.cliente.jid, self.grupo.jid, comando=comando_objeto);
+        mensagem_objeto = Mensagem( self.cliente, self.cliente.jid, self.grupo.jid, comando=comando_objeto, criptografia="&2&", callback_retorno="load_teste");
         self.message_list_send.append( mensagem_objeto );
 
     # quando loga, tem que atualizar algumas coisas
     def atualizar_entrada(self):
         self.adicionar_mensagem( "comandos.html" ,"Html", "get", {"path" : "regras.html"});
         self.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastro", "cadastro", {});
-        self.adicionar_mensagem( "comandos.grupo_cadastro" ,"GrupoCadastro", "lista_clientes", {});
+        self.adicionar_mensagem( "comandos.grupo_cadastro" ,"GrupoCadastro", "cadastro", {});
     
     def escutar(self):
         while True:
@@ -93,11 +93,12 @@ class XMPPCliente:
                 if self.stop_enviador:
                     return;
                 if len(self.message_list_send) > 0 and self.cliente.chave_servidor != None:
-                    mensagem = self.message_list_send.pop();
+                    mensagem = self.message_list_send.pop(0);
                     if mensagem != None:
                         msg_xmpp = xmpp.Message( to=self.grupo.jid, body=mensagem.toString() );
                         msg_xmpp.setAttr('type', 'chat');
                         self.connection.send( msg_xmpp );
+                        time.sleep(0.1);
             except KeyboardInterrupt:
                 return;
             except:
@@ -122,7 +123,7 @@ class XMPPCliente:
             #retorno = getattr(instance, "retorno")( self.cliente, message );
             retorno = getattr(instance, js["funcao"])( self.cliente, self.grupo, message  );
             if retorno != None and self.callback != None:
-                self.callback( user, retorno );
+                self.callback( user, retorno, message, js );
         except KeyboardInterrupt:
             return;
         except:

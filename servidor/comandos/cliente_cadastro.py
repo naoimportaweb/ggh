@@ -4,4 +4,5 @@ import uuid;
 
 class ClienteCadastro:    
     def cadastro(self, cliente, grupo, mensagem):
-        return { "apelido" : cliente.apelido };
+        retornar = { "apelido" : cliente.apelido, "nivel_posicao" : cliente.nivel_posicao };
+        return retornar;

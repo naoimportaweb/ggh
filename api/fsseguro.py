@@ -1,6 +1,6 @@
 import os, json, sys;
 
-from api.aeshelp import AesHelper;
+from api.chachahelp import ChaChaHelper;
 
 class FsSeguro:
     def __init__(self, chave):
@@ -9,10 +9,13 @@ class FsSeguro:
     def ler_raw(self, path):
         if not os.path.exists( path ):
             return None;
-        with open( path, "r" ) as f:
-            buffer = f.read();
-            aes_help = AesHelper( key=self.chave );
-            return aes_help.decrypt( buffer );
+        try:
+            with open( path, "r" ) as f:
+                buffer = f.read();
+                aes_help = ChaChaHelper( key=self.chave );
+                return aes_help.decrypt( buffer );
+        except:
+            return None;
 
     def ler_json(self, path):
         buffer = self.ler_raw( path );
@@ -22,7 +25,7 @@ class FsSeguro:
 
     def escrever_raw(self, path, data):
         if len(data) > 0:
-            aes_help = AesHelper( key=self.chave );
+            aes_help = ChaChaHelper( key=self.chave );
             data = aes_help.encrypt( data ).decode();
         with open( path, "w" ) as f:
             f.write( data );

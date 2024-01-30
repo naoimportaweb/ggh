@@ -7,6 +7,9 @@ class Grupo:
     def __init__(self, jid_grupo):
         # iniciar diretórios
         self.jid = jid_grupo;
+        self.niveis = [];
+        self.tags = [];
+        self.clientes = [];
         self.path_home = os.path.expanduser("~/ggh_cliente/")
         self.path_grupo = self.path_home + "/" + hashlib.md5( jid_grupo.encode() ).hexdigest();
         self.path_grupo_html = self.path_grupo + "/html";

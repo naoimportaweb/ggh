@@ -33,12 +33,14 @@ class MDIWindow(QMainWindow):
         newAct = QAction('Conectar em um grupo', self)
         file.addAction(newAct)
         newAct.triggered.connect(self.action_connect)
+
     
     def callback_login(self, xmpp_var):
         form = FormGrupo( self );
         form.set_grupo( xmpp_var );
         sub = self.mdiArea.addSubWindow( form );
-        form.show();
+        form.showMaximized();
+        form.carregar_panel();
 
     def action_connect(self, q):
         f = FormLogin( self );

@@ -15,20 +15,30 @@ ROOT = os.path.dirname(CURRENTDIR);
 sys.path.append(ROOT);
 sys.path.append(CURRENTDIR);
 
+
 from classes.grupo import Grupo;
 from classes.cliente import Cliente;
 from api.mensagem import Mensagem
 from api.aeshelp import AesHelper;
 from api.comando import Comando;
+from classes.mysqlhelp import MysqlHelp
 from comandos import *
 
 TAMANHO = 16
+
+# criando tabelas antes de iniciar o servidor
+my = MysqlHelp();
+print("- Testando o Banco de Dados.");
+if my.teste() > 0:
+    print("Você tem que corrigir os erros relacionados a falta de tabela/colunas no banco de dados.");
+    sys.exit(1);
+my = None;
 
 class ServidorGrupo(ClientXMPP):
     def __init__(self, jid, password):
         ClientXMPP.__init__(self, jid, password);
         self.grupo = Grupo( jid );
-        self.clientes = {};
+        self.online = {};
         # Primeiro deve-se registrar os eventos XMPP, o evento será processado pelo método definido aqui
         self.add_event_handler("session_start", self.session_start);
         self.add_event_handler("message", self.message);
@@ -45,18 +55,33 @@ class ServidorGrupo(ClientXMPP):
         #msg['from'].local, '; node', msg['from'].node, '; resource', msg['from'].resource, '; server', msg['from'].server, '; unescape', msg['from'].unescape, '; user', msg['from'].user, '; username', msg['from'].username);
         #bare hacker.cliente.1@xmpp.jp ; domain xmpp.jp ; full hacker.cliente.1@xmpp.jp/836571472410685651457662818 ; host xmpp.jp ; jid hacker.cliente.1@xmpp.jp/836571472410685651457662818 ; local hacker.cliente.1 ; node hacker.cliente.1 ; resource 836571472410685651457662818 ; server xmpp.jp ; unescape <bound method JID.unescape of hacker.cliente.1@xmpp.jp/836571472410685651457662818> ; user hacker.cliente.1 ; username hacker.cliente.1
         nick = msg['from'].bare;
-        if self.clientes.get( nick ) == None:
-            self.clientes[ nick ] = Cliente( nick, self.grupo );
+        cliente = Cliente( nick, self.grupo );
+        cliente.carregar();
+
+        if self.online.get( cliente.jid ) == None:
+            cliente.chave_servidor = str( uuid.uuid5(uuid.NAMESPACE_URL, "-") )[0:16];
+        else:
+            cliente.chave_servidor = online[ self.cliente.jid ];
+
         if msg['type'] in ('chat', 'normal'):
-            message = Mensagem( self.clientes[ nick ], msg['from'], self.grupo.jid );
+            message = Mensagem( cliente, msg['from'], self.grupo.jid );
             message.fromString( msg['body'] );
             js = message.toJson();
             MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"])
             instance = MyClass()
-            retorno_metodo = getattr(instance, js["funcao"])( self.clientes[ nick ], self.grupo, message );
+            retorno_metodo = getattr(instance, js["funcao"])( cliente, self.grupo, message );
             comando_retorno = Comando(js["modulo"], js["comando"], js["funcao"], retorno_metodo );
-            mensagem_retorno = Mensagem( self.clientes[ nick ], self.clientes[ nick ].jid, self.grupo.jid);
-            msg.reply( mensagem_retorno.criar( comando_retorno, criptografia="&1&" ) ).send();
+            mensagem_retorno = Mensagem( cliente, cliente.jid, self.grupo.jid);
+
+            # retornar parametros do header, tal como id e callback
+            mensagem_retorno.id = message.id;
+            mensagem_retorno.callback_retorno = message.callback_retorno;
+
+            # isso foi gambiarra, forçando sem criptografia caso seja envio de chave pública, para depois ter a criptografia (a chave tem que ser transmitida né!!!).
+            gambiarra_criptografia = "&1&";
+            if js["comando"] != "ChaveSimetrica":
+                gambiarra_criptografia = "&2&";
+            msg.reply( mensagem_retorno.criar( comando_retorno, criptografia=gambiarra_criptografia ) ).send();
 
  
 if __name__ == '__main__': 

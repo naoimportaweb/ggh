@@ -5,9 +5,7 @@ from Crypto.PublicKey import RSA
 from slixmpp import ClientXMPP;
 
 class Cliente:
-    def __init__(self, jid, grupo):
-        #jsonstr1 = json.dumps(jid.__dict__) ;
-        #print("EU: ", jsonstr1);
+    def __init__(self, jid,  grupo, chave_local = None):
         if type(jid) != type(""):
             raise Exception("JID do cliente tem que ser uma STRING.")
         self.id = str(jid).replace("/","-");
@@ -17,6 +15,8 @@ class Cliente:
         self.chave_servidor = None;
         self.grupo = grupo;
         self.key_pair = None;
+        self.chave_local = chave_local;
+        self.nivel_posicao = 0;
         
         path_cliente = self.grupo.path_grupo + "/clientes/" + hashlib.md5( jid.encode() ).hexdigest();
         if not os.path.exists( path_cliente ):
@@ -29,20 +29,6 @@ class Cliente:
         else:
             with open(self.path_private_key, "rb") as k:
                 self.private_key = RSA.importKey( k.read() );
-
-
-        #if self.public_key != None:
-        #    with open(self.path_public_key, "w") as fb:
-        #        fb.write(self.public_key);
-        #else:
-        #    if self.private_key != None:
-        #        if not os.path.exists( self.path_public_key ):
-        #            public_key_buffer = self.private_key.publickey();
-        #            with open(self.path_public_key, "w") as fb:
-        #                fb.write(public_key_buffer.exportKey().decode());
-        #if os.path.exists( self.path_public_key ):
-        #    self.public_key = open( self.path_public_key, "r").read();
-    
     def chave_publica(self):
     	if not os.path.exists( self.path_public_key ):
     		self.criar_chaves();
