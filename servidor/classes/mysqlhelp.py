@@ -43,7 +43,7 @@ class MysqlHelp:
             d = {}
             for i, col in enumerate(self.cursorObject.description):
                 d[ col[0] ] = row[ i ];
-                result.append( d );
+            result.append( d );
         return result;
     
     def chave_string(self, tabela, field, tamanho ):
@@ -101,4 +101,7 @@ class MysqlHelp:
                     falhas +=1;
         return falhas;
 #my = MysqlHelp();
+#buffer =  my.datatable("select * from nivel as ni where ni.id_grupo = %s", [ "a9744c19ff882ebb9058a3c5096e6000" ]);
+#print("Niveis:", len(buffer))
+#print(buffer);
 #print(my.teste());

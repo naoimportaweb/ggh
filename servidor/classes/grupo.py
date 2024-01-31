@@ -31,8 +31,10 @@ class Grupo:
         return { "lista" : datatable };
     def niveis(self):
         my = MysqlHelp();
-        return my.datatable("select * from nivel as ni where ni.id_grupo = %s", [ self.id ]);
-    
+        buffer =  my.datatable("select * from nivel as ni where ni.id_grupo = %s", [ self.id ]);
+        print("Niveis:", len(buffer));
+        #print(buffer);
+        return buffer; 
     def tags(self):
         my = MysqlHelp();
         return my.datatable("select * from tag as ta where ta.id_grupo = %s", [ self.id ]);

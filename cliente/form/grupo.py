@@ -1,8 +1,9 @@
 import time;
 
 from PySide6.QtGui import QAction;
-from PySide6.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QMdiArea, QMainWindow, QHBoxLayout, QVBoxLayout, QMenuBar, QTextBrowser;
+from PySide6.QtWidgets import QApplication, QPlainTextEdit, QListWidget, QListWidgetItem, QDialog, QLineEdit, QPushButton, QMdiArea, QMainWindow, QHBoxLayout, QVBoxLayout, QMenuBar, QTextBrowser;
 from PySide6 import QtWidgets;
+from PySide6.QtCore import Qt
 
 from api.fsseguro import FsSeguro
 
@@ -10,42 +11,60 @@ class PainelChat(QtWidgets.QWidget):
     def __init__( self, xmpp_var):
         super().__init__();
         self.xmpp_var = xmpp_var;
-        form_layout = QVBoxLayout( self );
-        exemplo = QLineEdit('chat', self);
-        form_layout.addWidget( exemplo );
-        form_layout.addStretch();
-        self.setLayout(form_layout);
-        #self.setFixedWidth(600)
+        form_layout = QHBoxLayout( self );
+        self.lw = QListWidget()
+        form_layout.addWidget( self.lw );
+
+        form_layout_chat = QVBoxLayout( self );
+        area = QPlainTextEdit(self);
+        elemento = QPlainTextEdit(self);
+        elemento.setMaximumHeight(100);
+        form_layout_chat.addWidget(area);
+        form_layout_chat.addWidget(elemento);
+        form_layout.addLayout(form_layout_chat);
+        self.setLayout( form_layout );
+    def evento_mensagem(self, de, texto, message, conteudo_js):
+        if conteudo_js["comando"] == "GrupoCadastro":
+            for nivel in self.xmpp_var.grupo.niveis:
+                item = QListWidgetItem(nivel["nome"] + "("+ str(nivel["posicao"]) +")")
+                if self.xmpp_var.cliente.nivel_posicao >= nivel["posicao"]:
+                    if self.xmpp_var.cliente.nivel_posicao == nivel["posicao"]:
+                        item.setCheckState(Qt.Checked)
+                    else:
+                        item.setCheckState(Qt.Unchecked)
+                self.lw.addItem(item)
+
     
 class PainelRegras(QtWidgets.QWidget):
     def __init__( self, xmpp_var ):
         super().__init__();
         self.xmpp_var = xmpp_var;
-        fs = FsSeguro( self.xmpp_var.cliente.chave_local );
+        self.fs = FsSeguro( self.xmpp_var.cliente.chave_local );
+        self.path_regra = self.xmpp_var.grupo.path_grupo_html + "/regras.html";
         form_layout = QVBoxLayout( self );
-        #exemplo = QLineEdit('regras', self);
-        #form_layout.addWidget( exemplo );
-        #form_layout.addStretch();
-        #self.setLayout(form_layout);
         self.tb = QTextBrowser(self);
         self.tb.setAcceptRichText(True);
         self.tb.setOpenExternalLinks(False);
-        self.tb.setHtml(fs.ler_raw( self.xmpp_var.grupo.path_grupo_html + "/regras.html" ));
-
+        self.tb.setHtml(self.fs.ler_raw( self.path_regra ));
         self.b4 = QPushButton("Atualizar")
         self.b4.setGeometry(10,0,32,32)
         self.b4.clicked.connect( self.botao_atualizar_click )
-        
-
         form_layout.addWidget( self.tb );
         form_layout.addWidget( self.b4 );
         form_layout.addStretch();
         self.setLayout(form_layout);
-        #self.setFixedWidth(600)
+    
     def botao_atualizar_click(self):
-        fs = FsSeguro( self.xmpp_var.cliente.chave_local );
-        html = fs.ler_raw( self.xmpp_var.grupo.path_grupo_html + "/regras.html" );
+        html = self.fs.ler_raw( self.path_regra );
         self.tb.setHtml(html);
+    
+    def evento_mensagem(self, de, texto, message, conteudo_js):
+        #html = self.fs.ler_raw( self.path_regra );
+        print("Atualizar regras.");
+        #if conteudo_js["comando"] == "Html":
+        #    html = self.fs.ler_raw( self.path_regra );
+        #    self.tb.setHtml(html);
+            
 
 class FormGrupo(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
@@ -89,13 +108,8 @@ class FormGrupo(QtWidgets.QWidget):
         self.layout.addWidget( self.chat );
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        if message.callback_retorno != "":
-            print("chamar: ", message.callback_retorno);
-        #print(conteudo_js);
-        #if conteudo_js["comando"] == "Html":
-        #    print("aTUALIZAR HTML ");
-        #    #self.regras.botao_atualizar_click();
-    
+        self.regras.evento_mensagem(de, texto, message, conteudo_js);
+        self.chat.evento_mensagem(de, texto, message, conteudo_js);
     def __del__(self):
         self.xmpp_var.disconnect();
         self.xmpp_var = None;
