@@ -6,9 +6,9 @@ import mysql.connector, json
 from mysql.connector import Error
 from mysql.connector import errorcode
 
-
 class MysqlHelp:
     def __init__(self, host=None, user=None, password=None, database=None):
+        # Dados padrões para testes, depois tenho que fazer um config sigleton
         self.dataBase = mysql.connector.connect(
             host ="127.0.0.1",
             user ="root",
@@ -25,7 +25,7 @@ class MysqlHelp:
     
     def executes(self, sqls, array_values):
         try:
-            self.cursorObject = dataBase.cursor();
+            self.cursorObject = self.dataBase.cursor();
             for i in range(len(array_values)):
                 self.cursorObject.execute(sqls[ i ], array_values[ i ] );
             self.dataBase.commit();
@@ -89,6 +89,8 @@ class MysqlHelp:
             {"nome" : "tag", "fields" : ["id", "nome", "id_grupo"]},
             {"nome" : "nivel_cliente", "fields" : ["id_cliente", "id_nivel"]},
             {"nome" : "tag_cliente", "fields" : ["id_cliente", "id_tag"]},
+            {"nome" : "mensagem", "fields" : ["id", "id_remetente", "id_destinatario", "mensagem_criptografada", "chave_simetrica_criptografada", "data_hora_envio", "ordem"]},
+            {"nome" : "mensagem_nivel", "fields" : ["id_nivel", "id_mensagem"]}
         ];
 
         for estrutura in estruturas:
@@ -100,8 +102,3 @@ class MysqlHelp:
                 if not self.__testar_field__( estrutura["nome"], field):
                     falhas +=1;
         return falhas;
-#my = MysqlHelp();
-#buffer =  my.datatable("select * from nivel as ni where ni.id_grupo = %s", [ "a9744c19ff882ebb9058a3c5096e6000" ]);
-#print("Niveis:", len(buffer))
-#print(buffer);
-#print(my.teste());

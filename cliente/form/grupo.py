@@ -1,4 +1,4 @@
-import time, base64, uuid;
+import time, base64, uuid, os, sys, json;
 
 from PySide6.QtGui import QAction;
 from PySide6.QtWidgets import QApplication, QPlainTextEdit, QListWidget, QListWidgetItem, QDialog, QLineEdit, QPushButton, QMdiArea, QMainWindow, QHBoxLayout, QVBoxLayout, QMenuBar, QTextBrowser;
@@ -37,7 +37,7 @@ class PainelChat(QtWidgets.QWidget):
     def btn_envio_click(self):
         # solicitar clientes aqui.
         if self.txt_mensagem.toPlainText().strip() != "":
-            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "lista_clientes_niveis", {"niveis" : ["3", "4"]} );
+            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "lista_clientes_niveis", {"niveis" : ["4"]} );
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "GrupoCadastro":
@@ -51,21 +51,28 @@ class PainelChat(QtWidgets.QWidget):
                         item.setCheckState(Qt.Unchecked)
                 self.lw.addItem(item)
         if conteudo_js["comando"] == "Mensagem" and conteudo_js["funcao"] == "lista_clientes_niveis":
-            #{niveis : [{"nivel" : id, "clientes" :  { "apelido", "public_key" }}] }
-            for nivel in conteudo_js["niveis"]:
-                for cliente in nivel["clientes"]:
-                    chave_simetrica = str( uuid.uuid5(uuid.NAMESPACE_URL, "0fk") )[0:16]; 
-                    rsa = RsaHelper(cliente["public_key"]);
-                    chave_simetrica_criptografada = rsa.encrypt( chave_simetrica );
-                    chacha = ChaChaHelper( chave_simetrica );
-                    mensagem_criptografada = base64.b64encode( chacha.encrypt( self.txt_mensagem.toPlainText() ) );
-                    envelope = {"apelido_remetente" : self.xmpp_var.cliente.apelido, "apelido_destinatario" : cliente["apelido"],
-                        "id_nivel" : nivel["nivel"], "mensagem_criptografada" : mensagem_criptografada.decode(),
+            #{'clientes': [{'id': '91d0cf8f3883a0dcb338d15a47b326c9', 'apelido': 'ok7HdegG', 'public_key': '-----BEGIN PUBLIC KEY-----END PUBLIC KEY-----', 'nivel': '4'}], 'comando': 'Mensagem', 'funcao': 'lista_clientes_niveis', 'modulo': 'comandos.mensagem'}
+            for cliente in conteudo_js["clientes"]:
+                chave_simetrica = str( uuid.uuid5(uuid.NAMESPACE_URL, "0fk") )[0:16];
+                rsa = RsaHelper(cliente["public_key"]);
+                chave_simetrica_criptografada = rsa.encrypt( chave_simetrica );
+                chacha = ChaChaHelper( chave_simetrica );
+                mensagem_criptografada = base64.b64encode( chacha.encrypt( self.txt_mensagem.toPlainText() ) );
+                envelope = {"apelido_remetente" : self.xmpp_var.cliente.apelido, "apelido_destinatario" : cliente["apelido"],
+                        "nivel" : cliente["nivel"], "mensagem_criptografada" : mensagem_criptografada.decode(),
                         "chave_simetrica_criptografada" : chave_simetrica_criptografada };
-                    self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "enviar", envelope );
+                self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "enviar", envelope );
+                self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "listar", {"id_nivel" : "4"} );
             self.txt_mensagem.setPlainText("");
         if conteudo_js["comando"] == "Mensagem" and conteudo_js["funcao"] == "listar":
-            print("Mensagens:", conteudo_js);
+            # {'retorno': [{'id': 'jitCQ6rIdo9XoTxqqFdN', 'id path_grupo_mensagens
+            for mensagem in conteudo_js["retorno"]:
+                path_nivel = self.xmpp_var.grupo.path_grupo_mensagens + "/" + mensagem["id_nivel"];
+                if not os.path.exists(path_nivel):
+                    os.makedirs( path_nivel );
+                fs = FsSeguro( self.xmpp_var.cliente.chave_local );
+                if fs.escrever_raw( path_nivel + "/" + mensagem["ordem"], json.dumps( mensagem ) ):
+                    self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "delete", {"id_mensagem" : mensagem["id"]} );
 
     
 class PainelRegras(QtWidgets.QWidget):
@@ -91,12 +98,8 @@ class PainelRegras(QtWidgets.QWidget):
         html = self.fs.ler_raw( self.path_regra );
         self.tb.setHtml(html);
     
-    def evento_mensagem(self, de, texto, message, conteudo_js):
-        #html = self.fs.ler_raw( self.path_regra );
-        print("Atualizar regras.");
-        #if conteudo_js["comando"] == "Html":
-        #    html = self.fs.ler_raw( self.path_regra );
-        #    self.tb.setHtml(html);
+    # futura implementácao
+    #def evento_mensagem(self, de, texto, message, conteudo_js):
             
 
 class FormGrupo(QtWidgets.QWidget):
@@ -141,7 +144,7 @@ class FormGrupo(QtWidgets.QWidget):
         self.layout.addWidget( self.chat );
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        self.regras.evento_mensagem(de, texto, message, conteudo_js);
+        #self.regras.evento_mensagem(de, texto, message, conteudo_js);
         self.chat.evento_mensagem(de, texto, message, conteudo_js);
     def __del__(self):
         self.xmpp_var.disconnect();

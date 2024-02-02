@@ -34,10 +34,5 @@ class FsSeguro:
     def escrever_json(self, path, js):
         return self.escrever_raw(path, json.dumps( js ) );
 
-#f = FsSeguro("1234567890123456");
-#f.escrever_raw("/tmp/criptografado.txt", "abcdefghijklmnopqrstuvxzabcdefghijklmnopqrstuvxzabcdefghijklmnopqrstuvxzabcdefghijklmnopqrstuvxz")
-#print( f.ler_raw( "/tmp/criptografado.txt" ) )
-#f.escrever_json("/tmp/criptografado.json", {"comando" : "teste", "exemplo" : "1"});
-#print( f.ler_json( "/tmp/criptografado.json" ));
 
 

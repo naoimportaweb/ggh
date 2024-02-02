@@ -23,3 +23,6 @@ class Mensagem:
     
     def listar(self, cliente, grupo, mensagem):
         return mensagem.toJson();
+
+    def delete(self, cliente, grupo, mensagem):
+        return True;

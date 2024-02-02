@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 import asyncio, logging, json, os, sys, inspect;
-import  base64, uuid
+import  base64, uuid, time
 import importlib
+import asyncio
 #binascii,
 
 from Crypto.Cipher import PKCS1_OAEP
@@ -46,12 +47,13 @@ class ServidorGrupo(ClientXMPP):
  
     def session_start(self, event):
         self.send_presence();
-        self.get_roster();
+        self.get_roster()
+        #self.get_roster();
         print("Done");
+        #https://stackoverflow.com/questions/17791783/sleekxmpp-send-a-message-at-will-and-still-listen-for-incoming-messages
+        #self.send_message(mto="hacker.cliente.1@xmpp.jp", mbody="some message 3", mtype='chat')
  
     def message(self, msg):
-        #print( dir( msg['from'] )  )
-        #print('bare', msg['from'].bare, '; domain', msg['from'].domain, '; full', msg['from'].full, '; host', msg['from'].host, '; jid', msg['from'].jid, '; local',
         #msg['from'].local, '; node', msg['from'].node, '; resource', msg['from'].resource, '; server', msg['from'].server, '; unescape', msg['from'].unescape, '; user', msg['from'].user, '; username', msg['from'].username);
         #bare hacker.cliente.1@xmpp.jp ; domain xmpp.jp ; full hacker.cliente.1@xmpp.jp/836571472410685651457662818 ; host xmpp.jp ; jid hacker.cliente.1@xmpp.jp/836571472410685651457662818 ; local hacker.cliente.1 ; node hacker.cliente.1 ; resource 836571472410685651457662818 ; server xmpp.jp ; unescape <bound method JID.unescape of hacker.cliente.1@xmpp.jp/836571472410685651457662818> ; user hacker.cliente.1 ; username hacker.cliente.1
         nick = msg['from'].bare;
@@ -98,5 +100,7 @@ if __name__ == '__main__':
     #xmpp.proxy_config = {
     #    'host': "127.0.0.1",
     #    'port': 9054}
+    xmpp.register_plugin('xep_0030') # Service Discovery
+    xmpp.register_plugin('xep_0199') # XMPP Ping
     xmpp.connect();
     xmpp.process();

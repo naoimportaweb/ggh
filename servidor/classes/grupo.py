@@ -16,14 +16,13 @@ class Grupo:
         self.path_grupo_html = self.path_grupo + "/html";
         self.path_grupo_public_key = self.path_grupo + "/public_key";
         self.path_grupo_apelidos = self.path_grupo + "/apelidos";
-
+        
         criar_diretorio_se_nao_existe(self.path_home);
         criar_diretorio_se_nao_existe(self.path_grupo);
         criar_diretorio_se_nao_existe(self.path_grupo_html);
+        
         criar_diretorio_se_nao_existe(self.path_grupo + "/clientes/" );
-
         os.environ['PATH_GRUPO'] = self.path_grupo;
-
         self.clientes = {};
     def clientes_nick(self):
         my = MysqlHelp();
@@ -32,8 +31,6 @@ class Grupo:
     def niveis(self):
         my = MysqlHelp();
         buffer =  my.datatable("select * from nivel as ni where ni.id_grupo = %s", [ self.id ]);
-        print("Niveis:", len(buffer));
-        #print(buffer);
         return buffer; 
     def tags(self):
         my = MysqlHelp();
