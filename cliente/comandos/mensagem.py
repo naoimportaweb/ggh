@@ -20,4 +20,6 @@ class Mensagem:
         #recebo: {"resultado" :  True/False };
         js = mensagem.toJson();
         return js["resultado"]; 
-        
+    
+    def listar(self, cliente, grupo, mensagem):
+        return mensagem.toJson();

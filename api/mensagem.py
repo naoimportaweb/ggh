@@ -71,7 +71,7 @@ class Mensagem:
         retornar += self.formato;
         if comando != None:
             self.comando = comando;
-        enviar_envelope_json = json.dumps({"head" : {"id" : self.id, "callback" : self.callback_retorno }, "body" : json.loads(self.comando.mensagem()) });
+        enviar_envelope_json = json.dumps({"head" : {"id" : self.id, "callback" : self.callback_retorno }, "body" : json.loads(self.comando.mensagem()) } );
         if self.criptografia == "&1&":
             key_pub = RSA.importKey( self.cliente.public_key );
             encryptor = PKCS1_OAEP.new( key_pub );

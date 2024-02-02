@@ -46,6 +46,7 @@ class PainelChat(QtWidgets.QWidget):
                 if self.xmpp_var.cliente.nivel_posicao >= nivel["posicao"]:
                     if self.xmpp_var.cliente.nivel_posicao == nivel["posicao"]:
                         item.setCheckState(Qt.Checked)
+                        self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "listar", {"id_nivel" : nivel["id"]} );
                     else:
                         item.setCheckState(Qt.Unchecked)
                 self.lw.addItem(item)
@@ -63,6 +64,8 @@ class PainelChat(QtWidgets.QWidget):
                         "chave_simetrica_criptografada" : chave_simetrica_criptografada };
                     self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "enviar", envelope );
             self.txt_mensagem.setPlainText("");
+        if conteudo_js["comando"] == "Mensagem" and conteudo_js["funcao"] == "listar":
+            print("Mensagens:", conteudo_js);
 
     
 class PainelRegras(QtWidgets.QWidget):

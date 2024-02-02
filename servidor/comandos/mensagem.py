@@ -37,3 +37,10 @@ class Mensagem:
             my.execute(sql_insercao, values);
             return {"resultado" :  True };
         return {"resultado" :  False };
+
+    def listar(self, cliente, grupo, mensagem):
+        my = MysqlHelp();
+        js = mensagem.toJson();
+        sql = "select id, id_remetente, id_destinatario, id_nivel, mensagem_criptografada, chave_simetrica_criptografada,  TO_CHAR(data_hora_envio, 'YY-MM-DD HH24:MI:SS') as  data_hora_envio from mensagem where id_destinatario = %s and id_nivel = %s";
+        return { "retorno" :  my.datatable(sql, [ cliente.id, js["id_nivel"] ] ) };
+
