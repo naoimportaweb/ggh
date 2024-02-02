@@ -1,4 +1,4 @@
-import time;
+import time, base64, uuid;
 
 from PySide6.QtGui import QAction;
 from PySide6.QtWidgets import QApplication, QPlainTextEdit, QListWidget, QListWidgetItem, QDialog, QLineEdit, QPushButton, QMdiArea, QMainWindow, QHBoxLayout, QVBoxLayout, QMenuBar, QTextBrowser;
@@ -6,6 +6,11 @@ from PySide6 import QtWidgets;
 from PySide6.QtCore import Qt
 
 from api.fsseguro import FsSeguro
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.PublicKey import RSA
+
+from api.chachahelp import ChaChaHelper;
+from api.rsahelp import RsaHelper;
 
 class PainelChat(QtWidgets.QWidget):
     def __init__( self, xmpp_var):
@@ -17,12 +22,23 @@ class PainelChat(QtWidgets.QWidget):
 
         form_layout_chat = QVBoxLayout( self );
         area = QPlainTextEdit(self);
-        elemento = QPlainTextEdit(self);
-        elemento.setMaximumHeight(100);
+        self.txt_mensagem = QPlainTextEdit(self);
+        self.txt_mensagem.setMaximumHeight(100);
+        btn_envio = QPushButton("Atualizar")
+        btn_envio.setGeometry(10,0,32,32)
+        btn_envio.clicked.connect( self.btn_envio_click )
+
         form_layout_chat.addWidget(area);
-        form_layout_chat.addWidget(elemento);
+        form_layout_chat.addWidget(self.txt_mensagem);
+        form_layout_chat.addWidget(btn_envio);
         form_layout.addLayout(form_layout_chat);
         self.setLayout( form_layout );
+
+    def btn_envio_click(self):
+        # solicitar clientes aqui.
+        if self.txt_mensagem.toPlainText().strip() != "":
+            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "lista_clientes_niveis", {"niveis" : ["3", "4"]} );
+
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "GrupoCadastro":
             for nivel in self.xmpp_var.grupo.niveis:
@@ -33,6 +49,20 @@ class PainelChat(QtWidgets.QWidget):
                     else:
                         item.setCheckState(Qt.Unchecked)
                 self.lw.addItem(item)
+        if conteudo_js["comando"] == "Mensagem" and conteudo_js["funcao"] == "lista_clientes_niveis":
+            #{niveis : [{"nivel" : id, "clientes" :  { "apelido", "public_key" }}] }
+            for nivel in conteudo_js["niveis"]:
+                for cliente in nivel["clientes"]:
+                    chave_simetrica = str( uuid.uuid5(uuid.NAMESPACE_URL, "0fk") )[0:16]; 
+                    rsa = RsaHelper(cliente["public_key"]);
+                    chave_simetrica_criptografada = rsa.encrypt( chave_simetrica );
+                    chacha = ChaChaHelper( chave_simetrica );
+                    mensagem_criptografada = base64.b64encode( chacha.encrypt( self.txt_mensagem.toPlainText() ) );
+                    envelope = {"apelido_remetente" : self.xmpp_var.cliente.apelido, "apelido_destinatario" : cliente["apelido"],
+                        "id_nivel" : nivel["nivel"], "mensagem_criptografada" : mensagem_criptografada.decode(),
+                        "chave_simetrica_criptografada" : chave_simetrica_criptografada };
+                    self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "enviar", envelope );
+            self.txt_mensagem.setPlainText("");
 
     
 class PainelRegras(QtWidgets.QWidget):
