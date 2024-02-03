@@ -22,6 +22,7 @@ from classes.cliente import Cliente;
 from api.mensagem import Mensagem
 from api.aeshelp import AesHelper;
 from api.comando import Comando;
+from api.rsahelp import RsaHelper
 from classes.mysqlhelp import MysqlHelp
 from comandos import *
 
@@ -66,6 +67,8 @@ class ServidorGrupo(ClientXMPP):
             cliente.chave_servidor = online[ self.cliente.jid ];
 
         if msg['type'] in ('chat', 'normal'):
+            print("|->\033[Chego:\033[0m", msg['from'] );
+            print("      |");
             message = Mensagem( cliente, msg['from'], self.grupo.jid );
             message.fromString( msg['body'] );
             js = message.toJson();
@@ -83,6 +86,7 @@ class ServidorGrupo(ClientXMPP):
             gambiarra_criptografia = "&1&";
             if js["comando"] != "ChaveSimetrica":
                 gambiarra_criptografia = "&2&";
+            print("      |->\033[94mRespondido:\033[0m", msg['from'] );
             msg.reply( mensagem_retorno.criar( comando_retorno, criptografia=gambiarra_criptografia ) ).send();
 
  

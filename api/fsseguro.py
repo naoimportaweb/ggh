@@ -1,4 +1,4 @@
-import os, json, sys;
+import os, json, sys, traceback;
 
 from api.chachahelp import ChaChaHelper;
 
@@ -10,11 +10,12 @@ class FsSeguro:
         if not os.path.exists( path ):
             return None;
         try:
-            with open( path, "r" ) as f:
+            with open( path, "rb" ) as f:
                 buffer = f.read();
                 aes_help = ChaChaHelper( key=self.chave );
-                return aes_help.decrypt( buffer );
+                return aes_help.decrypt( buffer.decode("utf-8") );
         except:
+            traceback.print_exc();
             return None;
 
     def ler_json(self, path):
@@ -26,11 +27,11 @@ class FsSeguro:
     def escrever_raw(self, path, data):
         if len(data) > 0:
             aes_help = ChaChaHelper( key=self.chave );
-            data = aes_help.encrypt( data ).decode();
-        with open( path, "w" ) as f:
-            f.write( data );
-        return os.path.exists( path );
-
+            data = aes_help.encrypt( data );
+            with open( path, "wb" ) as f:
+                f.write( data );
+            return os.path.exists( path );
+        return False;
     def escrever_json(self, path, js):
         return self.escrever_raw(path, json.dumps( js ) );
 

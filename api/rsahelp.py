@@ -11,13 +11,11 @@ class RsaHelper:
     def encrypt(self, raw):
         key_pub = RSA.importKey( self.chave_publica );
         encryptor = PKCS1_OAEP.new( key_pub );
-        encrypted = base64.b64encode( encryptor.encrypt( raw.encode()  ));
-        return encrypted.decode("ascii");
+        encrypted = base64.b64encode( encryptor.encrypt( raw.encode('utf-8')  ));
+        return encrypted.decode('utf-8');
 
     def decrypt(self, enc):
-        if self.chave_privada == None:
-            return None;
         decryptor = PKCS1_OAEP.new( self.chave_privada );
-        return decryptor.decrypt( base64.b64decode( enc.encode() ) ).decode();
+        buffer = base64.b64decode( enc.encode('utf-8') );
+        return decryptor.decrypt( buffer ).decode('utf-8');
         
-

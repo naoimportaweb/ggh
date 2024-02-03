@@ -36,7 +36,8 @@ class Mensagem:
         self.formato = mensagem[5:8];
         buffer_json_envelope = None;
         if self.criptografia == "&1&":
-            decryptor = PKCS1_OAEP.new(self.cliente.key_pair);
+            #key = RSA.import_key( self.cliente.private_key ) 
+            decryptor = PKCS1_OAEP.new( self.cliente.private_key );
             decrypted = decryptor.decrypt( base64.b64decode( mensagem[8:].encode() ) ).decode();
             buffer_json_envelope = json.loads( decrypted );
         elif self.criptografia == "&2&":

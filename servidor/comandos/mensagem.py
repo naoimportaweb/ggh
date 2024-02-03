@@ -32,7 +32,6 @@ class Mensagem:
         cliente_remetente =    my.datatable( sql_cliente, [ js["apelido_remetente"] ] )[0];
         cliente_destinatario = my.datatable( sql_cliente, [ js["apelido_destinatario"] ] )[0];
         niveis = my.datatable( sql_niveis, [ js["nivel"] ] );
-        
         id_mensagem = my.chave_string("mensagem", "id", 20 );
         sql_insercao_mensagem = "INSERT INTO mensagem(id, ordem, id_remetente, id_destinatario, mensagem_criptografada, chave_simetrica_criptografada, data_hora_envio) values(%s, %s, %s, %s, %s, %s, %s)";
         sql_insercao_mensagem_velues = [ id_mensagem, str(time.time()) , cliente_remetente["id"], cliente_destinatario["id"], js["mensagem_criptografada"], js["chave_simetrica_criptografada" ], datetime.now().strftime('%Y-%m-%d %H:%M:%S') ];
@@ -52,7 +51,8 @@ class Mensagem:
         my = MysqlHelp();
         js = mensagem.toJson();
         sql = "select mess.id as id, mess.ordem as ordem, mess.id_remetente as id_remetente, mess.id_destinatario as id_destinatario, mess.mensagem_criptografada as mensagem_criptografada, mess.chave_simetrica_criptografada as chave_simetrica_criptografada,  TO_CHAR(mess.data_hora_envio, 'YY-MM-DD HH24:MI:SS') as  data_hora_envio, messn.id_nivel as id_nivel from mensagem as mess inner join mensagem_nivel as messn on mess.id = messn.id_mensagem where mess.id_destinatario = %s and messn.id_nivel = %s"
-        return { "retorno" :  my.datatable(sql, [ cliente.id, js["id_nivel"] ] ) };
+        buffers = { "retorno" :  my.datatable(sql, [ cliente.id, js["id_nivel"] ] ) };
+        return buffers;
 
     def delete(self, cliente, grupo, mensagem):
         my = MysqlHelp();

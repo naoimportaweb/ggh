@@ -34,7 +34,6 @@ class XMPPCliente:
         # TODA VEZ QUE SE GERA O OBJETO CRIA UM PAR DE CHAVE DIFERENTE;
         #           https://cryptobook.nakov.com/asymmetric-key-ciphers/rsa-encrypt-decrypt-examples
         self.cliente = Cliente( jid_participante, self.grupo, chave_local=chave_criptografia );
-        self.cliente.criar_chaves();
 
     def conectar(self):
         jid = xmpp.protocol.JID( self.cliente.jid );
