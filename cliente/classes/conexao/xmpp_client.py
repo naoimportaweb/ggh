@@ -70,7 +70,7 @@ class XMPPCliente:
 
     # quando loga, tem que atualizar algumas coisas
     def atualizar_entrada(self):
-        self.adicionar_mensagem( "comandos.html" ,"Html", "get", {"path" : "regras.html"});
+        #self.adicionar_mensagem( "comandos.html" ,"Html", "get", {"path" : "regras.html"});
         self.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastro", "cadastro", {});
         self.adicionar_mensagem( "comandos.grupo_cadastro" ,"GrupoCadastro", "cadastro", {});
     

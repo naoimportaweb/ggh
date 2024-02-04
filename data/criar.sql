@@ -56,3 +56,23 @@ insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("56734d
 insert into grupo_cliente(id_cliente, id_grupo) values ("91d0cf8f3883a0dcb338d15a47b326c9", "a9744c19ff882ebb9058a3c5096e6000");
 insert into nivel_cliente(id_cliente, id_nivel) values ("91d0cf8f3883a0dcb338d15a47b326c9", "56734dcbd0c44a6daddfb1c9dd034f70" );
 insert into html(id, nome, html) values ('regras.html','Regras','<html><body>Regras</body></html>');
+
+
+
+
+delete from cliente;
+delete from grupo;
+delete from grupo_cliente;
+delete from mensagem;
+delete from mensagem_nivel;
+delete from nivel;
+delete from nivel_cliente;
+delete from tag;
+delete from tag_cliente;  
+
+# Carga de dados iniciais par um projeto exemplo
+insert into grupo(id, jid, nome, descricao) values("1b89816ae9df5dc039242b4899fb06a1", "cypherpunkgroup@jabber.sa", "DEV Cypherpunk", "");
+insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("41f38c9c2383f414db6ce99f50cff9ad8", "1b89816ae9df5dc039242b4899fb06a1", "Iniciante",  0,         0,        30);
+insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("117072decd99445b4973e81d67edc91e5", "1b89816ae9df5dc039242b4899fb06a1", "Anarquista", 10,        1000,     90);
+insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("81a01e3b7dbc24a468a8252eafeb91e9a", "1b89816ae9df5dc039242b4899fb06a1", "Cypher programmer", 20, 10000,    180);
+insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("516734dcbd0c44a6daddfb1c9dd034f70", "1b89816ae9df5dc039242b4899fb06a1", "CypherPunk", 30,        -1,       365);

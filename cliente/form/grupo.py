@@ -55,7 +55,7 @@ class PainelChat(QtWidgets.QWidget):
         #self.area_adicionar_mensagem.addWidget( texto1 );
         self.setLayout( form_layout );
     def btn_atualizar_click(self):
-        self.mensagens("1");
+        self.mensagens("41f38c9c2383f414db6ce99f50cff9ad8");
         #self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "listar", {"id_nivel" : nivel["id"]} );
     def mensagens(self, nivel):
         rsa = RsaHelper(self.xmpp_var.cliente.public_key, self.xmpp_var.cliente.private_key);
@@ -72,10 +72,9 @@ class PainelChat(QtWidgets.QWidget):
     def btn_envio_click(self):
         # solicitar clientes aqui.
         if self.txt_mensagem.toPlainText().strip() != "":
-            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "lista_clientes_niveis", {"niveis" : ["1"]} );
+            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "lista_clientes_niveis", {"nivel" : "41f38c9c2383f414db6ce99f50cff9ad8"} );
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        
         if conteudo_js["comando"] == "GrupoCadastro":
             for nivel in self.xmpp_var.grupo.niveis:
                 item = QListWidgetItem(nivel["nome"] + "("+ str(nivel["posicao"]) +")")
@@ -98,19 +97,18 @@ class PainelChat(QtWidgets.QWidget):
                         "nivel" : cliente["nivel"], "mensagem_criptografada" : mensagem_criptografada.decode(),
                         "chave_simetrica_criptografada" : chave_simetrica_criptografada };
                 self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "enviar", envelope );
-            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "listar", {"id_nivel" : "1"} );
+            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "listar", {"id_nivel" : "41f38c9c2383f414db6ce99f50cff9ad8"} );
             self.txt_mensagem.setPlainText("");
         if conteudo_js["comando"] == "Mensagem" and conteudo_js["funcao"] == "listar":
             # {'retorno': [{'id': 'jitCQ6rIdo9XoTxqqFdN', 'id 
             for mensagem in conteudo_js["retorno"]:
-                print("Chegou uma mensagem: ", mensagem["id_nivel"], mensagem["ordem"]);
                 path_nivel = self.xmpp_var.cliente.path_mensagens + "/" + mensagem["id_nivel"];
                 if not os.path.exists(path_nivel):
                     os.makedirs( path_nivel );
                 fs = FsSeguro( self.xmpp_var.cliente.chave_local );
                 if fs.escrever_raw( path_nivel + "/" + mensagem["ordem"], json.dumps( mensagem ) ):
                     self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "delete", {"id_mensagem" : mensagem["id"]} );
-            #self.mensagens("1");
+            #self.mensagens("41f38c9c2383f414db6ce99f50cff9ad8");
 
     
 class PainelRegras(QtWidgets.QWidget):

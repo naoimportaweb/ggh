@@ -11,6 +11,7 @@ class Grupo:
         # iniciar diretórios
         self.jid = jid_grupo;
         self.id = hashlib.md5( self.jid.encode() ).hexdigest() ;
+        print("Grupo iniciado:", self.id );
         self.path_home = os.path.expanduser("~/ggh_servidor/")
         self.path_grupo = self.path_home + "/" + hashlib.md5( jid_grupo.encode() ).hexdigest();
         self.path_grupo_html = self.path_grupo + "/html";

@@ -16,12 +16,8 @@ class Mensagem:
         my = MysqlHelp();
         js = mensagem.toJson();
         #https://stackoverflow.com/questions/60884078/use-a-list-in-prepared-statement
-        sql_clientes = "select distinct cl.id as id, cl.apelido as apelido, cl.public_key as public_key, nicl.id_nivel as nivel from cliente as cl inner join nivel_cliente as nicl on cl.id = nicl.id_cliente where nicl.id_nivel in ('3', '4')";
-        buffer = ();
-        lista = list(buffer);
-        for nivel in js['niveis']:
-            lista.append(nivel);
-        lista_clientes = my.datatable(sql_clientes, []);
+        sql_clientes = "select distinct cl.id as id, cl.apelido as apelido, cl.public_key as public_key, nicl.id_nivel as nivel from cliente as cl inner join nivel_cliente as nicl on cl.id = nicl.id_cliente where nicl.id_nivel = %s ";
+        lista_clientes = my.datatable(sql_clientes, [ js["nivel"] ]);
         return {"clientes" : lista_clientes };
 
     def enviar(self, cliente, grupo, mensagem):
