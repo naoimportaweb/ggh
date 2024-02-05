@@ -1,6 +1,10 @@
-import sys, os, hashlib;
+import sys, os, hashlib, time;
 
 from classes.mysqlhelp import MysqlHelp
+from classes.cliente import Cliente;
+from api.mensagem import Mensagem
+from api.comando import Comando;
+
 
 def criar_diretorio_se_nao_existe(diretorio):
     if not os.path.exists( diretorio ):
@@ -25,20 +29,27 @@ class Grupo:
         criar_diretorio_se_nao_existe(self.path_grupo + "/clientes/" );
         os.environ['PATH_GRUPO'] = self.path_grupo;
         self.clientes = {};
+        self.lista_envio = [];
+    
+    def add_envio(self, cliente, modulo, comando, funcao, data={}, retorno=""):
+        comando  = Comando( modulo, comando, funcao, data );
+        mensagem = Mensagem( cliente, cliente.jid, self.jid, comando=comando );
+        self.lista_envio.append( mensagem );
+
     def clientes_nick(self):
         my = MysqlHelp();
         datatable = my.datatable("select cl.apelido from grupo_cliente as gc inner join cliente as cl on gc.id_cliente = cl.id where gc.id_grupo = %s", [ self.id ]);
         return { "lista" : datatable };
     def niveis(self):
         my = MysqlHelp();
-        buffer =  my.datatable("select * from nivel as ni where ni.id_grupo = %s", [ self.id ]);
+        buffer =  my.datatable("select * from nivel as ni where ni.id_grupo = %s order by posicao asc", [ self.id ]);
         return buffer; 
     def tags(self):
         my = MysqlHelp();
         return my.datatable("select * from tag as ta where ta.id_grupo = %s", [ self.id ]);
     
     def registrar_chave_publica(self, cliente, semente=""):
-        chave_simetrica =  str( uuid.uuid5(uuid.NAMESPACE_URL, semente + cliente ) )[0:16];
+        chave_simetrica =  str( uuid.uuid5(uuid.NAMESPACE_URL, semente + cliente + str(time.time())) )[0:16];
         self.clientes[ cliente ] = chave_simetrica; 
         return chave_simetrica;
         

@@ -41,14 +41,16 @@ class Mensagem:
                 sqls.append(sql_insercao_mensagem_nivel);
                 valuess.append(sql_insercao_mensagem_nivel_values);
         my.executes(sqls, valuess);
+        for nivel in niveis:
+            grupo.add_envio(cliente, "comandos.mensagem", "Mensagem", "atualizar", data={"nivel" : nivel["id"]});
         return {"resultado" :  True };
 
     def listar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql = "select mess.id as id, mess.ordem as ordem, mess.id_remetente as id_remetente, mess.id_destinatario as id_destinatario, mess.mensagem_criptografada as mensagem_criptografada, mess.chave_simetrica_criptografada as chave_simetrica_criptografada,  TO_CHAR(mess.data_hora_envio, 'YY-MM-DD HH24:MI:SS') as  data_hora_envio, messn.id_nivel as id_nivel from mensagem as mess inner join mensagem_nivel as messn on mess.id = messn.id_mensagem where mess.id_destinatario = %s and messn.id_nivel = %s"
-        buffers = { "retorno" :  my.datatable(sql, [ cliente.id, js["id_nivel"] ] ) };
-        return buffers;
+        sql = "select mess.id as id, mess.ordem as ordem, mess.id_remetente as id_remetente, mess.id_destinatario as id_destinatario, mess.mensagem_criptografada as mensagem_criptografada, mess.chave_simetrica_criptografada as chave_simetrica_criptografada,  TO_CHAR(mess.data_hora_envio, 'YY-MM-DD HH24:MI:SS') as  data_hora_envio, messn.id_nivel as id_nivel, rem.apelido as apelido_remetente, des.apelido as apelido_destinatario from mensagem as mess inner join mensagem_nivel as messn on mess.id = messn.id_mensagem inner join cliente as rem on mess.id_remetente = rem.id inner join cliente as des on des.id = mess.id_destinatario where mess.id_destinatario = %s and messn.id_nivel = %s"
+        buffers = my.datatable(sql, [ cliente.id, js["id_nivel"] ] );
+        return { "retorno" : buffers  };
 
     def delete(self, cliente, grupo, mensagem):
         my = MysqlHelp();

@@ -1,21 +1,15 @@
 #!/usr/bin/python3
-import asyncio, logging, json, os, sys, inspect;
-import  base64, uuid, time
-import importlib
-import asyncio
-#binascii,
+import asyncio, logging, json, os, sys, inspect, base64, uuid, time, threading, importlib;
 
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
 from slixmpp import ClientXMPP;
-
 
 CURRENTDIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())));
 ROOT = os.path.dirname(CURRENTDIR);
 
 sys.path.append(ROOT);
 sys.path.append(CURRENTDIR);
-
 
 from classes.grupo import Grupo;
 from classes.cliente import Cliente;
@@ -25,8 +19,6 @@ from api.comando import Comando;
 from api.rsahelp import RsaHelper
 from classes.mysqlhelp import MysqlHelp
 from comandos import *
-
-TAMANHO = 16
 
 # criando tabelas antes de iniciar o servidor
 my = MysqlHelp();
@@ -44,7 +36,19 @@ class ServidorGrupo(ClientXMPP):
         # Primeiro deve-se registrar os eventos XMPP, o evento será processado pelo método definido aqui
         self.add_event_handler("session_start", self.session_start);
         self.add_event_handler("message", self.message);
-        
+        self.thread_enviador = threading.Thread(target = self.enviador, args=());
+        self.thread_enviador.start();
+
+    def enviador(self):
+        while True:
+            try:
+                if len(self.grupo.lista_envio) > 0:
+                    mensagem = self.grupo.lista_envio.pop(0);
+                    self.send_message(mto=mensagem.cliente.jid, mbody=mensagem.criar( criptografia="&2&" ), mtype='chat')
+            except:
+                traceback.print_exc();
+            if len(self.grupo.lista_envio) == 0:
+                time.sleep(5);
  
     def session_start(self, event):
         self.send_presence();
@@ -52,7 +56,6 @@ class ServidorGrupo(ClientXMPP):
         #self.get_roster();
         print("Done");
         #https://stackoverflow.com/questions/17791783/sleekxmpp-send-a-message-at-will-and-still-listen-for-incoming-messages
-        #self.send_message(mto="hacker.cliente.1@xmpp.jp", mbody="some message 3", mtype='chat')
  
     def message(self, msg):
         #msg['from'].local, '; node', msg['from'].node, '; resource', msg['from'].resource, '; server', msg['from'].server, '; unescape', msg['from'].unescape, '; user', msg['from'].user, '; username', msg['from'].username);
@@ -62,9 +65,8 @@ class ServidorGrupo(ClientXMPP):
         cliente.carregar();
 
         if self.online.get( cliente.jid ) == None:
-            cliente.chave_servidor = str( uuid.uuid5(uuid.NAMESPACE_URL, "-") )[0:16];
-        else:
-            cliente.chave_servidor = online[ self.cliente.jid ];
+            self.online[ cliente.jid ] = str( uuid.uuid5(uuid.NAMESPACE_URL, str(time.time())) )[0:16];
+        cliente.chave_servidor = self.online[ cliente.jid ];
 
         if msg['type'] in ('chat', 'normal'):
             print("|->\033[Chego:\033[0m", msg['from'] );
@@ -77,11 +79,8 @@ class ServidorGrupo(ClientXMPP):
             retorno_metodo = getattr(instance, js["funcao"])( cliente, self.grupo, message );
             comando_retorno = Comando(js["modulo"], js["comando"], js["funcao"], retorno_metodo );
             mensagem_retorno = Mensagem( cliente, cliente.jid, self.grupo.jid);
-
             # retornar parametros do header, tal como id e callback
             mensagem_retorno.id = message.id;
-            mensagem_retorno.callback_retorno = message.callback_retorno;
-
             # isso foi gambiarra, forçando sem criptografia caso seja envio de chave pública, para depois ter a criptografia (a chave tem que ser transmitida né!!!).
             gambiarra_criptografia = "&1&";
             if js["comando"] != "ChaveSimetrica":
@@ -100,10 +99,6 @@ if __name__ == '__main__':
         configuracao.append( input("Informe o password: ") );
 
     xmpp = ServidorGrupo( configuracao[0].strip() , configuracao[1].strip() );
-    #xmpp.use_proxy = True
-    #xmpp.proxy_config = {
-    #    'host': "127.0.0.1",
-    #    'port': 9054}
     xmpp.register_plugin('xep_0030') # Service Discovery
     xmpp.register_plugin('xep_0199') # XMPP Ping
     xmpp.connect();

@@ -26,3 +26,8 @@ class Mensagem:
 
     def delete(self, cliente, grupo, mensagem):
         return True;
+
+    def atualizar(self, cliente, grupo, mensagem):
+        js = mensagem.toJson();
+        grupo.adicionar_mensagem( cliente, "comandos.mensagem" ,"Mensagem", "listar", data={"id_nivel" : js["nivel"]} );
+        return True;

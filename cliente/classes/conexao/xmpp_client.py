@@ -21,7 +21,6 @@ from api.comando import Comando;
 class XMPPCliente:
 
     def __init__(self, jid_participante, password, jid_grupo, chave_criptografia):
-        self.message_list_send = [];
         self.password = password;
         self.connection = None;
         self.callback = None;
@@ -62,11 +61,9 @@ class XMPPCliente:
     
     def set_callback(self, callback):
         self.callback = callback;
-
+    
     def adicionar_mensagem(self, modulo, comando, funcao, data, criptografia="&2&", callback_retorno=""):
-        comando_objeto = Comando(modulo, comando, funcao, data);
-        mensagem_objeto = Mensagem( self.cliente, self.cliente.jid, self.grupo.jid, comando=comando_objeto, criptografia="&2&", callback_retorno="load_teste");
-        self.message_list_send.append( mensagem_objeto );
+        self.grupo.adicionar_mensagem(self.cliente, modulo, comando, funcao, data, criptografia=criptografia, callback_retorno=callback_retorno);
 
     # quando loga, tem que atualizar algumas coisas
     def atualizar_entrada(self):
@@ -91,8 +88,8 @@ class XMPPCliente:
             try:
                 if self.stop_enviador:
                     return;
-                if len(self.message_list_send) > 0 and self.cliente.chave_servidor != None:
-                    mensagem = self.message_list_send.pop(0);
+                if len(self.grupo.message_list_send) > 0 and self.cliente.chave_servidor != None:
+                    mensagem = self.grupo.message_list_send.pop(0);
                     if mensagem != None:
                         msg_xmpp = xmpp.Message( to=self.grupo.jid, body=mensagem.toString() );
                         msg_xmpp.setAttr('type', 'chat');
@@ -102,8 +99,9 @@ class XMPPCliente:
                 return;
             except:
                 print(".", end="");
-                traceback.print_exc(); 
-            time.sleep(1);   
+                traceback.print_exc();
+            if len(self.grupo.message_list_send) == 0:
+                time.sleep( 3 );   
     
     def processar_mensagem(self, conn, mess):
         try:
@@ -118,9 +116,7 @@ class XMPPCliente:
             js = message.toJson();
             MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"]);
             instance = MyClass();
-            #retorno = instance.processar( self.cliente, message ); 
-            #retorno = getattr(instance, "retorno")( self.cliente, message );
-            retorno = getattr(instance, js["funcao"])( self.cliente, self.grupo, message  );
+            retorno = getattr(instance, js["funcao"])( self.cliente, self.grupo, message );
             if retorno != None and self.callback != None:
                 self.callback( user, retorno, message, js );
         except KeyboardInterrupt:

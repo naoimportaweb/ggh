@@ -12,7 +12,7 @@ class Cliente:
     def __init__(self, jid,  grupo, chave_local = None):
         if type(jid) != type(""):
             raise Exception("JID do cliente tem que ser uma STRING.")
-        self.id = str(jid).replace("/","-");
+        self.id = hashlib.md5( jid.encode() ).hexdigest(); #str(jid).replace("/","-");
         self.jid = jid;
         self.public_key = None;
         self.private_key = None;
@@ -21,6 +21,7 @@ class Cliente:
         self.key_pair = None;
         self.chave_local = chave_local;
         self.nivel_posicao = 0;
+        self.apelido = "";
         
         self.path_cliente = self.grupo.path_grupo + "/clientes/" + hashlib.md5( jid.encode("utf-8") ).hexdigest();
         if not os.path.exists( self.path_cliente ):

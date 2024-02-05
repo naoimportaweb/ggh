@@ -1,4 +1,4 @@
-import sys, os, uuid, json, base64;
+import sys, os, uuid, json, base64, time;
 
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
@@ -19,7 +19,7 @@ from api.chachahelp import ChaChaHelper;
 
 class Mensagem:
     def __init__(self, cliente, jid_from, jid_to,comando=None, criptografia="&0&", callback_retorno=""):
-        self.id = str( uuid.uuid5(uuid.NAMESPACE_URL, "" ) );
+        self.id = str( uuid.uuid5(uuid.NAMESPACE_URL, str(time.time()) ) );
         self.versao = "00";
         self.criptografia = criptografia;
         self.formato = "000";
@@ -36,7 +36,6 @@ class Mensagem:
         self.formato = mensagem[5:8];
         buffer_json_envelope = None;
         if self.criptografia == "&1&":
-            #key = RSA.import_key( self.cliente.private_key ) 
             decryptor = PKCS1_OAEP.new( self.cliente.private_key );
             decrypted = decryptor.decrypt( base64.b64decode( mensagem[8:].encode() ) ).decode();
             buffer_json_envelope = json.loads( decrypted );
@@ -50,15 +49,16 @@ class Mensagem:
         self.id = buffer_json_envelope["head"]["id"];
         self.callback_retorno = buffer_json_envelope["head"]["callback"];
     
-    def criar(self, comando, versao=None, criptografia=None, formato=None ):
+    def criar(self, comando=None, versao=None, criptografia=None, formato=None ):
         if versao != None:
             self.versao = versao;
         if criptografia != None:
             self.criptografia = criptografia;
         if formato != None:
             self.formato = formato;
-        self.comando = comando;
-        return self.toString(comando);
+        if comando != None:
+            self.comando = comando;
+        return self.toString(self.comando);
     
     def toRaw(self):
         return json.dumps(self.mensagem);
