@@ -19,14 +19,17 @@ class WidgetChatTexto(QtWidgets.QWidget):
         frame = QFrame()
         frame.setFrameShape(QFrame.StyledPanel)
         if mensagem['id_remetente'] == mensagem['id_destinatario']:
-            frame.setStyleSheet("background-color: grey");
+            frame.setStyleSheet("background-color: lightyellow");
         else:
             frame.setStyleSheet("background-color: white");
         frame.setLineWidth(3)
         form_layout_chat = QVBoxLayout( frame );
+        lbl_remetente = QLabel( self );
+        lbl_remetente.setText( "<b>Remetente: <font color='red'>"+ mensagem["apelido_remetente"] +"</font></b>" );
         label = QLabel(self);
         label.setText(texto);
         label.setGeometry(10,0,32,32)
+        form_layout_chat.addWidget(lbl_remetente);
         form_layout_chat.addWidget(label);
 
         buffer = QVBoxLayout(self);
@@ -42,7 +45,6 @@ class PainelChat(QtWidgets.QWidget):
         self.lw = QListWidget()
         self.form_layout.addWidget( self.lw );
         self.form_layout_chat = QVBoxLayout( self );
-
 
         self.scroll = QScrollArea(self);
         self.scroll.setWidgetResizable(True);
