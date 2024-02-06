@@ -30,6 +30,7 @@ class XMPPCliente:
         self.thread_recebedor = None;
         self.stop_enviador = True;
         self.stop_recebedor = True;
+        self.pausa_enviador = False;
         # TODA VEZ QUE SE GERA O OBJETO CRIA UM PAR DE CHAVE DIFERENTE;
         #           https://cryptobook.nakov.com/asymmetric-key-ciphers/rsa-encrypt-decrypt-examples
         self.cliente = Cliente( jid_participante, self.grupo, chave_local=chave_criptografia );
@@ -63,10 +64,13 @@ class XMPPCliente:
         self.callback = callback;
     
     def adicionar_mensagem(self, modulo, comando, funcao, data, criptografia="&2&", callback_retorno=""):
+        self.pausa_enviador = True;
         self.grupo.adicionar_mensagem(self.cliente, modulo, comando, funcao, data, criptografia=criptografia, callback_retorno=callback_retorno);
+        self.pausa_enviador = False;
 
     # quando loga, tem que atualizar algumas coisas
     def atualizar_entrada(self):
+        print("..:: ATUALIZANDO ::..");
         #self.adicionar_mensagem( "comandos.html" ,"Html", "get", {"path" : "regras.html"});
         self.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastro", "cadastro", {});
         self.adicionar_mensagem( "comandos.grupo_cadastro" ,"GrupoCadastro", "cadastro", {});
@@ -88,7 +92,7 @@ class XMPPCliente:
             try:
                 if self.stop_enviador:
                     return;
-                if len(self.grupo.message_list_send) > 0 and self.cliente.chave_servidor != None:
+                if len(self.grupo.message_list_send) > 0 and self.cliente.chave_servidor != None and self.pausa_enviador == False:
                     mensagem = self.grupo.message_list_send.pop(0);
                     if mensagem != None:
                         msg_xmpp = xmpp.Message( to=self.grupo.jid, body=mensagem.toString() );

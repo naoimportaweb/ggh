@@ -69,7 +69,7 @@ class ServidorGrupo(ClientXMPP):
         cliente.chave_servidor = self.online[ cliente.jid ];
 
         if msg['type'] in ('chat', 'normal'):
-            print("|->\033[Chego:\033[0m", msg['from'] );
+            print("|->\033[96mChego:\033[0m", msg['from'] );
             print("      |");
             message = Mensagem( cliente, msg['from'], self.grupo.jid );
             message.fromString( msg['body'] );
@@ -77,7 +77,9 @@ class ServidorGrupo(ClientXMPP):
             MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"])
             instance = MyClass()
             retorno_metodo = getattr(instance, js["funcao"])( cliente, self.grupo, message );
+            print
             comando_retorno = Comando(js["modulo"], js["comando"], js["funcao"], retorno_metodo );
+            print("      |", js["modulo"], js["comando"], js["funcao"] );
             mensagem_retorno = Mensagem( cliente, cliente.jid, self.grupo.jid);
             # retornar parametros do header, tal como id e callback
             mensagem_retorno.id = message.id;

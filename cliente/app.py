@@ -67,6 +67,7 @@ if __name__ == '__main__':
     form = MDIWindow()
     form.show()
     sys.exit(app.exec())
+    sys.exit(0);
 
 
 
