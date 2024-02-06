@@ -11,9 +11,9 @@ from classes.conexao.xmpp_client import XMPPCliente;
 
 from api.aeshelp import AesHelper;
 
-from form.login import FormLogin;
-from form.painel import FormPainel;
-from form.grupo import FormGrupo;
+from form.form_login  import FormLogin;
+from form.form_painel import FormPainel;
+from form.form_grupo  import FormGrupo;
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction,  QPalette, QColor;
@@ -62,12 +62,11 @@ if __name__ == '__main__':
     palette.setColor(QPalette.Link, QColor(42, 130, 218))
     palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
     palette.setColor(QPalette.HighlightedText, Qt.black)
-    #app.setStyle("Fusion")
+    app.setStyle("Fusion")
     #app.setPalette(palette)
     form = MDIWindow()
     form.show()
     sys.exit(app.exec())
-    sys.exit(0);
 
 
 
