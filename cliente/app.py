@@ -9,7 +9,7 @@ from classes.singleton.singlegon_meta import SingletonMeta;
 from classes.singleton.configuracao import Configuracao;
 from classes.conexao.xmpp_client import XMPPCliente;
 
-from api.aeshelp import AesHelper;
+#from api.aeshelp import AesHelper;
 
 from form.form_login  import FormLogin;
 from form.form_painel import FormPainel;

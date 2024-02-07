@@ -6,13 +6,8 @@ from PySide6.QtWidgets import QSizePolicy, QSizePolicy;
 from PySide6 import QtWidgets;
 from PySide6.QtCore import Qt, QObject
 from PySide6.QtCore import  QFileSystemWatcher, QSettings, Signal, Slot, QThread;
-
 from api.fsseguro import FsSeguro
-from Crypto.Cipher import PKCS1_OAEP
-from Crypto.PublicKey import RSA
 
-from api.chachahelp import ChaChaHelper;
-from api.rsahelp import RsaHelper;
 
 class PainelRegras(QtWidgets.QWidget):
     def __init__( self, xmpp_var ):

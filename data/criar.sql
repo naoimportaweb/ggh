@@ -46,20 +46,7 @@ ALTER TABLE html ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id);
 ALTER TABLE mensagem ADD FOREIGN KEY (id_remetente) REFERENCES cliente(id); 
 ALTER TABLE mensagem ADD FOREIGN KEY (id_destinatario) REFERENCES cliente(id); 
 
-# Carga de dados iniciais par um projeto exemplo
-insert into grupo(id, jid, nome, descricao) values("a9744c19ff882ebb9058a3c5096e6000", "nao.importa.web@jabb3r.de", "DEV Cypherpunk", "");
-insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("4f38c9c2383f414db6ce99f50cff9ad8", "a9744c19ff882ebb9058a3c5096e6000", "Iniciante",  0,         0,        30);
-insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("17072decd99445b4973e81d67edc91e5", "a9744c19ff882ebb9058a3c5096e6000", "Anarquista", 10,        1000,     90);
-insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("8a01e3b7dbc24a468a8252eafeb91e9a", "a9744c19ff882ebb9058a3c5096e6000", "Cypher programmer", 20, 10000,    180);
-insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("56734dcbd0c44a6daddfb1c9dd034f70", "a9744c19ff882ebb9058a3c5096e6000", "CypherPunk", 30,        -1,       365);
-# Deve ser feito o cadastro do administrador o colocando no maior nível
-insert into grupo_cliente(id_cliente, id_grupo) values ("91d0cf8f3883a0dcb338d15a47b326c9", "a9744c19ff882ebb9058a3c5096e6000");
-insert into nivel_cliente(id_cliente, id_nivel) values ("91d0cf8f3883a0dcb338d15a47b326c9", "56734dcbd0c44a6daddfb1c9dd034f70" );
-insert into html(id, nome, html) values ('regras.html','Regras','<html><body>Regras</body></html>');
-
-
-
-
+# EXEMPLO DE GRUPO
 delete from cliente;
 delete from grupo;
 delete from grupo_cliente;
@@ -76,3 +63,5 @@ insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("41f38c
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("117072decd99445b4973e81d67edc91e5", "1b89816ae9df5dc039242b4899fb06a1", "Anarquista", 10,        1000,     90);
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("81a01e3b7dbc24a468a8252eafeb91e9a", "1b89816ae9df5dc039242b4899fb06a1", "Cypher programmer", 20, 10000,    180);
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("516734dcbd0c44a6daddfb1c9dd034f70", "1b89816ae9df5dc039242b4899fb06a1", "CypherPunk", 30,        -1,       365);
+insert into html(id, nome, html) values ('regras.html','Regras','<html><body>Regras</body></html>');
+insert into html(id, nome, html) values ('recomendacao.html','Recomendação','<html><body>Recomendação</body></html>');
