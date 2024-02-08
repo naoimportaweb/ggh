@@ -47,11 +47,11 @@ class FormLogin(QDialog):
         
     
     def action_btn_entrar(self):
-        self.pushButton.setEnabled( False );
+        self.pushButton.setDisabled( False );
         xmpp_var = XMPPCliente(self.jid_pessoa.text(), self.password.text(), self.jid_grupo.text(), self.chave_criptografia.text() );
         if xmpp_var.conectar():
             self.form_main.callback_login( xmpp_var );
             self.close();
         else:
-            self.pushButton.setEnabled( True );
+            self.pushButton.setDisabled( True );
             QMessageBox.information(self, "Falha de autenticação", "Não foi possível autenticar no serviço XMPP do participante, confirme que seu usuário XMPP está correto e que a senha também esteja correta.", QMessageBox.StandardButton.Ok);

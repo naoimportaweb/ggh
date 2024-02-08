@@ -34,6 +34,29 @@ class FsSeguro:
         return False;
     def escrever_json(self, path, js):
         return self.escrever_raw(path, json.dumps( js ) );
+    
+    def escrever_binario(self, path, binario):
+        cypherhelp = ChaChaHelper( key=self.chave );
+        binario = cypherhelp.encrypt_binario( binario );
+        with open (path, "bw") as f:
+            f.write( binario );
+            return True;
+        return False;
 
+    def ler_binario(self, path):
+        cypherhelp = ChaChaHelper( key=self.chave );
+        with open(path, "rb") as k:
+            return cypherhelp.decrypt_binario( k.read() );
+        return None;
+
+
+
+
+
+#with open (self.path_private_key, "bw") as prv_file:
+#    prv_file.write( self.private_key );
+#with open (self.path_public_key, "wb") as pub_file:
+#    self.public_key = public_key.exportKey().decode("utf-8");
+#    pub_file.write( self.public_key.encode("utf-8") );
 
 

@@ -185,6 +185,9 @@ class PainelChat(QtWidgets.QWidget):
             return;
         if self.txt_mensagem.toPlainText().strip() != "":
             self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "lista_clientes_niveis", {"nivel" : self.xmpp_var.grupo.niveis[self.list_nivel.currentRow()]["id"]} );
+            self.txt_mensagem.setDisabled(True);
+            self.btn_envio.setDisabled(True);
+                
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "GrupoCadastro":
@@ -210,6 +213,8 @@ class PainelChat(QtWidgets.QWidget):
                 self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "enviar", envelope );
             self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"Mensagem", "listar", {"id_nivel" : self.xmpp_var.grupo.niveis[self.list_nivel.currentRow()]["id"] } );
             self.txt_mensagem.setPlainText("");
+            self.txt_mensagem.setDisabled(False);
+            self.btn_envio.setDisabled(False);
         if conteudo_js["comando"] == "Mensagem" and conteudo_js["funcao"] == "listar":
             # {'retorno': [{'id': 'jitCQ6rIdo9XoTxqqFdN', 'id 
             for mensagem in conteudo_js["retorno"]:
