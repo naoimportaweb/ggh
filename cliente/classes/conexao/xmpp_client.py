@@ -50,7 +50,7 @@ class XMPPCliente:
             self.thread_recebedor.start();
             self.thread_enviador = threading.Thread(target = self.enviador, args=());
             self.thread_enviador.start();
-            comando = Comando("comandos.chave_simetrica"  ,"ChaveSimetrica", "gerar", {"chave" : self.cliente.chave_publica() });
+            comando = Comando("comandos.chave_simetrica"  ,"ChaveSimetricaComando", "gerar", {"chave" : self.cliente.chave_publica() });
             mensagem = Mensagem( self.cliente, self.cliente.jid, self.grupo.jid);
             # -------1-------------------------------- GERAR NOVA CHAVE PÚBLICA E ENVIAR AQUI------------------------->
             msg_xmpp = xmpp.Message( to=self.grupo.jid, body=mensagem.criar( comando ) );
@@ -71,9 +71,10 @@ class XMPPCliente:
     # quando loga, tem que atualizar algumas coisas
     def atualizar_entrada(self):
         print("..:: ATUALIZANDO ::..");
-        #self.adicionar_mensagem( "comandos.html" ,"Html", "get", {"path" : "regras.html"});
-        self.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastro", "cadastro", {});
-        self.adicionar_mensagem( "comandos.grupo_cadastro" ,"GrupoCadastro", "cadastro", {});
+        self.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "regras.html"});
+        self.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "recomendacoes.html"});
+        self.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastroComando", "cadastro", {});
+        self.adicionar_mensagem( "comandos.grupo_cadastro" ,"GrupoCadastroComando", "cadastro", {});
     
     def escutar(self):
         while True:
@@ -91,10 +92,12 @@ class XMPPCliente:
         while True:
             try:
                 if self.stop_enviador:
+                    print("Stop enviador.");
                     return;
                 if len(self.grupo.message_list_send) > 0 and self.cliente.chave_servidor != None and self.pausa_enviador == False:
                     mensagem = self.grupo.message_list_send.pop(0);
                     if mensagem != None:
+                        print("Enviado:", mensagem.comando.comando);
                         msg_xmpp = xmpp.Message( to=self.grupo.jid, body=mensagem.toString() );
                         msg_xmpp.setAttr('type', 'chat');
                         self.connection.send( msg_xmpp );

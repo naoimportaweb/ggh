@@ -13,7 +13,7 @@ CREATE TABLE grupo_cliente ( id_grupo varchar(255) NOT NULL, id_cliente varchar(
 CREATE TABLE nivel ( id varchar(255) NOT NULL, nome varchar(255), id_grupo varchar(255), posicao int, pontuacao int, tempo int,
   PRIMARY KEY(id) );
 
-CREATE TABLE tag ( id varchar(255) NOT NULL, nome varchar(255), id_grupo varchar(255),
+CREATE TABLE tag ( id varchar(255) NOT NULL, nome varchar(255), sigla varchar(255), id_grupo varchar(255),
   PRIMARY KEY(id) );
 
 CREATE TABLE html ( id varchar(255) NOT NULL, nome varchar(255), id_grupo varchar(255), html LONGTEXT,
@@ -32,6 +32,13 @@ CREATE TABLE mensagem( id varchar(255) NOT NULL, id_remetente varchar(255), id_d
 CREATE TABLE mensagem_nivel ( id_nivel varchar(255) NOT NULL, id_mensagem varchar(255) NOT NULL,
   PRIMARY KEY(id_nivel, id_mensagem) );
 
+CREATE TABLE conhecimento ( id varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL, id_revisor varchar(255) DEFAULT NULL,  id_nivel varchar(255) NOT NULL,
+   id_grupo varchar(255) NOT NULL, titulo varchar(255), tags varchar(255), descricao LONGTEXT, texto LONGTEXT, status int not null, 
+  PRIMARY KEY(id) );
+
+CREATE TABLE conhecimento_tag ( id_tag varchar(255) NOT NULL, id_conhecimento varchar(255) NOT NULL,
+  PRIMARY KEY(id_conhecimento, id_tag) );
+
 # relacionamento
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id); 
@@ -45,6 +52,8 @@ ALTER TABLE tag ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id);
 ALTER TABLE html ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
 ALTER TABLE mensagem ADD FOREIGN KEY (id_remetente) REFERENCES cliente(id); 
 ALTER TABLE mensagem ADD FOREIGN KEY (id_destinatario) REFERENCES cliente(id); 
+ALTER TABLE conhecimento_tag ADD FOREIGN KEY (id_conhecimento) REFERENCES conhecimento(id); 
+ALTER TABLE conhecimento_tag ADD FOREIGN KEY (id_tag) REFERENCES tag(id); 
 
 # EXEMPLO DE GRUPO
 delete from cliente;
@@ -65,3 +74,5 @@ insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("81a01e
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("516734dcbd0c44a6daddfb1c9dd034f70", "1b89816ae9df5dc039242b4899fb06a1", "CypherPunk", 30,        -1,       365);
 insert into html(id, nome, html) values ('regras.html','Regras','<html><body>Regras</body></html>');
 insert into html(id, nome, html) values ('recomendacao.html','Recomendação','<html><body>Recomendação</body></html>');
+insert into tag(id, nome, sigla, id_grupo) values ('ed583d0879894266bb8916f9abce53bc', 'Aprovador Conhecimento', 'aprovador_conhecimento', '1b89816ae9df5dc039242b4899fb06a1');
+insert into tag_cliente(id_tag, id_cliente) values ('ed583d0879894266bb8916f9abce53bc', '8140652f47496a8cc66a435101de9023');

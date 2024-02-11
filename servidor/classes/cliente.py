@@ -58,9 +58,17 @@ class Cliente:
             self.id_nivel = cadastro[0]["id_nivel"];
         #insert into nivel_cliente( id_cliente, id_nivel ) values( '8140652f47496a8cc66a435101de9023', (select id from nivel where id_grupo = 'a9744c19ff882ebb9058a3c5096e6000' and posicao=0 limit 1)  )
         my = None;                  
+    
     def chave_publica_salvar(self, chave):
         self.public_key = chave;
         my = MysqlHelp();
         my.execute("UPDATE cliente SET public_key= %s where id = %s ", [ self.public_key, self.id ]);
         my = None;
+    
+    def posso_nivel(self, nivel_id):
+        my = MysqlHelp();
+        cadastro = my.datatable( "select ni.id as id_nivel, ni.posicao as posicao from nivel_cliente as nic inner join nivel as ni on nic.id_nivel = ni.id where ni.id = %s and ni.id_grupo = %s and nic.id_cliente = %s order by ni.posicao desc", [ nivel_id, self.grupo.id, self.id ] );
+        if len(cadastro) > 0:
+            return cadastro[0]["posicao"] <= self.nivel_posicao;
+        return False;
 

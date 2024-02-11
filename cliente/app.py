@@ -14,6 +14,7 @@ from classes.conexao.xmpp_client import XMPPCliente;
 from form.form_login  import FormLogin;
 from form.form_painel import FormPainel;
 from form.form_grupo  import FormGrupo;
+from form.form_edit_conhecimento import FormEditarConhecimento
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction,  QPalette, QColor;
@@ -43,26 +44,28 @@ class MDIWindow(QMainWindow):
         form.carregar_panel();
 
     def action_connect(self, q):
+        #form = FormEditarConhecimento(1,1,1);
+        #form.exec();
         f = FormLogin( self );
         f.exec();
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     palette = QPalette()
-    palette.setColor(QPalette.Window, QColor(53, 53, 53))
-    palette.setColor(QPalette.WindowText, Qt.white)
-    palette.setColor(QPalette.Base, QColor(25, 25, 25))
-    palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
-    palette.setColor(QPalette.ToolTipBase, Qt.black)
-    palette.setColor(QPalette.ToolTipText, Qt.white)
-    palette.setColor(QPalette.Text, Qt.white)
-    palette.setColor(QPalette.Button, QColor(53, 53, 53))
-    palette.setColor(QPalette.ButtonText, Qt.white)
-    palette.setColor(QPalette.BrightText, Qt.red)
-    palette.setColor(QPalette.Link, QColor(42, 130, 218))
-    palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
-    palette.setColor(QPalette.HighlightedText, Qt.black)
-    app.setStyle("Fusion")
+    #palette.setColor(QPalette.Window, QColor(53, 53, 53))
+    #palette.setColor(QPalette.WindowText, Qt.white)
+    #palette.setColor(QPalette.Base, QColor(25, 25, 25))
+    #palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
+    #palette.setColor(QPalette.ToolTipBase, Qt.black)
+    #palette.setColor(QPalette.ToolTipText, Qt.white)
+    #palette.setColor(QPalette.Text, Qt.white)
+    #palette.setColor(QPalette.Button, QColor(53, 53, 53))
+    #palette.setColor(QPalette.ButtonText, Qt.white)
+    #palette.setColor(QPalette.BrightText, Qt.red)
+    #palette.setColor(QPalette.Link, QColor(42, 130, 218))
+    #palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+    #palette.setColor(QPalette.HighlightedText, Qt.black)
+    #app.setStyle("Fusion")
     #app.setPalette(palette)
     form = MDIWindow()
     form.show()

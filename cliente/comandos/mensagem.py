@@ -8,7 +8,7 @@ import uuid;
 #       2.1 - o servidor valida se o cliente remetente pode enviar mensagem para o cliente destinatário por meio de nível
 #       2.2 - o servidor lança salvando na tabela
 
-class Mensagem:    
+class MensagemComando:    
     # retorna uma lista de clientes que podem acessar cada nível, então nível é um array de niveis
     def lista_clientes_niveis(self, cliente, grupo, mensagem):
         # envio:  {"niveis" : ["3", "4"]}
@@ -29,5 +29,5 @@ class Mensagem:
 
     def atualizar(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
-        grupo.adicionar_mensagem( cliente, "comandos.mensagem" ,"Mensagem", "listar", data={"id_nivel" : js["nivel"]} );
+        grupo.adicionar_mensagem( cliente, "comandos.mensagem" ,"MensagemComando", "listar", data={"id_nivel" : js["nivel"]} );
         return True;

@@ -12,6 +12,7 @@ from classes.conexao.sessao import Sessao;
 class FormLogin(QDialog):
     def __init__(self, parent=None):
         super(FormLogin, self).__init__(parent)
+        #self.setStyleSheet("border: 1px solid rgba(0, 0, 0, 0.15);")
         self.setWindowTitle("Grupo")
         self.setGeometry(400, 400, 800, 500)
 
@@ -27,7 +28,6 @@ class FormLogin(QDialog):
             self.jid_pessoa.setText( buffer_config["jid_pessoa"] );
             self.chave_criptografia.setText( buffer_config["chave_criptografia"] );
             self.password.setText( buffer_config["password"] );
-
             buffer_config = None;
 
 

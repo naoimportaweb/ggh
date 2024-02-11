@@ -2,7 +2,7 @@ import uuid;
 
 # no cliente
 
-class GrupoCadastro:    
+class GrupoCadastroComando:    
     def cadastro(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
         grupo.niveis = js["niveis"];

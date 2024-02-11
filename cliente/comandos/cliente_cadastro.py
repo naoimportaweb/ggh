@@ -2,7 +2,7 @@ import uuid;
 
 # no cliente
 
-class ClienteCadastro:    
+class ClienteCadastroComando:    
     def cadastro(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
         cliente.apelido = js["apelido"];

@@ -10,7 +10,7 @@ from datetime import datetime
 #       2.1 - o servidor valida se o cliente remetente pode enviar mensagem para o cliente destinatário por meio de nível
 #       2.2 - o servidor lança salvando na tabela
 
-class Mensagem:    
+class MensagemComando:    
     # retorna uma lista de clientes que podem acessar cada nível, então nível é um array de niveis
     def lista_clientes_niveis(self, cliente, grupo, mensagem):
         my = MysqlHelp();
@@ -42,7 +42,7 @@ class Mensagem:
                 valuess.append(sql_insercao_mensagem_nivel_values);
         my.executes(sqls, valuess);
         for nivel in niveis:
-            grupo.add_envio(cliente, "comandos.mensagem", "Mensagem", "atualizar", data={"nivel" : nivel["id"]});
+            grupo.add_envio(cliente, "comandos.mensagem", "MensagemComando", "atualizar", data={"nivel" : nivel["id"]});
         return {"resultado" :  True };
 
     def listar(self, cliente, grupo, mensagem):

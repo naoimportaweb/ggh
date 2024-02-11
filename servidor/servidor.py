@@ -85,7 +85,7 @@ class ServidorGrupo(ClientXMPP):
             mensagem_retorno.id = message.id;
             # isso foi gambiarra, forçando sem criptografia caso seja envio de chave pública, para depois ter a criptografia (a chave tem que ser transmitida né!!!).
             gambiarra_criptografia = "&1&";
-            if js["comando"] != "ChaveSimetrica":
+            if js["comando"] != "ChaveSimetricaComando":
                 gambiarra_criptografia = "&2&";
             print("      |->\033[94mRespondido:\033[0m", msg['from'] );
             msg.reply( mensagem_retorno.criar( comando_retorno, criptografia=gambiarra_criptografia ) ).send();
