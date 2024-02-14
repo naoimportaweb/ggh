@@ -15,6 +15,7 @@ class PainelConhecimento(QtWidgets.QWidget):
     def __init__( self, xmpp_var ):
         super().__init__();
         self.xmpp_var = xmpp_var;
+        self.lista_conhecimento = [];
         form_layout = QVBoxLayout( self );
         widget_pesquisa = QWidget();
         self.cmb_nivel = QComboBox(); 
@@ -38,10 +39,21 @@ class PainelConhecimento(QtWidgets.QWidget):
         self.table.setRowCount(0)
         form_layout.addWidget(self.table);
         
+        widget_acesso = QWidget();
+        form_acesso = QHBoxLayout( widget_acesso );
+        
+        self.b6 = QPushButton("Acessar conhecimento")
+        self.b6.setGeometry(10,0,32,32)
+        self.b6.clicked.connect( self.botao_acessar_conhecimento_click )
+        form_acesso.addWidget( self.b6 );
+        form_acesso.addStretch();
+
         self.b4 = QPushButton("Novo conhecimento")
         self.b4.setGeometry(10,0,32,32)
         self.b4.clicked.connect( self.botao_novo_conhecimento_click )
-        form_layout.addWidget( self.b4 );
+        form_acesso.addWidget( self.b4 );
+
+        form_layout.addWidget(widget_acesso);
         self.setLayout(form_layout);
         
 
@@ -49,6 +61,7 @@ class PainelConhecimento(QtWidgets.QWidget):
         if conteudo_js["comando"] == "ConhecimentoComando" and conteudo_js["funcao"] == "listar":
             self.table.clearContents();
             self.table.setRowCount(len(conteudo_js['lista']))
+            self.lista_conhecimento = conteudo_js['lista'];
             row = 0
             for conhecimento in conteudo_js['lista']:
                 self.table.setItem(row, 0, QTableWidgetItem(conhecimento['apelido']))
@@ -69,8 +82,8 @@ class PainelConhecimento(QtWidgets.QWidget):
             print("APROVAR:", conteudo_js);
         elif conteudo_js["comando"] == "ConhecimentoComando" and ( conteudo_js["funcao"] == "carregar" or conteudo_js["funcao"] == "novo" ):
             conhecimento = Conhecimento();
-            conhecimento.fromJson( js["conhecimento"] );
-            f = FormEditarConhecimento( self.xmpp_var.cliente, self.xmpp_var.grupo, conhecimento );
+            conhecimento.fromJson( conteudo_js["conhecimento"] );
+            f = FormEditarConhecimento( self.xmpp_var.cliente, self.xmpp_var, conhecimento );
             f.exec();
     def botao_listar_conhecimento_click(self):
         self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "listar", {"id_nivel" : self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ]["id"] } );
@@ -82,6 +95,10 @@ class PainelConhecimento(QtWidgets.QWidget):
                 self.cmb_nivel.addItem(nivel["nome"]);
             self.cmb_nivel.setCurrentIndex(0);
             self.botao_listar_conhecimento_click();
+    
+    def botao_acessar_conhecimento_click(self):
+        row = self.table.currentRow();
+        self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "carregar", {"id" : self.lista_conhecimento[row]["id"] } );
     
     def botao_novo_conhecimento_click(self):
         conhecimento = Conhecimento();

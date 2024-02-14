@@ -8,7 +8,7 @@ from classes.mysqlhelp import MysqlHelp
 
 class Cliente:
     def __init__(self, jid, grupo, public_key=None):
-        if jid == None or jid.strip() == "" or type(jid) != type(""):
+        if jid == None or type(jid) != type("") or jid.strip() == "":
             raise Exception("JID do cliente tem que ser uma STRING.")
         self.id = hashlib.md5( jid.encode() ).hexdigest() ;
         self.jid = jid;
@@ -19,7 +19,6 @@ class Cliente:
         self.id_nivel = "";
         self.apelido = None;   # vem do banco de dados, tem que iniciar.
         self.nivel_posicao = 0;
-        
         # cliente não existe, então vamos criar os diretórios dele.
         self.path_cliente = self.grupo.path_grupo + "/clientes/" + hashlib.md5( self.jid.encode() ).hexdigest();
     

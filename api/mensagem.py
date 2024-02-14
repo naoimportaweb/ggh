@@ -33,6 +33,7 @@ class Mensagem:
     def fromString(self, mensagem):
         self.versao = mensagem[0:2];
         self.criptografia = mensagem[2:5];
+        print("Criptografia: ", self.criptografia);
         self.formato = mensagem[5:8];
         buffer_json_envelope = None;
         if self.criptografia == "&1&":

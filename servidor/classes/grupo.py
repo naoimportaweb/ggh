@@ -15,7 +15,7 @@ class Grupo:
         # iniciar diretórios
         self.jid = jid_grupo;
         self.id = hashlib.md5( self.jid.encode() ).hexdigest() ;
-        print("Grupo iniciado:", self.id );
+        print("Grupo: ", self.id);
         self.path_home = os.path.expanduser("~/ggh_servidor/")
         self.path_grupo = self.path_home + "/" + hashlib.md5( jid_grupo.encode() ).hexdigest();
         self.path_grupo_html = self.path_grupo + "/html";
@@ -30,10 +30,9 @@ class Grupo:
         os.environ['PATH_GRUPO'] = self.path_grupo;
         self.clientes = {};
         self.lista_envio = [];
-    
-    def add_envio(self, cliente, modulo, comando, funcao, data={}, retorno=""):
+    def add_envio(self, cliente, modulo, comando, funcao, data={}, retorno="", criptografia="&1&"):
         comando  = Comando( modulo, comando, funcao, data );
-        mensagem = Mensagem( cliente, cliente.jid, self.jid, comando=comando );
+        mensagem = Mensagem( cliente, self.jid, cliente.jid, comando=comando, criptografia=criptografia );
         self.lista_envio.append( mensagem );
 
     def clientes_nick(self):

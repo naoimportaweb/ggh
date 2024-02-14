@@ -39,6 +39,8 @@ CREATE TABLE conhecimento ( id varchar(255) NOT NULL, id_cliente varchar(255) NO
 CREATE TABLE conhecimento_tag ( id_tag varchar(255) NOT NULL, id_conhecimento varchar(255) NOT NULL,
   PRIMARY KEY(id_conhecimento, id_tag) );
 
+CREATE TABLE conhecimento_status (id int not null, nome varchar(255), PRIMARY KEY(id) );
+
 # relacionamento
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id); 
@@ -54,6 +56,7 @@ ALTER TABLE mensagem ADD FOREIGN KEY (id_remetente) REFERENCES cliente(id);
 ALTER TABLE mensagem ADD FOREIGN KEY (id_destinatario) REFERENCES cliente(id); 
 ALTER TABLE conhecimento_tag ADD FOREIGN KEY (id_conhecimento) REFERENCES conhecimento(id); 
 ALTER TABLE conhecimento_tag ADD FOREIGN KEY (id_tag) REFERENCES tag(id); 
+ALTER TABLE conhecimento ADD FOREIGN KEY (status) REFERENCES conhecimento_status(id); 
 
 # EXEMPLO DE GRUPO
 delete from cliente;
@@ -65,14 +68,22 @@ delete from nivel;
 delete from nivel_cliente;
 delete from tag;
 delete from tag_cliente;  
+delete from conhecimento_tag;
+delete from conhecimento;
 
 # Carga de dados iniciais par um projeto exemplo
-insert into grupo(id, jid, nome, descricao) values("1b89816ae9df5dc039242b4899fb06a1", "cypherpunkgroup@jabber.sa", "DEV Cypherpunk", "");
-insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("41f38c9c2383f414db6ce99f50cff9ad8", "1b89816ae9df5dc039242b4899fb06a1", "Iniciante",  0,         0,        30);
-insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("117072decd99445b4973e81d67edc91e5", "1b89816ae9df5dc039242b4899fb06a1", "Anarquista", 10,        1000,     90);
-insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("81a01e3b7dbc24a468a8252eafeb91e9a", "1b89816ae9df5dc039242b4899fb06a1", "Cypher programmer", 20, 10000,    180);
-insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("516734dcbd0c44a6daddfb1c9dd034f70", "1b89816ae9df5dc039242b4899fb06a1", "CypherPunk", 30,        -1,       365);
-insert into html(id, nome, html) values ('regras.html','Regras','<html><body>Regras</body></html>');
-insert into html(id, nome, html) values ('recomendacao.html','Recomendação','<html><body>Recomendação</body></html>');
-insert into tag(id, nome, sigla, id_grupo) values ('ed583d0879894266bb8916f9abce53bc', 'Aprovador Conhecimento', 'aprovador_conhecimento', '1b89816ae9df5dc039242b4899fb06a1');
-insert into tag_cliente(id_tag, id_cliente) values ('ed583d0879894266bb8916f9abce53bc', '8140652f47496a8cc66a435101de9023');
+insert into grupo(id, jid, nome, descricao) values("a639ffc7a87856c52ea8b6a75dff4ff7", "cypherpunkgroup@jabber.sa", "DEV Cypherpunk", "");
+insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("41f38c9c2383f414db6ce99f50cff9ad8", "a639ffc7a87856c52ea8b6a75dff4ff7", "Iniciante",  0,         0,        30);
+insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("117072decd99445b4973e81d67edc91e5", "a639ffc7a87856c52ea8b6a75dff4ff7", "Anarquista", 10,        1000,     90);
+insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("81a01e3b7dbc24a468a8252eafeb91e9a", "a639ffc7a87856c52ea8b6a75dff4ff7", "Cypher programmer", 20, 10000,    180);
+insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("516734dcbd0c44a6daddfb1c9dd034f70", "a639ffc7a87856c52ea8b6a75dff4ff7", "CypherPunk", 30,        -1,       365);
+
+insert into conhecimento_status(id, nome) values(0, "Em desenvolvimento");
+insert into conhecimento_status(id, nome) values(1, "Aguardando aprovação");
+insert into conhecimento_status(id, nome) values(2, "Aprovado");
+insert into conhecimento_status(id, nome) values(3, "Reprovado");
+
+insert into html(id, nome, html, id_grupo) values ('regras.html'      ,'Regras','<html><body>Regras</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
+insert into html(id, nome, html, id_grupo) values ('recomendacao.html','Recomendação','<html><body>Recomendação</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
+insert into tag(id, nome, sigla, id_grupo) values ('ed583d0879894266bb8916f9abce53bc', 'Aprovador Conhecimento', 'aprovador_conhecimento', 'a639ffc7a87856c52ea8b6a75dff4ff7');
+insert into tag_cliente(id_tag, id_cliente) values ('ed583d0879894266bb8916f9abce53bc', '91d0cf8f3883a0dcb338d15a47b326c9');

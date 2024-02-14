@@ -24,10 +24,10 @@ def striphtml(data):
     return p.sub('', data)
 
 class FormEditarConhecimento(QDialog):
-    def __init__(self, cliente, grupo, conhecimento, parent=None):
+    def __init__(self, cliente, xmpp_var, conhecimento, parent=None):
         super(FormEditarConhecimento, self).__init__(parent);
         self.cliente = cliente;
-        self.grupo = grupo;
+        self.xmpp_var = xmpp_var;
         self.conhecimento = conhecimento;
         self.setWindowTitle("Conhecimento");
         self.setGeometry(400, 400, 800, 500);
@@ -56,6 +56,17 @@ class FormEditarConhecimento(QDialog):
         page_apr.setLayout(page_apr_layout);
         tab.addTab(page_apr,'Aprovação');
 
+        #CREATE TABLE conhecimento ( id varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL, id_revisor varchar(255) DEFAULT NULL,  id_nivel varchar(255) NOT NULL,
+        #id_grupo varchar(255) NOT NULL, titulo varchar(255), tags varchar(255), descricao LONGTEXT, texto LONGTEXT, status int not null, 
+        # FIM
+        self.b5 = QPushButton("Salvar conhecimento")
+        self.b5.clicked.connect( self.botao_salvar_conhecimento_click )
+        self.main_layout.addWidget(self.b5)
+        self.setLayout(self.main_layout);
+        self.layout_principal( page_elementos_layout, self.conhecimento);
+        self.layout_editor(    page_text_layout,      self.conhecimento);
+
+    def layout_editor(self, layout, conhecimento):
         # TAB DE TEXTO -> CONHECIMENTO
         self.editor = TextEdit()
         self.editor.setAutoFormatting(QTextEdit.AutoAll)
@@ -63,13 +74,26 @@ class FormEditarConhecimento(QDialog):
         font = QFont('Times', 12)
         self.editor.setFont(font)
         self.editor.setFontPointSize(12)
-        page_text_layout.addWidget(self.editor)
         self._format_actions = [ ]
-        # FIM
-        self.b5 = QPushButton("Salvar conhecimento")
-        self.b5.clicked.connect( self.botao_salvar_conhecimento_click )
-        self.main_layout.addWidget(self.b5)
-        self.setLayout(self.main_layout);
+        self.editor.setHtml( conhecimento.texto );
+        layout.addWidget(self.editor)
+
+    def layout_principal(self, layout, conhecimento):
+        self.titulo = QLineEdit(conhecimento.titulo, self);
+        self.cmb_nivel = QComboBox(); 
+        self.cmb_nivel.clear();
+        if len(self.xmpp_var.grupo.niveis) > 0:
+            for nivel in self.xmpp_var.grupo.niveis:
+                self.cmb_nivel.addItem(nivel["nome"]);
+            self.cmb_nivel.setCurrentIndex(0);
+            #self.botao_listar_conhecimento_click();
+        
+        #index = self.cmb_nivel.findText(conhecimento., QtCore.Qt.MatchFixedString)
+        #if index >= 0:
+        #     self.cmb_nivel.setCurrentIndex(index)
+        layout.addWidget( self.cmb_nivel );
+        layout.addWidget( self.titulo);
+        layout.addStretch();
 
     def substituir_url_imagem(self, html, url):
         conteudo_base = base64.b64encode(requests.get(url).content);

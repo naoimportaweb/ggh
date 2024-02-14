@@ -1,4 +1,4 @@
-import xmpp, time, traceback, os, sys, inspect, traceback, threading, base64, importlib
+import xmpp, time, traceback, os, sys, inspect, traceback, threading, base64, importlib, uuid;
 
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
@@ -43,6 +43,7 @@ class XMPPCliente:
         if self.connection.auth(user=jid.getNode(), password=self.password, resource=jid.getResource()) != None:
             self.connection.sendInitPresence();
             self.connection.RegisterHandler('message', self.processar_mensagem);
+            time.sleep(5);
 
             self.stop_enviador = False;
             self.stop_recebedor = False;
@@ -50,7 +51,8 @@ class XMPPCliente:
             self.thread_recebedor.start();
             self.thread_enviador = threading.Thread(target = self.enviador, args=());
             self.thread_enviador.start();
-            comando = Comando("comandos.chave_simetrica"  ,"ChaveSimetricaComando", "gerar", {"chave" : self.cliente.chave_publica() });
+            # abaixo tem um parametro chamado HOST que não serve para coisa alguma no código, serve só para pessoas curiosas se ferrarem tentando identificar o que é
+            comando = Comando("comandos.chave_simetrica"  ,"ChaveSimetricaComando", "gerar", {"chave" : self.cliente.chave_publica(), "host" : str( uuid.uuid5(uuid.NAMESPACE_URL, str(time.time()) ) )  });
             mensagem = Mensagem( self.cliente, self.cliente.jid, self.grupo.jid);
             # -------1-------------------------------- GERAR NOVA CHAVE PÚBLICA E ENVIAR AQUI------------------------->
             msg_xmpp = xmpp.Message( to=self.grupo.jid, body=mensagem.criar( comando ) );
@@ -81,18 +83,18 @@ class XMPPCliente:
             try:
                 if self.stop_recebedor:
                     return;
-                self.connection.Process(1);
+                if self.connection.Process(1) == 0:
+                    time.sleep(3);
             except KeyboardInterrupt:
                 return;
             except:
                 print(".", end="");
-            time.sleep(1);
-
+    
     def enviador(self):
         while True:
             try:
                 if self.stop_enviador:
-                    print("Stop enviador.");
+                    sys.exit(1);
                     return;
                 if len(self.grupo.message_list_send) > 0 and self.cliente.chave_servidor != None and self.pausa_enviador == False:
                     mensagem = self.grupo.message_list_send.pop(0);
@@ -102,16 +104,20 @@ class XMPPCliente:
                         msg_xmpp.setAttr('type', 'chat');
                         self.connection.send( msg_xmpp );
                         time.sleep(0.1);
+                elif len(self.grupo.message_list_send) > 0 and ( self.cliente.chave_servidor == None or self.pausa_enviador == True ):
+                    print("\033[93mTem mensagem na fila, mas deu problema: \033[0m", "Existe chave:", self.cliente.chave_servidor != None, " Pausa: ", self.pausa_enviador);
+
             except KeyboardInterrupt:
-                return;
+                sys.exit(1);
             except:
                 print(".", end="");
                 traceback.print_exc();
-            if len(self.grupo.message_list_send) == 0:
-                time.sleep( 3 );   
+            if len(self.grupo.message_list_send) == 0 or self.cliente.chave_servidor == None or self.pausa_enviador == True:
+                time.sleep( 5 );   
     
     def processar_mensagem(self, conn, mess):
         try:
+            print("algo...");
             if self.callback == None:
                 return;
             text = mess.getBody();
@@ -120,7 +126,8 @@ class XMPPCliente:
             user=mess.getFrom();
             message = Mensagem( self.cliente, mess['to'], self.grupo.jid );
             message.fromString( text );
-            js = message.toJson();
+            js = message.toJson( );
+            print("\033[91mChegou reposta:", js["modulo"],  js["comando"], js["funcao"], "\033[0m");
             MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"]);
             instance = MyClass();
             retorno = getattr(instance, js["funcao"])( self.cliente, self.grupo, message );
@@ -135,4 +142,5 @@ class XMPPCliente:
         self.stop_enviador = True;
         self.stop_recebedor = True;
         self.connection.disconnect();
+        sys.exit(0);
 

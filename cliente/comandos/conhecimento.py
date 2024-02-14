@@ -9,11 +9,14 @@ class ConhecimentoComando:
         js = mensagem.toJson();
         if js["status"] == True:
             return js["conhecimento"];
+        print( js["erro"] );
         return None;
     def carregar(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
         if js["status"] == True:
             return js["conhecimento"];
+        
+        print( js["erro"] );
         return None;
     def listar(self, cliente, grupo, mensagem):
         return mensagem.toJson()["lista"];

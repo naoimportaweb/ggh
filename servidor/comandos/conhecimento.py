@@ -24,6 +24,7 @@ class ConhecimentoComando:
         return {"status" : True, "conhecimento" : js };
     
     def carregar(self, cliente, grupo, mensagem):
+        my = MysqlHelp();
         js = mensagem.toJson();
         sql = "SELECT * FROM conhecimento where id = %s";
         values = [ js["id"] ];
@@ -42,6 +43,7 @@ class ConhecimentoComando:
         return {"lista" : my.datatable(sql, values) };
     
     def aprovar(self, cliente, grupo, mensagem):
+        my = MysqlHelp();
         js = mensagem.toJson();
         sql = "SELECT * FROM conhecimento where id = %s";
         values = [ js["id"] ];
@@ -59,6 +61,7 @@ class ConhecimentoComando:
         return {"status" : True, "conhecimento" : js };
     
     def salvar(self, cliente, grupo, mensagem):
+        my = MysqlHelp();
         js = mensagem.toJson();
         sql = "SELECT * FROM conhecimento where id = %s";
         values = [ js["id"] ];

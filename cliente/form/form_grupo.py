@@ -82,6 +82,5 @@ class FormGrupo(QtWidgets.QWidget):
     
     def closeEvent(self, event):
         event.accept();
-        print("..:: FECHANDO:", self.xmpp_var.cliente.jid, "::..");
         self.xmpp_var.disconnect();
         self.xmpp_var = None;
