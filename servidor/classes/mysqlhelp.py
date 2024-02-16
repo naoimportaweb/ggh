@@ -10,9 +10,9 @@ class MysqlHelp:
     def __init__(self, host=None, user=None, password=None, database=None):
         # Dados padrões para testes, depois tenho que fazer um config sigleton
         self.dataBase = mysql.connector.connect(
-            host ="127.0.0.1",
+            host ="localhost",
             user ="root",
-            passwd ="123456",
+            passwd ="password",
             database = "ggh" );
         self.cursorObject = self.dataBase.cursor();
     
