@@ -1,6 +1,6 @@
 
 # importing required libraries
-import random
+import random, os, sys;
 
 import mysql.connector, json
 from mysql.connector import Error
@@ -9,11 +9,12 @@ from mysql.connector import errorcode
 class MysqlHelp:
     def __init__(self, host=None, user=None, password=None, database=None):
         # Dados padrões para testes, depois tenho que fazer um config sigleton
+        self.configuracao = json.loads( os.environ["database"] );
         self.dataBase = mysql.connector.connect(
-            host ="localhost",
-            user ="root",
-            passwd ="password",
-            database = "ggh" );
+            host = self.configuracao["server"],
+            user = self.configuracao["user"],
+            passwd =  self.configuracao["password"] ,
+            database = self.configuracao["database"] );
         self.cursorObject = self.dataBase.cursor();
     
     def execute(self, sql, values=None):

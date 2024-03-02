@@ -37,7 +37,7 @@ class FormEditarConhecimento(QDialog):
         self.main_layout.addWidget(tab);
         
         page_elementos = QWidget(tab);
-        page_elementos_layout = QGridLayout();
+        page_elementos_layout = QVBoxLayout();
         page_elementos.setLayout(page_elementos_layout);
         tab.addTab(page_elementos,'Elementos textuais');
 
@@ -55,16 +55,29 @@ class FormEditarConhecimento(QDialog):
         page_apr_layout = QGridLayout();
         page_apr.setLayout(page_apr_layout);
         tab.addTab(page_apr,'Aprovação');
+        
+        if self.xmpp_var.cliente.id == conhecimento.id_cliente and conhecimento.status == 0:
+            self.b5 = QPushButton("Salvar conhecimento")
+            self.b5.clicked.connect( self.botao_salvar_conhecimento_click )
+            page_inferior = QWidget(self);
+            page_inferior_layout = QHBoxLayout();
+            page_inferior.setLayout(page_inferior_layout);
+            page_inferior_layout.addStretch();
+            page_inferior_layout.addWidget(self.b5);
+            self.main_layout.addWidget( page_inferior );
 
-        #CREATE TABLE conhecimento ( id varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL, id_revisor varchar(255) DEFAULT NULL,  id_nivel varchar(255) NOT NULL,
-        #id_grupo varchar(255) NOT NULL, titulo varchar(255), tags varchar(255), descricao LONGTEXT, texto LONGTEXT, status int not null, 
-        # FIM
-        self.b5 = QPushButton("Salvar conhecimento")
-        self.b5.clicked.connect( self.botao_salvar_conhecimento_click )
-        self.main_layout.addWidget(self.b5)
         self.setLayout(self.main_layout);
         self.layout_principal( page_elementos_layout, self.conhecimento);
         self.layout_editor(    page_text_layout,      self.conhecimento);
+        self.layout_tag( page_tag_layout,             self.conhecimento);
+        self.layout_aprovacao( page_apr_layout,       self.conhecimento);
+        self.showMaximized() 
+
+    def layout_tag(self, layout, conhecimento):
+        layout.addWidget( QLabel("TAGs:", self) );
+
+    def layout_aprovacao(self, layout, conhecimento):
+        layout.addWidget( QLabel("Aprovação:", self) );
 
     def layout_editor(self, layout, conhecimento):
         # TAB DE TEXTO -> CONHECIMENTO
@@ -76,6 +89,7 @@ class FormEditarConhecimento(QDialog):
         self.editor.setFontPointSize(12)
         self._format_actions = [ ]
         self.editor.setHtml( conhecimento.texto );
+        layout.addWidget( QLabel("Conhecimento", self) );
         layout.addWidget(self.editor)
 
     def layout_principal(self, layout, conhecimento):
@@ -83,53 +97,24 @@ class FormEditarConhecimento(QDialog):
         self.cmb_nivel = QComboBox(); 
         self.cmb_nivel.clear();
         if len(self.xmpp_var.grupo.niveis) > 0:
+            index = 0;
             for nivel in self.xmpp_var.grupo.niveis:
-                self.cmb_nivel.addItem(nivel["nome"]);
-            self.cmb_nivel.setCurrentIndex(0);
-            #self.botao_listar_conhecimento_click();
-        
-        #index = self.cmb_nivel.findText(conhecimento., QtCore.Qt.MatchFixedString)
-        #if index >= 0:
-        #     self.cmb_nivel.setCurrentIndex(index)
+                self.cmb_nivel.addItem(nivel.nome);
+                if nivel.id == conhecimento.id_nivel:
+                    self.cmb_nivel.setCurrentIndex(index)
+                index += 1;
+        layout.addWidget( QLabel("Nível do conhecimento", self) );
         layout.addWidget( self.cmb_nivel );
+        layout.addWidget( QLabel("Título", self) );
         layout.addWidget( self.titulo);
         layout.addStretch();
 
-    def substituir_url_imagem(self, html, url):
-        conteudo_base = base64.b64encode(requests.get(url).content);
-        return html.replace( url, "data:image/*;base64," + conteudo_base.decode("utf-8")) ;
-    def substituir_url_link(self, html, url):
-        partes = re.findall(r'href=[\'|\"](.*?)[\'|\"]', url[0]  );
-        if len(partes) > 0:
-            html = html.replace('<a'+ url[0] +'>'+ url[1] +'</a>',  striphtml( url[1] ) + " (" + partes[0] + ")" );
-        else:
-            html = html.replace('<a'+ url[0] +'>'+ url[1] +'</a>', "" );
-        return html;
-    
-    def limpar_tags_indesejadas(self, html):
-      scripts = re.compile(r'<(script).*?</\1>(?s)')
-      css = re.compile(r'<style.*?/style>')
-      a = re.compile(r'<a.*?/a>')
-      html = scripts.sub('', html)
-      html = css.sub('', html)
-      html = a.sub('', html)
-      return html;
-
     def botao_salvar_conhecimento_click(self):
-        html = self.editor.toHtml();
-        images = re.findall(r'src=[\"|\']([^\"|\']+)[\"|\']', html  );
-        images.sort();
-        for image in images:
-            if image[:len("data:image/*;base64,")] != "data:image/*;base64,":
-                html = self.substituir_url_imagem(html, image);
-        urls = re.findall(r'<a(.*?)>(.*?)</a>', html  );
-        urls.sort();
-        for url in urls:
-            html = self.substituir_url_link(html, url);
-        html = self.limpar_tags_indesejadas(html);
-        #with open('/tmp/documento.html', 'w') as yourFile:
-        #    yourFile.write( html   )
-
+        self.conhecimento.setHtml( self.editor.toHtml() );
+        self.conhecimento.titulo = self.titulo.text();
+        self.conhecimento.id_nivel = self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id;
+        self.xmpp_var.adicionar_mensagem("comandos.conhecimento" ,"ConhecimentoComando", "salvar", self.conhecimento.toJson() );
+    
     def block_signals(self, objects, b):
         for o in objects:
             o.blockSignals(b)

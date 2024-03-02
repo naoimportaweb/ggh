@@ -13,6 +13,7 @@ class PainelRecomendacoes(QtWidgets.QWidget):
     def __init__( self, xmpp_var ):
         super().__init__();
         self.xmpp_var = xmpp_var;
+        self.ativo = False;
         self.fs = FsSeguro( self.xmpp_var.cliente.chave_local );
         self.path_html = self.xmpp_var.grupo.path_grupo_html + "/recomendacoes.html";
         form_layout = QVBoxLayout( self );

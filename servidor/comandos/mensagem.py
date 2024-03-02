@@ -61,4 +61,4 @@ class MensagemComando:
             sqlss = [sql_nivel_excluir, sql_mensagem_excluir];
             valuess = [ [js["id_mensagem"]], [js["id_mensagem"]] ];
             return { "retorno" : my.executes( sqlss, valuess ) };
-        return False;
+        return {"resultado" :  True };

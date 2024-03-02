@@ -1,6 +1,9 @@
 #!/usr/bin/python3
-import  logging, json, os, sys, inspect, base64, uuid, time, threading, importlib;
+import  logging, json, os, sys, inspect, base64, uuid, time, threading, importlib, requests;
 import xmpp, time, traceback, os, sys, inspect, traceback, threading, base64, importlib, uuid;
+
+#   https://github.com/xmpppy/xmpppy                                                                        TEORIA
+#   https://stackoverflow.com/questions/16563200/connecting-to-jabber-server-via-proxy-in-python-xmppy      PROXY
 
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
@@ -20,52 +23,23 @@ from api.rsahelp import RsaHelper
 from classes.mysqlhelp import MysqlHelp
 from comandos import *
 
-# criando tabelas antes de iniciar o servidor
-my = MysqlHelp();
-print("- Testando o Banco de Dados.");
-if my.teste() > 0:
-    print("Você tem que corrigir os erros relacionados a falta de tabela/colunas no banco de dados.");
-    sys.exit(1);
-my = None;
-
-
-#from api.aeshelp import AesHelper;
-#from classes.cliente import Cliente;
-#from api.mensagem import Mensagem;
-#from classes.grupo import Grupo
-#from api.comando import Comando;
-#   https://github.com/xmpppy/xmpppy                                                                        TEORIA
-#   https://stackoverflow.com/questions/16563200/connecting-to-jabber-server-via-proxy-in-python-xmppy      PROXY
-
 class XMPPServer:
-
     def __init__(self, jid_server, password):
-        self.grupo = Grupo( jid_server );
-        self.online = {};
+        self.inicializacao = str( uuid.uuid5(uuid.NAMESPACE_URL, jid_server + password + str(time.time())) )[0:16];
+        self.grupo = Grupo( jid_server , self.inicializacao);
+        #self.online = {};
         self.password = password;
         self.pausa_enviador = True; # inicamos pausados a thread, pois não estamos logados ainda.
         self.pausa_recebedor = True; # inicamos pausados a thread, pois não estamos logados ainda.
         self.connection = None;     # pipe de conexão com servidor XMPP remoto
-        #self.callback = None;
-        #self.chave_criptografia = chave_criptografia;
-        #self.thread_enviador = None;
-        #self.thread_recebedor = None;
-        #self.stop_enviador = True;
-        #self.stop_recebedor = True;
-        #self.pausa_enviador = False;
-        # TODA VEZ QUE SE GERA O OBJETO CRIA UM PAR DE CHAVE DIFERENTE;
-        #           https://cryptobook.nakov.com/asymmetric-key-ciphers/rsa-encrypt-decrypt-examples
-        #self.cliente = Cliente( jid_participante, self.grupo, chave_local=chave_criptografia );
-        # Primeiro deve-se registrar os eventos XMPP, o evento será processado pelo método definido aqui
-        #self.add_event_handler("session_start", self.session_start);
-        #self.add_event_handler("message", self.message);
-        #self.thread_enviador = threading.Thread(target = self.enviador, args=());
-        #self.thread_enviador.start();
+
     def conectar(self):
         jid = xmpp.protocol.JID( self.grupo.jid );
-        self.connection = xmpp.Client(server=jid.getDomain(), debug=False);
-        self.connection.connect();
+        self.connection = xmpp.Client(server=jid.getDomain(), debug=False); #debug="always"
+        #self.connection.connect( server=("133.125.37.233", 5222 ), proxy={'host':'127.0.0.1', 'port': 9051}, secure=1  );
+        self.connection.connect( );
         if self.connection.auth(user=jid.getNode(), password=self.password, resource=jid.getResource()) != None:
+            print("Conectado.");
             self.connection.sendInitPresence();
             self.connection.RegisterHandler('message', self.processar_mensagem);
             time.sleep(5);
@@ -82,11 +56,13 @@ class XMPPServer:
                 if not self.pausa_enviador and len(self.grupo.lista_envio) > 0:
                     mensagem = self.grupo.lista_envio.pop(0);
                     if mensagem != None:
+                        if not self.connection.isConnected(): self.connection.reconnectAndReauth()
                         print("Enviado:", mensagem.comando.comando);
                         print(" [+] from:", self.grupo.jid ," to:", mensagem.jid_to);
-                        msg_xmpp = xmpp.Message( to=mensagem.jid_to , body=mensagem.toString() );
-                        msg_xmpp.setAttr('type', 'chat');
-                        self.connection.send( msg_xmpp );
+                        mensagem.enviar( self.connection );
+                        #msg_xmpp = xmpp.Message( to=mensagem.jid_to , body=mensagem.toString() );
+                        #msg_xmpp.setAttr('type', 'chat');
+                        #self.connection.send( msg_xmpp );
                         time.sleep(0.1);
             except KeyboardInterrupt:
                 sys.exit(1);
@@ -115,25 +91,19 @@ class XMPPServer:
                 print(mess);
                 return;
             user= mess.getFrom().getNode() + "@" + mess.getFrom().getDomain();
-            print("USER: ", user);
-            cliente = Cliente( user, self.grupo );
-            cliente.carregar();
-            if self.online.get( cliente.jid ) == None:
-                self.online[ cliente.jid ] = str( uuid.uuid5(uuid.NAMESPACE_URL, str(time.time())) )[0:16];
-            cliente.chave_servidor = self.online[ cliente.jid ];
+            cliente = self.grupo.cliente( user );
             
             message = Mensagem( cliente,  user, self.grupo.jid ); # cliente, jid_from, jid_to
-            message.fromString( text );
-            js = message.toJson( );
-
-            MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"])
-            instance = MyClass()
-            retorno_metodo = getattr(instance, js["funcao"])( cliente, self.grupo, message );
-            comando_retorno = Comando(js["modulo"], js["comando"], js["funcao"], retorno_metodo );
-            criptografia = "&1&";
-            if js["comando"] != "ChaveSimetricaComando":
+            if message.fromString( text ):
+                js = message.toJson( );
+                MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"])
+                instance = MyClass()
+                retorno_metodo = getattr(instance, js["funcao"])( cliente, self.grupo, message );
+                comando_retorno = Comando(js["modulo"], js["comando"], js["funcao"], retorno_metodo );
                 criptografia = "&2&";
-            self.grupo.add_envio(cliente, js["modulo"], js["comando"], js["funcao"], data=retorno_metodo, retorno="", criptografia=criptografia);
+                if js["comando"] == "GrupoCadastroComando" and js["funcao"] == "participar": # uma gambiarra, mas funciona. A primeira conexAo nao tem uma chave comum.
+                    criptografia = "&1&";
+                self.grupo.add_envio(cliente, js["modulo"], js["comando"], js["funcao"], data=retorno_metodo, retorno="", criptografia=criptografia);
         except KeyboardInterrupt:
             return;
         except:
@@ -144,26 +114,67 @@ class XMPPServer:
         self.stop_recebedor = True;
         self.connection.disconnect();
 
+
+# Obtendo arquivo de configuração < ========================================================
+configuracao = None;
+if os.path.exists(os.path.expanduser("~/.ggh_server_desenv.json")):
+    configuracao =  json.loads( open( os.path.expanduser("~/.ggh_server_desenv.json") ).read() ) ;
+else:
+    configuracao = {
+        "xmpp" :     { "server" :  "", "account" : "", "password" : ""},
+        "database" : { "server" :  "", "user" :    "", "password" : "", "database" : "" },
+        "proxy" :    {"protocol" : "", "server" :  "", "port" : 80 }
+    };
+    print("\033[94m" , "====== CONFIGURAÇÃO DO SERVIÇO JABBER ======" , "\033[0m");
+    configuracao["xmpp"]["server"] =   input("Informe o endereço do servidor XMPP: ") ;
+    configuracao["xmpp"]["account"] =  input("Informe o usuário do serviço XMPP: ") ;
+    configuracao["xmpp"]["password"] = input("Informe o password: ") ;
+
+    print("\033[94m" , "====== CONFIGURAÇÃO DO BANCO DE DADOS ======" , "\033[0m");
+    configuracao["database"]["server"]   = input("Informe o IP do servidor mysql: ") ;
+    configuracao["database"]["user"]     = input("Informe o usuário do serviço mysql: ") ;
+    configuracao["database"]["password"] = input("Informe o password do serviço mysql: ") ;
+    configuracao["database"]["database"] = input("Informe o Database do grupo: ") ;
+
+    print("\033[94m" , "====== CONFIGURAÇÃO DO BANCO DE DADOS ======" , "\033[0m");
+    configuracao["proxy"]["protocol"] = input("Informe o protocolo do proxy, pode ser http ou https: ") ;
+    configuracao["proxy"]["server"]   = input("Informe o IP do proxy: ") ;
+    configuracao["proxy"]["port"]     = int(input("Informe a porta: ")) ;
+
+    if input("DESEJA salvar esta configuração (pressione s para SIM, e n para NÃO): ") == "s":
+        with open(os.path.expanduser("~/.ggh_server_desenv.json"), "w") as f:
+            f.write( json.dumps( configuracao ) );
+
+# criando tabelas antes de iniciar o servidor
+# Vamos jogar no environment os dados para conexão com MYSQL
+os.environ["database"] = json.dumps( configuracao["database"] );
+my = MysqlHelp();
+print("- Testando o Banco de Dados.");
+if my.teste() > 0:
+    print("Você tem que corrigir os erros relacionados a falta de tabela/colunas no banco de dados.");
+    sys.exit(1);
+my = None;
+
+# TESTANDO SEU IP, não pode ser o mesmo
+ip_sem_tunel_proxy = requests.get('https://api.ipify.org').text;
+proxy = configuracao["proxy"]["protocol"] + "://"+ configuracao["proxy"]["server"] +":" + str( configuracao["proxy"]["port"] );
+os.environ['http_proxy'] = proxy
+os.environ['https_proxy'] = proxy
+os.environ['HTTP_PROXY'] = proxy
+os.environ['HTTPS_PROXY'] = proxy
+ip_com_tunel_proxy = requests.get('https://api.ipify.org').text;
+if ip_com_tunel_proxy == ip_sem_tunel_proxy:
+    print("\033[95m", "Você não está usando proxy para realizar a conexão." , "\033[0m");
+    sys.exit(1);
+else:
+    print("\033[95mIP após proxy:", ip_com_tunel_proxy , "\033[0m");
+
 if __name__ == '__main__': 
-    #logging.basicConfig(level=logging.DEBUG, format='%(levelname)-8s %(message)s');
-    configuracao = [];
-    if os.path.exists(os.path.expanduser("~/.ggh_server_desenv.json")):
-        configuracao =  open( os.path.expanduser("~/.ggh_server_desenv.json") ).readlines() ;
-    else:
-        configuracao.append( input("Informe o endereço XMPP do grupo: ") );
-        configuracao.append( input("Informe o password: ") );
-    xmpp_var = XMPPServer( configuracao[0].strip() , configuracao[1].strip() );
+    xmpp_var = XMPPServer( configuracao["xmpp"]["account"] , configuracao["xmpp"]["password"] );
     if xmpp_var.conectar():
-        print("Conectado");
         xmpp_var.pausa_enviador = False;
         xmpp_var.pausa_recebedor = False;
-    #xmpp = ServidorGrupo( configuracao[0].strip() , configuracao[1].strip() );
-    #xmpp.register_plugin('xep_0030') # Service Discovery
-    #xmpp.register_plugin('xep_0004') # Data Forms
-    #xmpp.register_plugin('xep_0060') # PubSub
-    #xmpp.register_plugin('xep_0199') # XMPP Ping
-    #xmpp.connect();
-    #xmpp.process();
+
 
 
 

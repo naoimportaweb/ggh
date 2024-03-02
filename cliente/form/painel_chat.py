@@ -69,6 +69,7 @@ class PainelChat(QtWidgets.QWidget):
     def __init__( self, xmpp_var):
         super().__init__();
         self.xmpp_var = xmpp_var;
+        self.ativo = False;
         self.mensagens_adicionadas_chat = [];
         self.fs = FsSeguro( self.xmpp_var.cliente.chave_local );
         self.form_layout = QHBoxLayout( self );
@@ -135,7 +136,7 @@ class PainelChat(QtWidgets.QWidget):
     def mensagens(self, layout):
         if self.list_nivel.currentRow() < 0:
             return;
-        nivel = self.xmpp_var.grupo.niveis[ self.list_nivel.currentRow() ]["id"];
+        nivel = self.xmpp_var.grupo.niveis[ self.list_nivel.currentRow() ].id;
         rsa = RsaHelper(self.xmpp_var.cliente.public_key, self.xmpp_var.cliente.private_key);
         if not os.path.exists(self.xmpp_var.cliente.path_mensagens + "/" + nivel):
             os.makedirs(self.xmpp_var.cliente.path_mensagens + "/" + nivel);
@@ -167,8 +168,8 @@ class PainelChat(QtWidgets.QWidget):
         while True:
             try:
                 index = self.list_nivel.currentRow();
-                if index != -1:
-                    self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {"id_nivel" : self.xmpp_var.grupo.niveis[index]["id"]} );
+                if index != -1 and self.ativo:
+                    self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {"id_nivel" : self.xmpp_var.grupo.niveis[index].id } );
             except KeyboardInterrupt:
                 sys.exit(0);
             except:
@@ -184,7 +185,7 @@ class PainelChat(QtWidgets.QWidget):
             QMessageBox.critical(None, "Falha no uso do sistema", "Selecione o nível na lista.", QMessageBox.Ok)
             return;
         if self.txt_mensagem.toPlainText().strip() != "":
-            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "lista_clientes_niveis", {"nivel" : self.xmpp_var.grupo.niveis[self.list_nivel.currentRow()]["id"]} );
+            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "lista_clientes_niveis", {"nivel" : self.xmpp_var.grupo.niveis[self.list_nivel.currentRow()].id } );
             self.txt_mensagem.setDisabled(True);
             self.btn_envio.setDisabled(True);
                 
@@ -192,11 +193,11 @@ class PainelChat(QtWidgets.QWidget):
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "GrupoCadastroComando":
             for nivel in self.xmpp_var.grupo.niveis:
-                item = QListWidgetItem( "Nível: " + nivel["nome"])
-                if self.xmpp_var.cliente.nivel_posicao >= nivel["posicao"]:
-                    if self.xmpp_var.cliente.nivel_posicao == nivel["posicao"]:
+                item = QListWidgetItem( "Nível: " + nivel.nome)
+                if self.xmpp_var.cliente.nivel_posicao >= nivel.posicao:
+                    if self.xmpp_var.cliente.nivel_posicao == nivel.posicao:
                         self.list_nivel.addItem(item)
-                self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {"id_nivel" : nivel["id"]} );
+                self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {"id_nivel" : nivel.id} );
             if self.list_nivel.currentRow() < 0:
                 self.list_nivel.setCurrentRow(0);
         if conteudo_js["comando"] == "MensagemComando" and conteudo_js["funcao"] == "lista_clientes_niveis":
@@ -211,7 +212,7 @@ class PainelChat(QtWidgets.QWidget):
                         "nivel" : cliente["nivel"], "mensagem_criptografada" : mensagem_criptografada.decode(),
                         "chave_simetrica_criptografada" : chave_simetrica_criptografada };
                 self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "enviar", envelope );
-            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {"id_nivel" : self.xmpp_var.grupo.niveis[self.list_nivel.currentRow()]["id"] } );
+            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {"id_nivel" : self.xmpp_var.grupo.niveis[self.list_nivel.currentRow()].id } );
             self.txt_mensagem.setPlainText("");
             self.txt_mensagem.setDisabled(False);
             self.btn_envio.setDisabled(False);

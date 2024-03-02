@@ -15,6 +15,7 @@ class PainelConhecimento(QtWidgets.QWidget):
     def __init__( self, xmpp_var ):
         super().__init__();
         self.xmpp_var = xmpp_var;
+        self.ativo = False;
         self.lista_conhecimento = [];
         form_layout = QVBoxLayout( self );
         widget_pesquisa = QWidget();
@@ -31,10 +32,10 @@ class PainelConhecimento(QtWidgets.QWidget):
 
         #https://www.pythontutorial.net/pyqt/pyqt-qtablewidget/
         self.table = QTableWidget(self)
-        colunas = [{"Autor": "", "Título" : "", "Status" : ""}];
+        colunas = [{"Título" : "", "Status" : ""}];
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
         self.table.resizeColumnsToContents()
-        self.table.setColumnCount(3)
+        self.table.setColumnCount(2)
         self.table.setHorizontalHeaderLabels(colunas[0].keys());
         self.table.setRowCount(0)
         form_layout.addWidget(self.table);
@@ -55,54 +56,70 @@ class PainelConhecimento(QtWidgets.QWidget):
 
         form_layout.addWidget(widget_acesso);
         self.setLayout(form_layout);
-        
+
+        self.thread_enviador = threading.Thread(target = self.atualizar_conhecimento, args=());
+        self.thread_enviador.start();
+    
+    def atualizar_conhecimento( self ):
+        while True:
+            try:
+                if self.cmb_nivel.currentIndex() >= 0 and self.ativo:
+                    lista_buffer = os.listdir(  self.xmpp_var.cliente.path_conhecimento  );
+                    for buffer_nome_conhecimento in lista_buffer:
+                        buffer_conhecimento = Conhecimento( );
+                        buffer_conhecimento.carregar( self.xmpp_var.cliente.chave_local, self.xmpp_var.cliente.path_conhecimento + "/" + buffer_nome_conhecimento );
+                        if len([x for x in self.lista_conhecimento if x.id == buffer_conhecimento.id]) == 0:
+                            self.lista_conhecimento.append( buffer_conhecimento );
+                            self.table.setRowCount( len(  self.lista_conhecimento  ) );
+                            self.table.setItem( len(self.lista_conhecimento) - 1, 0, QTableWidgetItem( buffer_conhecimento.titulo ) );
+                            self.table.setItem( len(self.lista_conhecimento) - 1, 1, QTableWidgetItem("") );
+            except:
+                traceback.print_exc();
+            time.sleep(5);
+            self.table.resizeColumnsToContents();
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "ConhecimentoComando" and conteudo_js["funcao"] == "listar":
-            self.table.clearContents();
-            self.table.setRowCount(len(conteudo_js['lista']))
-            self.lista_conhecimento = conteudo_js['lista'];
-            row = 0
             for conhecimento in conteudo_js['lista']:
-                self.table.setItem(row, 0, QTableWidgetItem(conhecimento['apelido']))
-                self.table.setItem(row, 1, QTableWidgetItem(conhecimento['titulo']))
-                if conhecimento['status'] == 0:
-                    self.table.setItem(row, 2, QTableWidgetItem("Em edição"))
-                elif conhecimento['status'] == 1:
-                    self.table.setItem(row, 2, QTableWidgetItem("Aguardando aprovação"))
-                if conhecimento['status'] == 2:
-                    self.table.setItem(row, 2, QTableWidgetItem("Aprovado"))
-                row += 1
-            self.table.resizeColumnsToContents()
+                buffer = Conhecimento(  );
+                buffer.fromJson( conhecimento );
+                buffer.salvar( self.xmpp_var.cliente.chave_local, self.xmpp_var.cliente.path_conhecimento );
+
         elif conteudo_js["comando"] == "ConhecimentoComando" and conteudo_js["funcao"] == "salvar":
-            # dizer que salvou
-            print("SALVAR:", conteudo_js);
-        elif conteudo_js["comando"] == "ConhecimentoComando" and conteudo_js["funcao"] == "aprovar":
-            # dizer que aprovou e mudar o layout
-            print("APROVAR:", conteudo_js);
-        elif conteudo_js["comando"] == "ConhecimentoComando" and ( conteudo_js["funcao"] == "carregar" or conteudo_js["funcao"] == "novo" ):
-            conhecimento = Conhecimento();
-            conhecimento.fromJson( conteudo_js["conhecimento"] );
-            f = FormEditarConhecimento( self.xmpp_var.cliente, self.xmpp_var, conhecimento );
-            f.exec();
+            buffer = Conhecimento(  );
+            buffer.fromJson( conteudo_js["conhecimento"] );
+            buffer.salvar( self.xmpp_var.cliente.chave_local, self.xmpp_var.cliente.path_conhecimento );
+            index = -1;
+            for i in range(len(self.lista_conhecimento)):
+                if self.lista_conhecimento[i].id == buffer.id:
+                    index = i;
+                    break;
+            if index >= 0:
+                self.lista_conhecimento[i] = buffer;
+                self.table.setItem( index, 0, QTableWidgetItem( buffer.titulo ) );
+    
     def botao_listar_conhecimento_click(self):
-        self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "listar", {"id_nivel" : self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ]["id"] } );
+        self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "listar", {"id_nivel" : self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id } );
 
     def atualizar_tela(self):
         self.cmb_nivel.clear();
         if len(self.xmpp_var.grupo.niveis) > 0:
             for nivel in self.xmpp_var.grupo.niveis:
-                self.cmb_nivel.addItem(nivel["nome"]);
+                self.cmb_nivel.addItem(nivel.nome);
             self.cmb_nivel.setCurrentIndex(0);
             self.botao_listar_conhecimento_click();
     
     def botao_acessar_conhecimento_click(self):
         row = self.table.currentRow();
-        self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "carregar", {"id" : self.lista_conhecimento[row]["id"] } );
+        f = FormEditarConhecimento( self.xmpp_var.cliente, self.xmpp_var, self.lista_conhecimento[ row ] );
+        f.exec();
+        #self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "carregar", {"id" : self.lista_conhecimento[row]["id"] } );
     
     def botao_novo_conhecimento_click(self):
         conhecimento = Conhecimento();
         conhecimento.titulo = "Novo conhecimento";
         conhecimento.id_cliente = self.xmpp_var.cliente.id;
-        conhecimento.id_nivel = self.xmpp_var.grupo.niveis[ self.xmpp_var.cliente.nivel_posicao ]["id"];
+        conhecimento.id_nivel = self.xmpp_var.grupo.niveis[ self.xmpp_var.cliente.nivel_posicao ].id;
         self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "novo", conhecimento.toJson() );
+        #self.lista_conhecimento = [];
+        #self.table.clearContents();

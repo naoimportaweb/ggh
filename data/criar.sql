@@ -1,8 +1,8 @@
 
 # criar tabelas e campos.
-
-CREATE TABLE cliente ( id varchar(255) NOT NULL, jid varchar(255) unique, public_key TEXT, apelido varchar(255) unique, pontuacao int,
-  PRIMARY KEY(id) );
+SET @@global.innodb_large_prefix = 1;
+CREATE TABLE cliente ( id varchar(255) NOT NULL, jid varchar(255) unique, public_key LONGTEXT, apelido varchar(255) unique, pontuacao int,
+  chave_simetrica_criptografada LONGTEXT,  PRIMARY KEY(id) );
 
 CREATE TABLE grupo ( id varchar(255) NOT NULL, jid varchar(255) unique, nome varchar(255), descricao TEXT,
   PRIMARY KEY(id) );
@@ -33,7 +33,7 @@ CREATE TABLE mensagem_nivel ( id_nivel varchar(255) NOT NULL, id_mensagem varcha
   PRIMARY KEY(id_nivel, id_mensagem) );
 
 CREATE TABLE conhecimento ( id varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL, id_revisor varchar(255) DEFAULT NULL,  id_nivel varchar(255) NOT NULL,
-   id_grupo varchar(255) NOT NULL, titulo varchar(255), tags varchar(255), descricao LONGTEXT, texto LONGTEXT, status int not null, 
+   id_grupo varchar(255) NOT NULL, titulo varchar(255), tags varchar(255), descricao LONGTEXT, texto LONGTEXT, status int not null, ultima_alteracao varchar(255),
   PRIMARY KEY(id) );
 
 CREATE TABLE conhecimento_tag ( id_tag varchar(255) NOT NULL, id_conhecimento varchar(255) NOT NULL,
@@ -59,20 +59,27 @@ ALTER TABLE conhecimento_tag ADD FOREIGN KEY (id_tag) REFERENCES tag(id);
 ALTER TABLE conhecimento ADD FOREIGN KEY (status) REFERENCES conhecimento_status(id); 
 
 # EXEMPLO DE GRUPO
-delete from cliente;
-delete from grupo;
+
 delete from grupo_cliente;
 delete from mensagem;
 delete from mensagem_nivel;
 delete from nivel;
 delete from nivel_cliente;
 delete from tag;
+delete from html;
 delete from tag_cliente;  
 delete from conhecimento_tag;
 delete from conhecimento;
+delete from conhecimento_status;
+delete from cliente;
+delete from grupo;
+
+
+
+
 
 # Carga de dados iniciais par um projeto exemplo
-insert into grupo(id, jid, nome, descricao) values("a639ffc7a87856c52ea8b6a75dff4ff7", "cypherpunkgroup@jabber.sa", "DEV Cypherpunk", "");
+insert into grupo(id, jid, nome, descricao) values("a639ffc7a87856c52ea8b6a75dff4ff7", "database.xmpp@xmpp.jp", "DEV Cypherpunk", "");
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("41f38c9c2383f414db6ce99f50cff9ad8", "a639ffc7a87856c52ea8b6a75dff4ff7", "Iniciante",  0,         0,        30);
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("117072decd99445b4973e81d67edc91e5", "a639ffc7a87856c52ea8b6a75dff4ff7", "Anarquista", 10,        1000,     90);
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("81a01e3b7dbc24a468a8252eafeb91e9a", "a639ffc7a87856c52ea8b6a75dff4ff7", "Cypher programmer", 20, 10000,    180);

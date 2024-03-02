@@ -44,24 +44,40 @@ class FormGrupo(QtWidgets.QWidget):
         self.recomendacoes.setParent( None );
         self.chat.setParent( None );
         self.conhecimento.atualizar_tela();
+        self.regras.ativo = False;
+        self.recomendacoes.ativo = False;
+        self.chat.ativo = False;
+        self.conhecimento.ativo = True;
 
     def botao_chat_click(self):
         self.layout.addWidget( self.chat );
         self.regras.setParent( None );
         self.recomendacoes.setParent( None );
         self.conhecimento.setParent( None );
+        self.regras.ativo = False;
+        self.recomendacoes.ativo = False;
+        self.chat.ativo = True;
+        self.conhecimento.ativo = False;
     
     def botao_regras_click(self):
         self.layout.addWidget( self.regras );
         self.chat.setParent( None );
         self.recomendacoes.setParent( None );
         self.conhecimento.setParent( None );
+        self.regras.ativo = True;
+        self.recomendacoes.ativo = False;
+        self.chat.ativo = False;
+        self.conhecimento.ativo = False;
     
     def botao_recomendacoes_click(self):
         self.layout.addWidget( self.recomendacoes );
         self.chat.setParent( None );
         self.regras.setParent( None );
         self.conhecimento.setParent( None );
+        self.regras.ativo = False;
+        self.recomendacoes.ativo = True;
+        self.chat.ativo = False;
+        self.conhecimento.ativo = False;
 
     def set_grupo(self, xmpp_var):
         self.xmpp_var = xmpp_var;
@@ -74,6 +90,7 @@ class FormGrupo(QtWidgets.QWidget):
         self.regras =        PainelRegras(self.xmpp_var);
         self.recomendacoes = PainelRecomendacoes(self.xmpp_var);
         self.conhecimento =  PainelConhecimento( self.xmpp_var );
+        self.chat.ativo = True;
         self.layout.addWidget( self.chat );
 
     def evento_mensagem(self, de, texto, message, conteudo_js):

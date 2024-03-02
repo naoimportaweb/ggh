@@ -22,6 +22,10 @@ class FormLogin(QDialog):
         self.chave_criptografia = QLineEdit('', self);
         self.password = QLineEdit('', self);
 
+        self.servidor_proxy = QLineEdit('127.0.0.1', self);
+        self.porta_proxy = QLineEdit('9051', self);
+        self.protocolo_proxy = QLineEdit('http', self);
+
         if os.path.exists(os.path.expanduser("~/.ggh_cliente_desenv.json")):
             buffer_config = json.loads( open(os.path.expanduser("~/.ggh_cliente_desenv.json"), 'r').read() );
             self.jid_grupo.setText( buffer_config["jid_grupo"] );
@@ -42,6 +46,11 @@ class FormLogin(QDialog):
         layout.addRow(QLabel("XMPP do participante"), self.jid_pessoa);
         layout.addRow(QLabel("Senha do XMPP do participante"), self.password);
         layout.addRow(QLabel("Chave de criptografia"), self.chave_criptografia);
+
+        layout.addRow(QLabel("Protocolo proxy"), self.protocolo_proxy);
+        layout.addRow(QLabel("IP do proxy"), self.servidor_proxy);
+        layout.addRow(QLabel("Porta do Proxy"), self.porta_proxy);
+
         layout.addRow(self.pushButton);
         self.setLayout(layout);
         
@@ -49,9 +58,12 @@ class FormLogin(QDialog):
     def action_btn_entrar(self):
         self.pushButton.setDisabled( False );
         xmpp_var = XMPPCliente(self.jid_pessoa.text(), self.password.text(), self.jid_grupo.text(), self.chave_criptografia.text() );
-        if xmpp_var.conectar():
-            self.form_main.callback_login( xmpp_var );
-            self.close();
+        if xmpp_var.proxy( self.protocolo_proxy.text(), self.servidor_proxy.text(), self.porta_proxy.text() ):
+            if xmpp_var.conectar():
+                self.form_main.callback_login( xmpp_var );
+                self.close();
+            else:
+                self.pushButton.setDisabled( True );
+                QMessageBox.information(self, "Falha de autenticação", "Não foi possível autenticar no serviço XMPP do participante, confirme que seu usuário XMPP está correto e que a senha também esteja correta.", QMessageBox.StandardButton.Ok);
         else:
-            self.pushButton.setDisabled( True );
-            QMessageBox.information(self, "Falha de autenticação", "Não foi possível autenticar no serviço XMPP do participante, confirme que seu usuário XMPP está correto e que a senha também esteja correta.", QMessageBox.StandardButton.Ok);
+            QMessageBox.information(self, "Proxy não existe", "O proxy não funcionou, veja o manual.", QMessageBox.StandardButton.Ok);

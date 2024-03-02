@@ -1,4 +1,4 @@
-import uuid;
+import uuid, time;
 
  # servidor
 from classes.mysqlhelp import MysqlHelp
@@ -14,12 +14,12 @@ class ConhecimentoComando:
         js = mensagem.toJson();
         if not cliente.posso_nivel( js["id_nivel"] ):
         	return {"status" : False };
-        sql = "INSERT INTO conhecimento (id, id_cliente, id_nivel, id_grupo, titulo, tags, descricao, texto, status, id_revisor ) values ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )"
+        sql = "INSERT INTO conhecimento (id, id_cliente, id_nivel, id_grupo, titulo, tags, descricao, texto, status, id_revisor, ultima_alteracao ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )"
         js["id"] = my.chave_string("conhecimento", "id", 30 );
         js["id_cliente"] = cliente.id;
         js["id_grupo"] = grupo.id;
         js["status"] = 0;
-        values = [ js["id"], js["id_cliente"], js["id_nivel"], js["id_grupo"], js["titulo"], js["tags"], js["descricao"], js["texto"], js["status"], None ];
+        values = [ js["id"], js["id_cliente"], js["id_nivel"], js["id_grupo"], js["titulo"], js["tags"], js["descricao"], js["texto"], js["status"], None, time.time() ];
         my.execute(sql, values);
         return {"status" : True, "conhecimento" : js };
     
@@ -38,7 +38,7 @@ class ConhecimentoComando:
         js = mensagem.toJson();
         if not cliente.posso_nivel( js["id_nivel"] ):
             return {"lista" : [] };
-        sql = "select cl.apelido as apelido, co.titulo as titulo, co.id as id, co.status as status from conhecimento as co inner join cliente as cl on co.id_cliente = cl.id where ( co.id_cliente <> %s and co.id_nivel= %s and co.status <> 0 ) or (co.id_cliente = %s and co.id_nivel= %s)";
+        sql = "select co.* from conhecimento as co inner join cliente as cl on co.id_cliente = cl.id where ( co.id_cliente <> %s and co.id_nivel= %s and co.status <> 0 ) or (co.id_cliente = %s and co.id_nivel= %s)";
         values = [ cliente.id, js["id_nivel"], cliente.id, js["id_nivel"] ];
         return {"lista" : my.datatable(sql, values) };
     
@@ -55,8 +55,8 @@ class ConhecimentoComando:
         tag = my.datatable(sql, values);
         if len(tag) == 0:
             return {"status" : False, "erro" : "Não tem permissão para aprovar."};
-        sql = "UPDATE conhecimento set status = %s where id = %s";
-        values = [ 2, js["id"] ];
+        sql = "UPDATE conhecimento set ultima_alteracao = %s, status = %s where id = %s";
+        values = [ time.time(), 2, js["id"] ];
         my.execute(sql, values);
         return {"status" : True, "conhecimento" : js };
     
@@ -68,7 +68,7 @@ class ConhecimentoComando:
         conhecimento = my.datatable(sql, values)[0];
         if conhecimento["id_cliente"] != cliente.id or conhecimento["status"] != 0:
             return {"status" : False, "erro" : "Tem que ser do autor e estar em edição."};
-        sql = "UPDATE conhecimento set id = %s, id_nivel = %s, titulo = %s, tags = %s, descricao = %s, texto = %s where id = %s";
-        values = [ js["id"], js["id_nivel"],             js["titulo"], js["tags"], js["descricao"], js["texto"], js["id"] ];
+        sql = "UPDATE conhecimento set ultima_alteracao = %s, id_nivel = %s, titulo = %s, tags = %s, descricao = %s, texto = %s where id = %s";
+        values = [ time.time(), js["id_nivel"],             js["titulo"], js["tags"], js["descricao"], js["texto"], js["id"] ];
         my.execute(sql, values);
         return {"status" : True, "conhecimento" : js };
