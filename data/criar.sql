@@ -1,6 +1,5 @@
 
 # criar tabelas e campos.
-SET @@global.innodb_large_prefix = 1;
 CREATE TABLE cliente ( id varchar(255) NOT NULL, jid varchar(255) unique, public_key LONGTEXT, apelido varchar(255) unique, pontuacao int,
   chave_simetrica_criptografada LONGTEXT,  PRIMARY KEY(id) );
 
@@ -93,4 +92,14 @@ insert into conhecimento_status(id, nome) values(3, "Reprovado");
 insert into html(id, nome, html, id_grupo) values ('regras.html'      ,'Regras','<html><body>Regras</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
 insert into html(id, nome, html, id_grupo) values ('recomendacao.html','Recomendação','<html><body>Recomendação</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
 insert into tag(id, nome, sigla, id_grupo) values ('ed583d0879894266bb8916f9abce53bc', 'Aprovador Conhecimento', 'aprovador_conhecimento', 'a639ffc7a87856c52ea8b6a75dff4ff7');
+
+
+
+
+
+
+
+
+
+
 insert into tag_cliente(id_tag, id_cliente) values ('ed583d0879894266bb8916f9abce53bc', '91d0cf8f3883a0dcb338d15a47b326c9');

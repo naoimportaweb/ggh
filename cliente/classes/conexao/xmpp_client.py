@@ -43,7 +43,6 @@ class XMPPCliente:
         os.environ['HTTP_PROXY'] = proxy
         os.environ['HTTPS_PROXY'] = proxy
         ip_com_tunel_proxy = requests.get('https://api.ipify.org').text;
-        print("IP:", ip_com_tunel_proxy);
         return ip_com_tunel_proxy != ip_sem_tunel_proxy;
 
     def conectar(self):
@@ -138,7 +137,7 @@ class XMPPCliente:
             message = Mensagem( self.cliente, mess['to'], self.grupo.jid );
             if message.fromString( text ):
                 js = message.toJson( );
-                print("\033[91mChegou reposta:", js["modulo"],  js["comando"], js["funcao"], "\033[0m");
+                #p rint("\033[91mChegou reposta:", js["modulo"],  js["comando"], js["funcao"], "\033[0m");
                 MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"]);
                 instance = MyClass();
                 retorno = getattr(instance, js["funcao"])( self.cliente, self.grupo, message );

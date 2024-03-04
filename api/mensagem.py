@@ -47,7 +47,6 @@ class Mensagem:
         parte = mensagem[8:12];
         total = mensagem[12:16];
         self.id = mensagem[16:48]
-        print(self.versao, self.criptografia, self.formato, parte, total);
         if parte != total:
             with open( "/tmp/" + self.id, "a" ) as f:
                 f.write( mensagem[48:] );
@@ -55,6 +54,7 @@ class Mensagem:
         mensagem_str = "";
         if os.path.exists("/tmp/" + self.id):
             mensagem_str = open("/tmp/" + self.id, "r").read();
+            os.unlink("/tmp/" + self.id);
         mensagem_str += mensagem[48:];
         buffer_json_envelope = None;
         if self.criptografia == "&1&":

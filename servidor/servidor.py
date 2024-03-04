@@ -57,8 +57,8 @@ class XMPPServer:
                     mensagem = self.grupo.lista_envio.pop(0);
                     if mensagem != None:
                         if not self.connection.isConnected(): self.connection.reconnectAndReauth()
-                        print("Enviado:", mensagem.comando.comando);
-                        print(" [+] from:", self.grupo.jid ," to:", mensagem.jid_to);
+                        #p rint("Enviado:", mensagem.comando.comando);
+                        #p rint(" [+] from:", self.grupo.jid ," to:", mensagem.jid_to);
                         mensagem.enviar( self.connection );
                         #msg_xmpp = xmpp.Message( to=mensagem.jid_to , body=mensagem.toString() );
                         #msg_xmpp.setAttr('type', 'chat');
@@ -117,8 +117,8 @@ class XMPPServer:
 
 # Obtendo arquivo de configuração < ========================================================
 configuracao = None;
-if os.path.exists(os.path.expanduser("~/.ggh_server_desenv.json")):
-    configuracao =  json.loads( open( os.path.expanduser("~/.ggh_server_desenv.json") ).read() ) ;
+if os.path.exists(os.path.expanduser("~/.ggh_server.json")):
+    configuracao =  json.loads( open( os.path.expanduser("~/.ggh_server.json") ).read() ) ;
 else:
     configuracao = {
         "xmpp" :     { "server" :  "", "account" : "", "password" : ""},
@@ -142,7 +142,7 @@ else:
     configuracao["proxy"]["port"]     = int(input("Informe a porta: ")) ;
 
     if input("DESEJA salvar esta configuração (pressione s para SIM, e n para NÃO): ") == "s":
-        with open(os.path.expanduser("~/.ggh_server_desenv.json"), "w") as f:
+        with open(os.path.expanduser("~/.ggh_server.json"), "w") as f:
             f.write( json.dumps( configuracao ) );
 
 # criando tabelas antes de iniciar o servidor
@@ -166,8 +166,8 @@ ip_com_tunel_proxy = requests.get('https://api.ipify.org').text;
 if ip_com_tunel_proxy == ip_sem_tunel_proxy:
     print("\033[95m", "Você não está usando proxy para realizar a conexão." , "\033[0m");
     sys.exit(1);
-else:
-    print("\033[95mIP após proxy:", ip_com_tunel_proxy , "\033[0m");
+#else:
+#    p rint("\033[95mIP após proxy:", ip_com_tunel_proxy , "\033[0m");
 
 if __name__ == '__main__': 
     xmpp_var = XMPPServer( configuracao["xmpp"]["account"] , configuracao["xmpp"]["password"] );
