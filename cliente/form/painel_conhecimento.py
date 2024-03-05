@@ -119,7 +119,7 @@ class PainelConhecimento(QtWidgets.QWidget):
         conhecimento = Conhecimento();
         conhecimento.titulo = "Novo conhecimento";
         conhecimento.id_cliente = self.xmpp_var.cliente.id;
-        conhecimento.id_nivel = self.xmpp_var.grupo.niveis[ self.xmpp_var.cliente.nivel_posicao ].id;
+        conhecimento.id_nivel = self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id;
         self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "novo", conhecimento.toJson() );
         #self.lista_conhecimento = [];
         #self.table.clearContents();

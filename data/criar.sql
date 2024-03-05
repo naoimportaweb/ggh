@@ -42,7 +42,7 @@ CREATE TABLE conhecimento_status (id int not null, nome varchar(255), PRIMARY KE
 
 CREATE TABLE atividade(id varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL,
   id_grupo varchar(255) NOT NULL, id_nivel varchar(255) NOT  NULL,
-  titulo as varchar(255) NOT NULL, execucoes INT DEFAULT 1, tentativas INT DEFAULT 3,
+  titulo varchar(255) NOT NULL, execucoes INT DEFAULT 1, tentativas INT DEFAULT 3,
   instrucao_correcao LONGTEXT NOT NULL, data_maxima DATE DEFAULT '2079-06-12',   
   instrucao LONGTEXT NOT NULL, pontos_maximo INT DEFAULT 1,
  PRIMARY KEY(id) );
@@ -52,9 +52,6 @@ CREATE TABLE atividade_cliente( id varchar(255) NOT NULL, id_atividade varchar(2
   data DATETIME NOT NULL,
   pontos INT DEFAULT NULL, data_avaliador DATETIME DEFAULT NULL, consideracao_avaliador LONGTEXT DEFAULT NULL,
   PRIMARY KEY(id) );
-
-
-
 
 # relacionamento
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
@@ -72,6 +69,11 @@ ALTER TABLE mensagem ADD FOREIGN KEY (id_destinatario) REFERENCES cliente(id);
 ALTER TABLE conhecimento_tag ADD FOREIGN KEY (id_conhecimento) REFERENCES conhecimento(id); 
 ALTER TABLE conhecimento_tag ADD FOREIGN KEY (id_tag) REFERENCES tag(id); 
 ALTER TABLE conhecimento ADD FOREIGN KEY (status) REFERENCES conhecimento_status(id); 
+ALTER TABLE atividade ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id);
+ALTER TABLE atividade ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id);
+ALTER TABLE atividade ADD FOREIGN KEY (id_nivel) REFERENCES nivel(id);
+ALTER TABLE atividade_cliente ADD FOREIGN KEY (id_atividade) REFERENCES atividade(id);
+ALTER TABLE atividade_cliente ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id);
 
 # EXEMPLO DE GRUPO
 

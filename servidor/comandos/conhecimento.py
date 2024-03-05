@@ -50,10 +50,12 @@ class ConhecimentoComando:
         conhecimento = my.datatable(sql, values)[0];
         if conhecimento["status"] != 1:
             return {"status" : False, "erro" : "Não está aguardando aprovação"};
-        sql = "SELECT tg.* FROM tag  as tg inner join tag_cliente as tgc on tg.id = tgc.id_tag where tg.sigla = 'aprovador_conhecimento' and tgc.id_cliente =  %s";
-        values = [ cliente.id ];
-        tag = my.datatable(sql, values);
-        if len(tag) == 0:
+        #sql = "SELECT tg.* FROM tag  as tg inner join tag_cliente as tgc on tg.id = tgc.id_tag where tg.sigla = 'aprovador_conhecimento' and tgc.id_cliente =  %s";
+        #values = [ cliente.id ];
+        #tag = my.datatable(sql, values);
+        #if len(tag) == 0:
+        #    return {"status" : False, "erro" : "Não tem permissão para aprovar."};
+        if not cliente.posso_tag("aprovador_conhecimento"):
             return {"status" : False, "erro" : "Não tem permissão para aprovar."};
         sql = "UPDATE conhecimento set ultima_alteracao = %s, status = %s where id = %s";
         values = [ time.time(), 2, js["id"] ];

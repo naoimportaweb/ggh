@@ -32,8 +32,10 @@ class Cliente:
         self.path_private_key = self.path_cliente + "/private_key.txt";
         self.path_mensagens = self.path_cliente + "/mensagens";
         self.path_conhecimento = self.path_cliente + "/conhecimento";
+        self.path_atividade = self.path_cliente + "/atividade";
         criar_diretorio_se_nao_existe(self.path_mensagens);
         criar_diretorio_se_nao_existe(self.path_conhecimento);
+        criar_diretorio_se_nao_existe(self.path_atividade);
         
         if not os.path.exists( self.path_private_key ):
             print("\033[91mATENÇÃO:\033[0m\033[96mNão existe o caminho: "+ self.path_private_key +"\033[0m");

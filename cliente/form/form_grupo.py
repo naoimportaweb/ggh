@@ -8,6 +8,7 @@ from form.painel_chat import PainelChat
 from form.painel_regras import PainelRegras
 from form.painel_recomendacoes import PainelRecomendacoes
 from form.painel_conhecimento import PainelConhecimento
+from form.painel_atividade import PainelAtividade
 
 class FormGrupo(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
@@ -32,12 +33,28 @@ class FormGrupo(QtWidgets.QWidget):
         self.b7.clicked.connect( self.botao_conhecimento_click )
         self.layout1.addWidget(self.b7)
 
+        self.b8 = QPushButton("Atividades")
+        self.b8.clicked.connect( self.botao_atividade_click )
+        self.layout1.addWidget(self.b8)
+
         self.layout1.addStretch();
 
         self.layout = QHBoxLayout();
         self.layout.addLayout( self.layout1 );
         self.setLayout( self.layout );
     
+    def botao_atividade_click(self):
+        self.layout.addWidget( self.atividade );
+        self.regras.setParent( None );
+        self.recomendacoes.setParent( None );
+        self.chat.setParent( None );
+        self.regras.ativo = False;
+        self.recomendacoes.ativo = False;
+        self.chat.ativo = False;
+        self.conhecimento.ativo = False;
+        self.atividade.ativo = True;
+        self.atividade.atualizar_tela();
+
     def botao_conhecimento_click(self):
         self.layout.addWidget( self.conhecimento );
         self.regras.setParent( None );
@@ -48,6 +65,7 @@ class FormGrupo(QtWidgets.QWidget):
         self.recomendacoes.ativo = False;
         self.chat.ativo = False;
         self.conhecimento.ativo = True;
+        self.atividade.ativo = False;
 
     def botao_chat_click(self):
         self.layout.addWidget( self.chat );
@@ -58,6 +76,7 @@ class FormGrupo(QtWidgets.QWidget):
         self.recomendacoes.ativo = False;
         self.chat.ativo = True;
         self.conhecimento.ativo = False;
+        self.atividade.ativo = False;
     
     def botao_regras_click(self):
         self.layout.addWidget( self.regras );
@@ -68,6 +87,7 @@ class FormGrupo(QtWidgets.QWidget):
         self.recomendacoes.ativo = False;
         self.chat.ativo = False;
         self.conhecimento.ativo = False;
+        self.atividade.ativo = False;
     
     def botao_recomendacoes_click(self):
         self.layout.addWidget( self.recomendacoes );
@@ -78,6 +98,7 @@ class FormGrupo(QtWidgets.QWidget):
         self.recomendacoes.ativo = True;
         self.chat.ativo = False;
         self.conhecimento.ativo = False;
+        self.atividade.ativo = False;
 
     def set_grupo(self, xmpp_var):
         self.xmpp_var = xmpp_var;
@@ -90,12 +111,14 @@ class FormGrupo(QtWidgets.QWidget):
         self.regras =        PainelRegras(self.xmpp_var);
         self.recomendacoes = PainelRecomendacoes(self.xmpp_var);
         self.conhecimento =  PainelConhecimento( self.xmpp_var );
+        self.atividade =     PainelAtividade( self.xmpp_var );
         self.chat.ativo = True;
         self.layout.addWidget( self.chat );
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         self.chat.evento_mensagem(de, texto, message, conteudo_js);
         self.conhecimento.evento_mensagem(de, texto, message, conteudo_js);
+        self.atividade.evento_mensagem(de, texto, message, conteudo_js);
     
     def closeEvent(self, event):
         event.accept();

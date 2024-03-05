@@ -126,4 +126,15 @@ class Cliente:
         if len(cadastro) > 0:
             return cadastro[0]["posicao"] <= self.nivel_posicao;
         return False;
+    def posso_tag(self, sigla):
+        my = MysqlHelp();
+        sql = "SELECT tg.* FROM tag  as tg inner join tag_cliente as tgc on tg.id = tgc.id_tag where tg.sigla = %s and tgc.id_cliente =  %s";
+        cadastro = my.datatable( sql, [ sigla, self.id ] );
+        if len(cadastro) > 0:
+            return True;
+        return False;
 
+        values = [ cliente.id ];
+        tag = my.datatable(sql, values);
+        if len(tag) == 0:
+            return {"status" : False, "erro" : "Não tem permissão para aprovar."};

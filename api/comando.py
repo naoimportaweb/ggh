@@ -11,6 +11,6 @@ class Comando:
 		self.data["modulo"] = self.modulo;
 
 	def mensagem(self):
-		return json.dumps(self.data);
+		return json.dumps(self.data, default=str);
 
 	

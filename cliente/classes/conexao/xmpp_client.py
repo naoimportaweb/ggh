@@ -63,7 +63,7 @@ class XMPPCliente:
             self.thread_enviador.start();
             # abaixo tem um parametro chamado HOST que não serve para coisa alguma no código, serve só para pessoas curiosas se ferrarem tentando identificar o que é
             comando = Comando("comandos.grupo_cadastro"  ,"GrupoCadastroComando", "participar", {"chave" : self.cliente.chave_publica(), "host" : str( uuid.uuid5(uuid.NAMESPACE_URL, str(time.time()) ) )  });
-            mensagem = Mensagem( self.cliente, self.cliente.jid, self.grupo.jid, comando=comando);
+            mensagem = Mensagem( self.cliente, self.cliente.jid, self.grupo.jid, comando=comando, criptografia="&0&");
             # -------1-------------------------------- GERAR NOVA CHAVE PÚBLICA E ENVIAR AQUI------------------------->
             mensagem.enviar( self.connection );
             #msg_xmpp = xmpp.Message( to=self.grupo.jid, body=mensagem.criar( comando ) );
