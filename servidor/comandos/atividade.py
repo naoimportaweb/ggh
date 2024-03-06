@@ -31,7 +31,7 @@ class AtividadeComando:
         js = mensagem.toJson();
         #if not cliente.posso_tag("atividade_criar"):
         #    return {"status" : False, "erro" : "Não tem permissão para salvar uma atividade."};
-        sql = "UPDATE atividade SET titulo=%s, execucoes=%s, tentativas=%s, instrucao_correcao=%s, instrucao=%s, pontos_maximo=%s where id=%s";
-        values = [js["titulo"], js["execucoes"], js["tentativas"], js["instrucao_correcao"], js["instrucao"], js["pontos_maximo"], js["id"]];
+        sql = "UPDATE atividade SET titulo=%s, execucoes=%s, tentativas=%s, instrucao_correcao=%s, instrucao=%s, pontos_maximo=%s, id_status=%s where id=%s";
+        values = [js["titulo"], js["execucoes"], js["tentativas"], js["instrucao_correcao"], js["instrucao"], js["pontos_maximo"], js["id_status"], js["id"]];
         my.execute(sql, values);
         return {"status" : True, "atividade" : js };

@@ -41,7 +41,7 @@ CREATE TABLE conhecimento_tag ( id_tag varchar(255) NOT NULL, id_conhecimento va
 CREATE TABLE conhecimento_status (id int not null, nome varchar(255), PRIMARY KEY(id) );
 
 CREATE TABLE atividade(id varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL,
-  id_grupo varchar(255) NOT NULL, id_nivel varchar(255) NOT  NULL,
+  id_grupo varchar(255) NOT NULL, id_nivel varchar(255) NOT  NULL, id_status int DEFAULT 0,
   titulo varchar(255) NOT NULL, execucoes INT DEFAULT 1, tentativas INT DEFAULT 3,
   instrucao_correcao LONGTEXT NOT NULL, data_maxima DATE DEFAULT '2079-06-12',   
   instrucao LONGTEXT NOT NULL, pontos_maximo INT DEFAULT 1,
@@ -49,9 +49,11 @@ CREATE TABLE atividade(id varchar(255) NOT NULL, id_cliente varchar(255) NOT NUL
 
 CREATE TABLE atividade_cliente( id varchar(255) NOT NULL, id_atividade varchar(255) NOT NULL,
   id_cliente VARCHAR(255) NOT NULL, resposta LONGTEXT, id_avaliador VARCHAR(255) DEFAULT NULL,
-  data DATETIME NOT NULL,
+  data DATETIME NOT NULL, 
   pontos INT DEFAULT NULL, data_avaliador DATETIME DEFAULT NULL, consideracao_avaliador LONGTEXT DEFAULT NULL,
   PRIMARY KEY(id) );
+
+CREATE TABLE atividade_status (id int not null, nome varchar(255), PRIMARY KEY(id) );
 
 # relacionamento
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
@@ -70,6 +72,7 @@ ALTER TABLE conhecimento_tag ADD FOREIGN KEY (id_conhecimento) REFERENCES conhec
 ALTER TABLE conhecimento_tag ADD FOREIGN KEY (id_tag) REFERENCES tag(id); 
 ALTER TABLE conhecimento ADD FOREIGN KEY (status) REFERENCES conhecimento_status(id); 
 ALTER TABLE atividade ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id);
+ALTER TABLE atividade ADD FOREIGN KEY (id_status) REFERENCES atividade_status(id);
 ALTER TABLE atividade ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id);
 ALTER TABLE atividade ADD FOREIGN KEY (id_nivel) REFERENCES nivel(id);
 ALTER TABLE atividade_cliente ADD FOREIGN KEY (id_atividade) REFERENCES atividade(id);
@@ -91,9 +94,14 @@ delete from conhecimento_status;
 delete from cliente;
 delete from grupo;
 
+insert into conhecimento_status(id, nome) values(0, "Em desenvolvimento");
+insert into conhecimento_status(id, nome) values(1, "Aguardando aprovação");
+insert into conhecimento_status(id, nome) values(2, "Aprovado");
+insert into conhecimento_status(id, nome) values(3, "Reprovado");
 
-
-
+insert into atividade_status(id, nome) values(0, "Em desenvolvimento");
+insert into atividade_status(id, nome) values(1, "Em uso");
+insert into atividade_status(id, nome) values(2, "Desativado");
 
 # Carga de dados iniciais par um projeto exemplo
 insert into grupo(id, jid, nome, descricao) values("a639ffc7a87856c52ea8b6a75dff4ff7", "database.xmpp@xmpp.jp", "DEV Cypherpunk", "");
@@ -102,22 +110,11 @@ insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("117072
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("81a01e3b7dbc24a468a8252eafeb91e9a", "a639ffc7a87856c52ea8b6a75dff4ff7", "Cypher programmer", 20, 10000,    180);
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("516734dcbd0c44a6daddfb1c9dd034f70", "a639ffc7a87856c52ea8b6a75dff4ff7", "CypherPunk", 30,        -1,       365);
 
-insert into conhecimento_status(id, nome) values(0, "Em desenvolvimento");
-insert into conhecimento_status(id, nome) values(1, "Aguardando aprovação");
-insert into conhecimento_status(id, nome) values(2, "Aprovado");
-insert into conhecimento_status(id, nome) values(3, "Reprovado");
-
 insert into html(id, nome, html, id_grupo) values ('regras.html'      ,'Regras','<html><body>Regras</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
 insert into html(id, nome, html, id_grupo) values ('recomendacao.html','Recomendação','<html><body>Recomendação</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
+
 insert into tag(id, nome, sigla, id_grupo) values ('ed583d0879894266bb8916f9abce53bc', 'Aprovador Conhecimento', 'aprovador_conhecimento', 'a639ffc7a87856c52ea8b6a75dff4ff7');
-
-
-
-
-
-
-
-
-
+insert into tag(id, nome, sigla, id_grupo) values ('fd583d0879894266bb8916f9abce53bc', 'Criar atividade', 'atividade_criar',               'a639ffc7a87856c52ea8b6a75dff4ff7');
 
 insert into tag_cliente(id_tag, id_cliente) values ('ed583d0879894266bb8916f9abce53bc', '91d0cf8f3883a0dcb338d15a47b326c9');
+insert into tag_cliente(id_tag, id_cliente) values ('fd583d0879894266bb8916f9abce53bc', '91d0cf8f3883a0dcb338d15a47b326c9');

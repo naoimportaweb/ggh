@@ -14,7 +14,6 @@ class AtividadeComando:
 
     def criar(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
-        print(js);
         return js["status"];
 
     def salvar(self, cliente, grupo, mensagem):
