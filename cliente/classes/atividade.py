@@ -16,6 +16,7 @@ class Atividade:
         self.instrucao = "";
         self.pontos_maximo = 5;
         self.id_status = 0;
+        self.respostas = [];
     
     def fromJson(self, js ):
         self.id = js["id"];

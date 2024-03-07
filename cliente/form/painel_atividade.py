@@ -9,7 +9,7 @@ from PySide6.QtCore import *
 from api.fsseguro import FsSeguro
 
 from classes.atividade import Atividade;
-#from form.form_edit_atividade import FormEditarAtividade
+from form.form_edit_atividade import FormEditarAtividade
 
 class PainelAtividade(QtWidgets.QWidget):
     def __init__( self, xmpp_var ):
@@ -94,11 +94,10 @@ class PainelAtividade(QtWidgets.QWidget):
             self.botao_listar_atividade_click();
     
     def botao_acessar_atividade_click(self):
-        print("");
-        #row = self.table.currentRow();
-        #f = FormEditarConhecimento( self.xmpp_var.cliente, self.xmpp_var, self.lista_conhecimento[ row ] );
-        #f.exec();
-        #self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "carregar", {"id" : self.lista_conhecimento[row]["id"] } );
+        row = self.table.currentRow();
+        f = FormEditarAtividade( self.xmpp_var.cliente, self.xmpp_var, self.lista_atividade[ row ] );
+        f.exec();
+        #self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "carregar", {"id" : self.lista_atividade[row]["id"] } );
     
     def botao_novo_atividade_click(self):
         atividade = Atividade();
