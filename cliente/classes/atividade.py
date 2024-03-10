@@ -1,6 +1,7 @@
 import json, re, base64, requests;
 
 from api.fsseguro import FsSeguro;
+from classes.atividade_resposta import AtividadeResposta;
 
 class Atividade:
     def __init__(self):
@@ -33,7 +34,21 @@ class Atividade:
         self.pontos_maximo = js["pontos_maximo"];
         self.id_status = js["id_status"];
         self.atividade = js.get("atividade");
-    
+        if js.get("respostas") != None:
+            for resposta in js["respostas"]:
+                buffer = AtividadeResposta();
+                buffer.fromJson(resposta);
+                self.resposta.append( buffer );
+
+    def adicionar_resposta(self,id_cliente, pontos, resposta):
+        buffer = AtividadeResposta();
+        buffer.pontos = pontos;
+        buffer.resposta = resposta;
+        buffer.id_cliente = id_cliente;
+        retornar = len(self.respostas);
+        self.respostas.append(buffer);
+        return retornar;
+            
     def toJson(self):
         return {"id" : self.id, "id_cliente" : self.id_cliente, "id_nivel" : self.id_nivel, "id_grupo" : self.id_grupo, "titulo" : self.titulo,
                 "execucoes" : self.execucoes, "tentativas" : self.tentativas, "instrucao_correcao" : self.instrucao_correcao, "data_maxima" : self.data_maxima,
@@ -46,3 +61,12 @@ class Atividade:
     def carregar(self, chave, path):
         fs = FsSeguro(chave);
         self.fromJson( fs.ler_json( path ) );
+
+        self.id = None;
+        self.id_atividade = None;
+        self.id_cliente = None;
+        self.id_avaliador = None;
+        self.data = None;
+
+        self.data_avaliador = None;
+        self.consideracao_avaliador = None;

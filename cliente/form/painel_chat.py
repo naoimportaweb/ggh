@@ -49,10 +49,11 @@ class WidgetChatTexto(QtWidgets.QWidget):
         form_layout_chat = QVBoxLayout( frame );
         lbl_remetente = QLabel( self );
         if mensagem['id_remetente'] == mensagem['id_destinatario']:
-            lbl_remetente.setText( "<b>Eu: <font color='red'>"+ mensagem["apelido_remetente"] +"</font></b>" );
+            lbl_remetente.setText( "<b><font color='black'>Eu: </font><font color='red'>"+ mensagem["apelido_remetente"] +"</font></b>" );
         else:
-            lbl_remetente.setText( "<b>Remetente: <font color='red'>"+ mensagem["apelido_remetente"] +"</font></b>" );
+            lbl_remetente.setText( "<b><font color='black'>Remetente: </font><font color='red'>"+ mensagem["apelido_remetente"] +"</font></b>" );
         lbl_mensagem = QLabel(self);
+        lbl_mensagem.setStyleSheet("color: black");
         lbl_mensagem.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum);
         lbl_mensagem.setWordWrap(True);
         lbl_mensagem.setText(texto);

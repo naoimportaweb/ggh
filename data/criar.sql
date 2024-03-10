@@ -115,6 +115,8 @@ insert into html(id, nome, html, id_grupo) values ('recomendacao.html','Recomend
 
 insert into tag(id, nome, sigla, id_grupo) values ('ed583d0879894266bb8916f9abce53bc', 'Aprovador Conhecimento', 'aprovador_conhecimento', 'a639ffc7a87856c52ea8b6a75dff4ff7');
 insert into tag(id, nome, sigla, id_grupo) values ('fd583d0879894266bb8916f9abce53bc', 'Criar atividade', 'atividade_criar',               'a639ffc7a87856c52ea8b6a75dff4ff7');
+insert into tag(id, nome, sigla, id_grupo) values ('dd583d0879894266bb8916f9abce53bc', 'Corrigir atividade', 'atividade_corrigir',         'a639ffc7a87856c52ea8b6a75dff4ff7');
 
 insert into tag_cliente(id_tag, id_cliente) values ('ed583d0879894266bb8916f9abce53bc', '91d0cf8f3883a0dcb338d15a47b326c9');
 insert into tag_cliente(id_tag, id_cliente) values ('fd583d0879894266bb8916f9abce53bc', '91d0cf8f3883a0dcb338d15a47b326c9');
+insert into tag_cliente(id_tag, id_cliente) values ('dd583d0879894266bb8916f9abce53bc', '91d0cf8f3883a0dcb338d15a47b326c9');

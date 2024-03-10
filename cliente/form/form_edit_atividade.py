@@ -30,6 +30,7 @@ class FormEditarAtividade(QDialog):
             self.widget_botton.setLayout( self.botton_layout );
             self.btn_salvar = QPushButton("Salvar")
             self.btn_salvar.clicked.connect(self.btn_click_salvar); 
+            self.botton_layout.addStretch();
             self.botton_layout.addWidget( self.btn_salvar );
             self.main_layout.addWidget(self.widget_botton);
 
@@ -77,11 +78,12 @@ class FormEditarAtividade(QDialog):
         widget_botton_resposta.setLayout(    botton_layout_resposta );
         btn_salvar_resposta = QPushButton("Responder")
         btn_salvar_resposta.clicked.connect( self.btn_click_salvar_resposta); 
+        botton_layout_resposta.addStretch();
         botton_layout_resposta.addWidget(    btn_salvar_resposta );
         layout.addWidget( widget_botton_resposta );
     
     def btn_click_salvar_resposta(self):
-        f = FormAtividadeResposta( self );
+        f = FormAtividadeResposta(self.xmpp_var, self.atividade, index_resposta=None, parent=self );
         f.exec();
     
     def btn_click_salvar(self):
