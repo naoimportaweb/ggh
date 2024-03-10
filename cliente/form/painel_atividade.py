@@ -49,10 +49,11 @@ class PainelAtividade(QtWidgets.QWidget):
         form_acesso.addWidget( self.b6 );
         form_acesso.addStretch();
 
-        self.b4 = QPushButton("Nova atividade")
-        self.b4.setGeometry(10,0,32,32)
-        self.b4.clicked.connect( self.botao_novo_atividade_click )
-        form_acesso.addWidget( self.b4 );
+        if self.xmpp_var.cliente.posso_tag("atividade_criar"):
+            self.b4 = QPushButton("Nova atividade")
+            self.b4.setGeometry(10,0,32,32)
+            self.b4.clicked.connect( self.botao_novo_atividade_click )
+            form_acesso.addWidget( self.b4 );
 
         form_layout.addWidget(widget_acesso);
         self.setLayout(form_layout);

@@ -22,6 +22,7 @@ class Cliente:
         self.chave_local = chave_local;
         self.nivel_posicao = 0;
         self.apelido = "";
+        self.tags = [];
         self.fs = FsSeguro( chave_local );
         
         self.path_cliente = self.grupo.path_grupo + "/clientes/" + hashlib.md5( jid.encode("utf-8") ).hexdigest();
@@ -43,11 +44,16 @@ class Cliente:
         self.private_key = RSA.importKey( self.fs.ler_binario( self.path_private_key ) );
         self.public_key = self.fs.ler_binario(self.path_public_key).decode("utf-8");
     
+    def posso_tag(self, sigla):
+        for tag in self.tags:
+            if tag["sigla"] == sigla:
+                return True;
+        return False;
+
     def chave_publica(self):
         self.private_key = RSA.importKey( self.fs.ler_binario( self.path_private_key ) );
         self.public_key = self.fs.ler_binario(self.path_public_key).decode("utf-8");
         return self.public_key ;
-
 
     def chave_publica_salvar(self, chave):
         self.fs.escrever_binario(self.path_public_key , chave.encode("utf-8") );

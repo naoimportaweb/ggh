@@ -19,7 +19,6 @@ class AtividadeComando:
     def salvar(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
         a = Atividade();
-        a = Atividade();
-        a.fromJson( elemento );
-        elemento.salvar( cliente.chave_local, cliente.path_atividade );
+        a.fromJson( js["atividade"] );
+        a.salvar( cliente.chave_local, cliente.path_atividade );
         return js["status"];
