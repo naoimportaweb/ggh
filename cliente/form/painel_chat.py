@@ -189,7 +189,9 @@ class PainelChat(QtWidgets.QWidget):
             self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "lista_clientes_niveis", {"nivel" : self.xmpp_var.grupo.niveis[self.list_nivel.currentRow()].id } );
             self.txt_mensagem.setDisabled(True);
             self.btn_envio.setDisabled(True);
-                
+    
+    def atualizar_tela(self):
+        print();  
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "GrupoCadastroComando":

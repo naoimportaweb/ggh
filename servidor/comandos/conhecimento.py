@@ -12,6 +12,7 @@ class ConhecimentoComando:
     def novo(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
+        #TODO: validar permissao: aprovador_conhecimento
         if not cliente.posso_nivel( js["id_nivel"] ):
         	return {"status" : False };
         sql = "INSERT INTO conhecimento (id, id_cliente, id_nivel, id_grupo, titulo, tags, descricao, texto, status, id_revisor, ultima_alteracao ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )"
@@ -45,6 +46,7 @@ class ConhecimentoComando:
     def aprovar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
+        #TODO: validar permissao: aprovador_conhecimento
         sql = "SELECT * FROM conhecimento where id = %s";
         values = [ js["id"] ];
         conhecimento = my.datatable(sql, values)[0];
@@ -65,6 +67,7 @@ class ConhecimentoComando:
     def salvar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
+        #TODO: validar permissao: aprovador_conhecimento
         sql = "SELECT * FROM conhecimento where id = %s";
         values = [ js["id"] ];
         conhecimento = my.datatable(sql, values)[0];

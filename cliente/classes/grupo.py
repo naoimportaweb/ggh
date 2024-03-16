@@ -31,7 +31,7 @@ class Grupo:
         self.clientes[ cliente ] = chave_simetrica; 
         return chave_simetrica;
     
-    def adicionar_mensagem(self, cliente, modulo, comando, funcao, data, criptografia="&2&", callback_retorno=""):
+    def adicionar_mensagem(self, cliente, modulo, comando, funcao, data, criptografia="&2&", callback=None):
         comando_objeto = Comando(modulo, comando, funcao, data);
-        mensagem_objeto = Mensagem( cliente, cliente.jid, self.jid, comando=comando_objeto, criptografia="&2&", callback_retorno="");
+        mensagem_objeto = Mensagem( cliente, cliente.jid, self.jid, comando=comando_objeto, criptografia="&2&", callback=callback);
         self.message_list_send.append( mensagem_objeto );

@@ -37,68 +37,45 @@ class FormGrupo(QtWidgets.QWidget):
         self.b8.clicked.connect( self.botao_atividade_click )
         self.layout1.addWidget(self.b8)
 
+        self.b4.setEnabled(False);
+        self.b5.setEnabled(False);
+        self.b6.setEnabled(False);
+        self.b7.setEnabled(False);
+        self.b8.setEnabled(False);
+
         self.layout1.addStretch();
 
         self.layout = QHBoxLayout();
         self.layout.addLayout( self.layout1 );
         self.setLayout( self.layout );
     
+    def ativar_layout_especifico(self, widget_type_name):
+        if self.widget_atual.__class__.__name__ == widget_type_name:
+            return;
+        for buffer in self.widgets:
+            if buffer.__class__.__name__ == widget_type_name:
+                self.layout.addWidget( buffer );
+                buffer.atualizar_tela();
+                buffer.ativo = True;
+                self.widget_atual = buffer;
+            else:
+                buffer.setParent( None );
+                buffer.ativo = False;
+
     def botao_atividade_click(self):
-        self.layout.addWidget( self.atividade );
-        self.regras.setParent( None );
-        self.recomendacoes.setParent( None );
-        self.chat.setParent( None );
-        self.regras.ativo = False;
-        self.recomendacoes.ativo = False;
-        self.chat.ativo = False;
-        self.conhecimento.ativo = False;
-        self.atividade.ativo = True;
-        self.atividade.atualizar_tela();
+        self.ativar_layout_especifico( "PainelAtividade" );
 
     def botao_conhecimento_click(self):
-        self.layout.addWidget( self.conhecimento );
-        self.regras.setParent( None );
-        self.recomendacoes.setParent( None );
-        self.chat.setParent( None );
-        self.conhecimento.atualizar_tela();
-        self.regras.ativo = False;
-        self.recomendacoes.ativo = False;
-        self.chat.ativo = False;
-        self.conhecimento.ativo = True;
-        self.atividade.ativo = False;
+        self.ativar_layout_especifico( "PainelConhecimento" );
 
     def botao_chat_click(self):
-        self.layout.addWidget( self.chat );
-        self.regras.setParent( None );
-        self.recomendacoes.setParent( None );
-        self.conhecimento.setParent( None );
-        self.regras.ativo = False;
-        self.recomendacoes.ativo = False;
-        self.chat.ativo = True;
-        self.conhecimento.ativo = False;
-        self.atividade.ativo = False;
+        self.ativar_layout_especifico( "PainelChat" );
     
     def botao_regras_click(self):
-        self.layout.addWidget( self.regras );
-        self.chat.setParent( None );
-        self.recomendacoes.setParent( None );
-        self.conhecimento.setParent( None );
-        self.regras.ativo = True;
-        self.recomendacoes.ativo = False;
-        self.chat.ativo = False;
-        self.conhecimento.ativo = False;
-        self.atividade.ativo = False;
+        self.ativar_layout_especifico( "PainelRegras" );
     
     def botao_recomendacoes_click(self):
-        self.layout.addWidget( self.recomendacoes );
-        self.chat.setParent( None );
-        self.regras.setParent( None );
-        self.conhecimento.setParent( None );
-        self.regras.ativo = False;
-        self.recomendacoes.ativo = True;
-        self.chat.ativo = False;
-        self.conhecimento.ativo = False;
-        self.atividade.ativo = False;
+        self.ativar_layout_especifico( "PainelRecomendacoes" );
 
     def set_grupo(self, xmpp_var):
         self.xmpp_var = xmpp_var;
@@ -106,19 +83,22 @@ class FormGrupo(QtWidgets.QWidget):
         self.setWindowTitle( xmpp_var.cliente.jid +  " <=#=> " +  xmpp_var.grupo.jid );
         self.xmpp_var.atualizar_entrada();
 
+        self.b4.setEnabled(True);
+        self.b5.setEnabled(True);
+        self.b6.setEnabled(True);
+        self.b7.setEnabled(True);
+        self.b8.setEnabled(True);
+
     def carregar_panel( self ):
-        self.chat =          PainelChat(self.xmpp_var);
-        self.regras =        PainelRegras(self.xmpp_var);
-        self.recomendacoes = PainelRecomendacoes(self.xmpp_var);
-        self.conhecimento =  PainelConhecimento( self.xmpp_var );
-        self.atividade =     PainelAtividade( self.xmpp_var );
-        self.chat.ativo = True;
-        self.layout.addWidget( self.chat );
+        self.widgets = [PainelChat(self.xmpp_var), PainelRegras(self.xmpp_var), PainelRecomendacoes(self.xmpp_var),
+                        PainelConhecimento( self.xmpp_var ),PainelAtividade( self.xmpp_var ) ];
+        self.widgets[0].ativo = True;
+        self.layout.addWidget( self.widgets[0] );
+        self.widget_atual = self.widgets[0];
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        self.chat.evento_mensagem(de, texto, message, conteudo_js);
-        self.conhecimento.evento_mensagem(de, texto, message, conteudo_js);
-        self.atividade.evento_mensagem(de, texto, message, conteudo_js);
+        for buffer in self.widgets:
+            buffer.evento_mensagem(de, texto, message, conteudo_js);
     
     def closeEvent(self, event):
         event.accept();

@@ -110,13 +110,15 @@ insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("117072
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("81a01e3b7dbc24a468a8252eafeb91e9a", "a639ffc7a87856c52ea8b6a75dff4ff7", "Cypher programmer", 20, 10000,    180);
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("516734dcbd0c44a6daddfb1c9dd034f70", "a639ffc7a87856c52ea8b6a75dff4ff7", "CypherPunk", 30,        -1,       365);
 
-insert into html(id, nome, html, id_grupo) values ('regras.html'      ,'Regras','<html><body>Regras</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
+insert into html(id, nome, html, id_grupo) values ('regras.html'      ,'Regras','<html><body>Regras</body></html>',             "a639ffc7a87856c52ea8b6a75dff4ff7");
 insert into html(id, nome, html, id_grupo) values ('recomendacao.html','Recomendação','<html><body>Recomendação</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
 
 insert into tag(id, nome, sigla, id_grupo) values ('ed583d0879894266bb8916f9abce53bc', 'Aprovador Conhecimento', 'aprovador_conhecimento', 'a639ffc7a87856c52ea8b6a75dff4ff7');
 insert into tag(id, nome, sigla, id_grupo) values ('fd583d0879894266bb8916f9abce53bc', 'Criar atividade', 'atividade_criar',               'a639ffc7a87856c52ea8b6a75dff4ff7');
 insert into tag(id, nome, sigla, id_grupo) values ('dd583d0879894266bb8916f9abce53bc', 'Corrigir atividade', 'atividade_corrigir',         'a639ffc7a87856c52ea8b6a75dff4ff7');
+insert into tag(id, nome, sigla, id_grupo) values ('hd583d0879894266bb8916f9abce53bc', 'Editar recomendacoes', 'recomendacao_editar',      'a639ffc7a87856c52ea8b6a75dff4ff7');
 
 insert into tag_cliente(id_tag, id_cliente) values ('ed583d0879894266bb8916f9abce53bc', '91d0cf8f3883a0dcb338d15a47b326c9');
 insert into tag_cliente(id_tag, id_cliente) values ('fd583d0879894266bb8916f9abce53bc', '91d0cf8f3883a0dcb338d15a47b326c9');
 insert into tag_cliente(id_tag, id_cliente) values ('dd583d0879894266bb8916f9abce53bc', '91d0cf8f3883a0dcb338d15a47b326c9');
+insert into tag_cliente(id_tag, id_cliente) values ('hd583d0879894266bb8916f9abce53bc', '91d0cf8f3883a0dcb338d15a47b326c9');

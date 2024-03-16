@@ -24,7 +24,7 @@ class FormEditarAtividade(QDialog):
         tab =       QTabWidget();        
         self.main_layout.addWidget(tab);
 
-        if atividade.id_cliente == self.cliente.id:# and self.xmpp_var.cliente.posso_tag("atividade_criar"):
+        if atividade.id_cliente == self.cliente.id and self.xmpp_var.cliente.posso_tag("atividade_criar"):
             self.widget_botton = QWidget();
             self.botton_layout = QHBoxLayout();
             self.widget_botton.setLayout( self.botton_layout );
@@ -47,6 +47,7 @@ class FormEditarAtividade(QDialog):
         self.layout_resposta( page_respostas_layout ,       self.atividade);
         self.layout_atividade( page_atividade_layout,       self.atividade);
         self.showMaximized() 
+        print("Atividade:", self.atividade.toJson());
 
     def layout_atividade(self, layout, atividade):
         layout.addWidget( QLabel("Atividade", self) );
@@ -65,8 +66,10 @@ class FormEditarAtividade(QDialog):
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
         self.table.resizeColumnsToContents()
         self.table.setColumnCount(1)
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers);
         self.table.setHorizontalHeaderLabels(colunas[0].keys());
-        self.table.setRowCount(0)
+        header = self.table.horizontalHeader() ;# https://stackoverflow.com/questions/38098763/pyside-pyqt-how-to-make-set-qtablewidget-column-width-as-proportion-of-the-a
+        header.setSectionResizeMode(0, QHeaderView.Stretch)
         layout.addWidget(self.table);
         self.table.setRowCount( len(  self.atividade.respostas  ) );
         index = 0;
@@ -77,13 +80,20 @@ class FormEditarAtividade(QDialog):
         botton_layout_resposta = QHBoxLayout();
         widget_botton_resposta.setLayout(    botton_layout_resposta );
         btn_salvar_resposta = QPushButton("Responder")
-        btn_salvar_resposta.clicked.connect( self.btn_click_salvar_resposta); 
+        btn_salvar_resposta.clicked.connect( self.btn_click_adicionar_resposta); 
         botton_layout_resposta.addStretch();
         botton_layout_resposta.addWidget(    btn_salvar_resposta );
         layout.addWidget( widget_botton_resposta );
     
-    def btn_click_salvar_resposta(self):
-        f = FormAtividadeResposta(self.xmpp_var, self.atividade, index_resposta=None, parent=self );
+    def btn_click_adicionar_resposta(self):
+        self.index_resposta = self.atividade.adicionar_resposta( self.xmpp_var.cliente.id, 0, "");
+        print( self.atividade.respostas[self.index_resposta].toJson() );
+        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "resposta_adicionar", 
+                                        self.atividade.respostas[self.index_resposta].toJson(), callback=self.btn_click_adicionar_resposta_callback );
+
+    def btn_click_adicionar_resposta_callback(self, message):
+        print( message );
+        f = FormAtividadeResposta(self.xmpp_var, self.atividade, index_resposta=self.index_resposta, parent=self );
         f.exec();
     
     def btn_click_salvar(self):

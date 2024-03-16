@@ -103,7 +103,7 @@ class XMPPServer:
                 criptografia = "&2&";
                 if js["comando"] == "GrupoCadastroComando" and js["funcao"] == "participar": # uma gambiarra, mas funciona. A primeira conexAo nao tem uma chave comum.
                     criptografia = "&1&";
-                self.grupo.add_envio(cliente, js["modulo"], js["comando"], js["funcao"], data=retorno_metodo, retorno="", criptografia=criptografia);
+                self.grupo.add_envio(cliente, js["modulo"], js["comando"], js["funcao"], data=retorno_metodo, retorno="", criptografia=criptografia, id=message.id);
         except KeyboardInterrupt:
             return;
         except:

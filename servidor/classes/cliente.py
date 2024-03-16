@@ -61,7 +61,7 @@ class Cliente:
     def carregar_tag(self):
         my = MysqlHelp();
         self.tags = my.datatable( "select tg.nome, tg.sigla from tag_cliente as tc inner join tag as tg on tc.id_tag = tg.id where tc.id_cliente = %s", [ self.id ] );
-
+        
     def criar(self):
         my = MysqlHelp();
         sqls = [];

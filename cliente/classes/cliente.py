@@ -46,6 +46,7 @@ class Cliente:
     
     def posso_tag(self, sigla):
         for tag in self.tags:
+            print(tag);
             if tag["sigla"] == sigla:
                 return True;
         return False;

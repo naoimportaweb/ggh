@@ -31,6 +31,7 @@ class XMPPCliente:
         self.stop_enviador = True;
         self.stop_recebedor = True;
         self.pausa_enviador = False;
+        self.aguardando_resposta =[];
         # TODA VEZ QUE SE GERA O OBJETO CRIA UM PAR DE CHAVE DIFERENTE;
         #           https://cryptobook.nakov.com/asymmetric-key-ciphers/rsa-encrypt-decrypt-examples
         self.cliente = Cliente( jid_participante, self.grupo, chave_local=chave_criptografia );
@@ -66,9 +67,6 @@ class XMPPCliente:
             mensagem = Mensagem( self.cliente, self.cliente.jid, self.grupo.jid, comando=comando, criptografia="&0&");
             # -------1-------------------------------- GERAR NOVA CHAVE PÚBLICA E ENVIAR AQUI------------------------->
             mensagem.enviar( self.connection );
-            #msg_xmpp = xmpp.Message( to=self.grupo.jid, body=mensagem.criar( comando ) );
-            #msg_xmpp.setAttr('type', 'chat');
-            #self.connection.send( msg_xmpp );
             # <------2-------------------------------- RECEBER CHAVE SIMÉTRICA E GUARDAR, guardar em self.chave_servidor------------------------------
             return True;
         return False;
@@ -76,16 +74,15 @@ class XMPPCliente:
     def set_callback(self, callback):
         self.callback = callback;
     
-    def adicionar_mensagem(self, modulo, comando, funcao, data, criptografia="&2&", callback_retorno=""):
+    def adicionar_mensagem(self, modulo, comando, funcao, data, criptografia="&2&", callback=None):
         self.pausa_enviador = True;
-        self.grupo.adicionar_mensagem(self.cliente, modulo, comando, funcao, data, criptografia=criptografia, callback_retorno=callback_retorno);
+        self.grupo.adicionar_mensagem(self.cliente, modulo, comando, funcao, data, criptografia=criptografia, callback=callback);
         self.pausa_enviador = False;
 
     # quando loga, tem que atualizar algumas coisas
     def atualizar_entrada(self):
-        print("..:: ATUALIZANDO ::..");
         self.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "regras.html"});
-        self.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "recomendacoes.html"});
+        self.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "recomendacao.html"});
         self.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastroComando", "cadastro", {});
         self.adicionar_mensagem( "comandos.grupo_cadastro" ,"GrupoCadastroComando", "cadastro", {});
     
@@ -111,9 +108,7 @@ class XMPPCliente:
                     if mensagem != None:
                         if not self.connection.isConnected(): self.connection.reconnectAndReauth()
                         mensagem.enviar( self.connection );
-                        #msg_xmpp = xmpp.Message( to=self.grupo.jid, body=mensagem.toString() );
-                        #msg_xmpp.setAttr('type', 'chat');
-                        #self.connection.send( msg_xmpp );
+                        self.aguardando_resposta.append( mensagem );
                         time.sleep(0.1);
                 elif len(self.grupo.message_list_send) > 0 and ( self.cliente.chave_servidor == None or self.pausa_enviador == True ):
                     print("\033[93mTem mensagem na fila, mas deu problema: \033[0m", "Existe chave:", self.cliente.chave_servidor != None, " Pausa: ", self.pausa_enviador);
@@ -143,6 +138,17 @@ class XMPPCliente:
                 retorno = getattr(instance, js["funcao"])( self.cliente, self.grupo, message );
                 if retorno != None and self.callback != None:
                     self.callback( user, retorno, message, js );
+                
+                index_aguardando_resposta = -1;
+                for i in range(len(self.aguardando_resposta)):
+                    if self.aguardando_resposta[i].id == message.id:
+                        index_aguardando_resposta = i;
+                        break;
+                if index_aguardando_resposta >= 0:
+                    buffer = self.aguardando_resposta.pop( index_aguardando_resposta );
+                    if buffer.callback != None:
+                        if type("") != type(buffer.callback):
+                            buffer.callback(message);
         except KeyboardInterrupt:
             return;
         except:

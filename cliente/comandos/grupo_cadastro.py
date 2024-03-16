@@ -28,3 +28,5 @@ class GrupoCadastroComando:
         js = mensagem.toJson();
         cliente.chave_servidor = js["chave"];
         return None;
+    def ping(self, cliente, grupo, mensagem):
+        return {"status" : True};

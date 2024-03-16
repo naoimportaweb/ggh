@@ -19,6 +19,7 @@ class Atividade:
         self.id_status = 0;
         self.respostas = [];
         self.atividade = None;
+        self.resposta = [];
     
     def fromJson(self, js ):
         self.id = js["id"];
@@ -45,6 +46,7 @@ class Atividade:
         buffer.pontos = pontos;
         buffer.resposta = resposta;
         buffer.id_cliente = id_cliente;
+        buffer.id_atividade = self.id;
         retornar = len(self.respostas);
         self.respostas.append(buffer);
         return retornar;
@@ -61,12 +63,10 @@ class Atividade:
     def carregar(self, chave, path):
         fs = FsSeguro(chave);
         self.fromJson( fs.ler_json( path ) );
-
-        self.id = None;
-        self.id_atividade = None;
-        self.id_cliente = None;
-        self.id_avaliador = None;
-        self.data = None;
-
-        self.data_avaliador = None;
-        self.consideracao_avaliador = None;
+        #self.id = None;
+        #self.id_atividade = None;
+        #self.id_cliente = None;
+        #self.id_avaliador = None;
+        #self.data = None;
+        #self.data_avaliador = None;
+        #self.consideracao_avaliador = None;

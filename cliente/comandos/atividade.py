@@ -22,3 +22,7 @@ class AtividadeComando:
         a.fromJson( js["atividade"] );
         a.salvar( cliente.chave_local, cliente.path_atividade );
         return js["status"];
+
+    def resposta_adicionar(self, cliente, grupo, mensagem):
+        js = mensagem.toJson();
+        return js["status"];

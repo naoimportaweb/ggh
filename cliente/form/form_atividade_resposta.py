@@ -14,10 +14,10 @@ class FormAtividadeResposta(QDialog):
         self.form_main = parent;
         self.xmpp_var = xmpp_var;
         self.atividade = atividade;
-        if index_resposta == None:
-            self.index_resposta = self.atividade.adicionar_resposta( self.xmpp_var.cliente.id, 0, "");
-        else:
-            self.index_resposta = index_resposta;
+        #if index_resposta == None:
+        #    self.index_resposta = self.atividade.adicionar_resposta( self.xmpp_var.cliente.id, 0, "");
+        #else:
+        self.index_resposta = index_resposta;
         self.txt_resposta = None;
         self.txt_atividade = None;
         self.main_layout = QVBoxLayout( self );
@@ -51,7 +51,6 @@ class FormAtividadeResposta(QDialog):
 
         self.setLayout(self.main_layout);
 
-
     def layout_principal(self, layout):
         self.txt_resposta = QTextEdit(self);
         self.txt_resposta.setPlainText( self.atividade.respostas[self.index_resposta].resposta );
@@ -73,7 +72,7 @@ class FormAtividadeResposta(QDialog):
 
     def layout_recomendacao(self, layout):
         txt_recomendacao = QTextEdit(self);
-        path_html = self.xmpp_var.grupo.path_grupo_html + "/recomendacoes.html";
+        path_html = self.xmpp_var.grupo.path_grupo_html + "/recomendacao.html";
         txt_recomendacao.setHtml(self.xmpp_var.cliente.fs.ler_raw( path_html ));
         layout.addWidget( txt_recomendacao );
 
@@ -102,6 +101,3 @@ class FormAtividadeResposta(QDialog):
         print();
     def btn_click_salvar(self):
         print("...");
-
-
-        instrucao_correcao

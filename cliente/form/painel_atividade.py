@@ -34,9 +34,12 @@ class PainelAtividade(QtWidgets.QWidget):
         self.table = QTableWidget(self)
         colunas = [{"Título" : ""}];
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
-        self.table.resizeColumnsToContents()
-        self.table.setColumnCount(1)
+        self.table.resizeColumnsToContents();
+        self.table.setColumnCount(1);
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers);
         self.table.setHorizontalHeaderLabels(colunas[0].keys());
+        header = self.table.horizontalHeader() 
+        header.setSectionResizeMode(0, QHeaderView.Stretch)
         self.table.setRowCount(0)
         form_layout.addWidget(self.table);
         
@@ -49,11 +52,12 @@ class PainelAtividade(QtWidgets.QWidget):
         form_acesso.addWidget( self.b6 );
         form_acesso.addStretch();
 
-        if self.xmpp_var.cliente.posso_tag("atividade_criar"):
-            self.b4 = QPushButton("Nova atividade")
-            self.b4.setGeometry(10,0,32,32)
-            self.b4.clicked.connect( self.botao_novo_atividade_click )
-            form_acesso.addWidget( self.b4 );
+        #if self.xmpp_var.cliente.posso_tag("atividade_criar"):
+        self.b4 = QPushButton("Nova atividade")
+        self.b4.setGeometry(10,0,32,32)
+        self.b4.clicked.connect( self.botao_novo_atividade_click )
+        self.b4.setEnabled(False);
+        form_acesso.addWidget( self.b4 );
 
         form_layout.addWidget(widget_acesso);
         self.setLayout(form_layout);
@@ -77,7 +81,6 @@ class PainelAtividade(QtWidgets.QWidget):
             except:
                 traceback.print_exc();
             time.sleep(5);
-            self.table.resizeColumnsToContents();
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "ConhecimentoAtividade" and conteudo_js["funcao"] == "listar":
@@ -87,6 +90,7 @@ class PainelAtividade(QtWidgets.QWidget):
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
 
     def atualizar_tela(self):
+        self.b4.setEnabled(self.xmpp_var.cliente.posso_tag("atividade_criar"));
         self.cmb_nivel.clear();
         if len(self.xmpp_var.grupo.niveis) > 0:
             for nivel in self.xmpp_var.grupo.niveis:

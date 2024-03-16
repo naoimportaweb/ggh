@@ -27,8 +27,11 @@ from api.chachahelp import ChaChaHelper;
 #00000000000000000000000000
 
 class Mensagem:
-    def __init__(self, cliente, jid_from, jid_to,comando=None, criptografia="&0&", callback_retorno=""):
-        self.id = str( uuid.uuid5(uuid.NAMESPACE_URL, str(time.time()) ) )[:32];
+    def __init__(self, cliente, jid_from, jid_to,comando=None, criptografia="&0&", callback=None, id=None):
+        if id == None:
+            self.id = str( uuid.uuid5(uuid.NAMESPACE_URL, str(time.time()) ) )[:32];
+        else:
+            self.id = id;
         self.versao = "00";
         self.criptografia = criptografia;
         self.formato = "000";
@@ -37,7 +40,7 @@ class Mensagem:
         self.jid_to = jid_to;
         self.cliente = cliente;
         self.comando = comando;
-        self.callback_retorno = callback_retorno;
+        self.callback = callback;
         self.MAX_SIZE_CHAT = 4000;
 
     def fromString(self, mensagem):
@@ -69,7 +72,6 @@ class Mensagem:
             buffer_json_envelope = json.loads(mensagem_str.strip());
         self.mensagem = buffer_json_envelope["body"];
         self.id = buffer_json_envelope["head"]["id"];
-        self.callback_retorno = buffer_json_envelope["head"]["callback"];
         return True;
     
     def criar(self, comando=None, versao=None, criptografia=None, formato=None ):
@@ -117,7 +119,7 @@ class Mensagem:
         retornar = "";
         if comando != None:
             self.comando = comando;
-        enviar_envelope_json = json.dumps({"head" : {"id" : self.id, "callback" : self.callback_retorno }, "body" : json.loads(self.comando.mensagem()), "aleatoriedade" : str( uuid.uuid5(uuid.NAMESPACE_URL, str(time.time()) ) ) } );
+        enviar_envelope_json = json.dumps({"head" : {"id" : self.id }, "body" : json.loads(self.comando.mensagem()), "aleatoriedade" : str( uuid.uuid5(uuid.NAMESPACE_URL, str(time.time()) ) ) } );
         if self.criptografia == "&1&":
             key_pub = RSA.importKey( self.cliente.public_key );
             encryptor = PKCS1_OAEP.new( key_pub );
