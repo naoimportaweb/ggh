@@ -30,6 +30,7 @@ class XMPPCliente:
         self.thread_recebedor = None;
         self.stop_enviador = True;
         self.stop_recebedor = True;
+        self.finalizado = False;
         self.pausa_enviador = False;
         self.aguardando_resposta =[];
         # TODA VEZ QUE SE GERA O OBJETO CRIA UM PAR DE CHAVE DIFERENTE;
@@ -157,6 +158,7 @@ class XMPPCliente:
     def disconnect(self):
         self.stop_enviador = True;
         self.stop_recebedor = True;
-        self.connection.disconnect();
-        sys.exit(0);
+        self.finalizado = True;
+        #self.connection.disconnect();
+        #sys.exit(0);
 

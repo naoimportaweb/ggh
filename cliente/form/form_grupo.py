@@ -1,8 +1,8 @@
 import time, base64, uuid, os, sys, json, traceback, threading;
 
-from PySide6.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout;
+from PySide6.QtWidgets import *
 from PySide6 import QtWidgets;
-from PySide6.QtCore import Qt
+from PySide6.QtCore import *
 
 from form.painel_chat import PainelChat
 from form.painel_regras import PainelRegras
@@ -103,4 +103,5 @@ class FormGrupo(QtWidgets.QWidget):
     def closeEvent(self, event):
         event.accept();
         self.xmpp_var.disconnect();
-        self.xmpp_var = None;
+        #self.xmpp_var = None;
+        #QApplication.quit();

@@ -168,6 +168,8 @@ class PainelChat(QtWidgets.QWidget):
     def download_mensagens(self):
         while True:
             try:
+                if self.xmpp_var.finalizado == True:
+                    return;
                 index = self.list_nivel.currentRow();
                 if index != -1 and self.ativo:
                     self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {"id_nivel" : self.xmpp_var.grupo.niveis[index].id } );
