@@ -26,8 +26,8 @@ class FormLogin(QDialog):
         self.porta_proxy = QLineEdit('9051', self);
         self.protocolo_proxy = QLineEdit('http', self);
 
-        if os.path.exists(os.path.expanduser("~/.ggh_cliente_desenv.json")):
-            buffer_config = json.loads( open(os.path.expanduser("~/.ggh_cliente_desenv.json"), 'r').read() );
+        if os.path.exists(os.path.expanduser("~/.ggh_client.json")):
+            buffer_config = json.loads( open(os.path.expanduser("~/.ggh_client.json"), 'r').read() );
             self.jid_grupo.setText( buffer_config["jid_grupo"] );
             self.jid_pessoa.setText( buffer_config["jid_pessoa"] );
             self.chave_criptografia.setText( buffer_config["chave_criptografia"] );
