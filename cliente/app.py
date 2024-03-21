@@ -18,7 +18,7 @@ from form.form_edit_conhecimento import FormEditarConhecimento
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction,  QPalette, QColor;
-from PySide6.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QMdiArea, QMainWindow;
+from PySide6.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QMdiArea, QMainWindow, QStatusBar, QLabel;
 from PySide6 import QtWidgets;
 
 
@@ -31,11 +31,19 @@ class MDIWindow(QMainWindow):
         bar = self.menuBar()
         file = bar.addMenu("Grupos")
 
+        #self.statusbar = QStatusBar()
+        #self.setStatusBar(self.statusbar)
+        #self.statusbar.showMessage("Aguardando...", 3000)
+        #self.wcLabel = QLabel(f"{self.getWordCount()} Words")
+        #self.statusbar.addPermanentWidget(self.wcLabel)
+        self.statusbar = StatusClass( self );
+        
         newAct = QAction('Conectar em um grupo', self)
         file.addAction(newAct)
         newAct.triggered.connect(self.action_connect)
 
     
+
     def callback_login(self, xmpp_var):
         form = FormGrupo( self );
         form.set_grupo( xmpp_var );
@@ -48,7 +56,23 @@ class MDIWindow(QMainWindow):
         #form.exec();
         f = FormLogin( self );
         f.exec();
-        
+
+class StatusClass():
+    def __init__(self, layout):
+        self.statusbar = QStatusBar()
+        self.statusbar.showMessage("Carregando...", 2000)
+        self.wcLabel = QLabel(f"{self.getWordCount()} Words")
+        self.statusbar.addPermanentWidget(self.wcLabel)
+        layout.setStatusBar(self.statusbar);
+
+    def atualizar(self):
+        return;
+
+    def getWordCount(self):
+        return "1";
+
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     palette = QPalette()

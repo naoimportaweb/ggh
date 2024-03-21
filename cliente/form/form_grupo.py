@@ -45,6 +45,8 @@ class FormGrupo(QtWidgets.QWidget):
 
         self.layout1.addStretch();
 
+
+
         self.layout = QHBoxLayout();
         self.layout.addLayout( self.layout1 );
         self.setLayout( self.layout );

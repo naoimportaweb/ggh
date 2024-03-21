@@ -83,8 +83,10 @@ class PainelAtividade(QtWidgets.QWidget):
             time.sleep(5);
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        if conteudo_js["comando"] == "ConhecimentoAtividade" and conteudo_js["funcao"] == "listar":
+        if conteudo_js["comando"] == "AtividadeComando" and conteudo_js["funcao"] == "listar":
             print("Carregou.");
+        elif conteudo_js["comando"] == "AtividadeComando" and conteudo_js["funcao"] == "salvar":
+            self.lista_atividade = [];
     
     def botao_listar_atividade_click(self):
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
