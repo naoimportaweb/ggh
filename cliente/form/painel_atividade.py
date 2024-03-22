@@ -83,10 +83,9 @@ class PainelAtividade(QtWidgets.QWidget):
             time.sleep(5);
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        if conteudo_js["comando"] == "AtividadeComando" and conteudo_js["funcao"] == "listar":
-            print("Carregou.");
-        elif conteudo_js["comando"] == "AtividadeComando" and conteudo_js["funcao"] == "salvar":
+        if conteudo_js["comando"] == "AtividadeComando" and (conteudo_js["funcao"] == "salvar" or conteudo_js["funcao"] == "criar" ):
             self.lista_atividade = [];
+            self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
     
     def botao_listar_atividade_click(self):
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
@@ -110,5 +109,4 @@ class PainelAtividade(QtWidgets.QWidget):
         atividade = Atividade();
         atividade.titulo = "Nova Atividade";
         atividade.id_nivel = self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id;
-        print("Atividade: ", atividade);
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "criar", atividade.toJson() );

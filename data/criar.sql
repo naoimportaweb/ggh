@@ -42,13 +42,11 @@ CREATE TABLE conhecimento_tag ( id_tag varchar(255) NOT NULL, id_conhecimento va
 CREATE TABLE conhecimento_status (id int not null, nome varchar(255), PRIMARY KEY(id) );
 
 CREATE TABLE atividade(id varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL,
-  id_grupo varchar(255) NOT NULL, id_nivel varchar(255) NOT  NULL,
+  id_grupo varchar(255) NOT NULL, id_nivel varchar(255) NOT  NULL, atividade longtext,
   titulo varchar(255) NOT NULL, execucoes INT DEFAULT 1, tentativas INT DEFAULT 3,
   instrucao_correcao LONGTEXT NOT NULL, data_maxima DATE DEFAULT '2079-06-12',   
-  instrucao LONGTEXT NOT NULL, pontos_maximo INT DEFAULT 1,
+  instrucao LONGTEXT NOT NULL, pontos_maximo INT DEFAULT 1, id_status INT default 0,
  PRIMARY KEY(id) );
-
-
 
 CREATE TABLE atividade_cliente( id varchar(255) NOT NULL, id_atividade varchar(255) NOT NULL,
   id_cliente VARCHAR(255) NOT NULL, resposta LONGTEXT, id_avaliador VARCHAR(255) DEFAULT NULL,
