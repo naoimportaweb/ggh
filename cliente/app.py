@@ -1,4 +1,5 @@
-import sys, os, inspect;
+import sys, os, inspect, time;
+import threading
 
 CURRENTDIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())));
 ROOT = os.path.dirname(CURRENTDIR);
@@ -30,30 +31,21 @@ class MDIWindow(QMainWindow):
         self.setCentralWidget( self.mdiArea )
         bar = self.menuBar()
         file = bar.addMenu("Grupos")
-
-        #self.statusbar = QStatusBar()
-        #self.setStatusBar(self.statusbar)
-        #self.statusbar.showMessage("Aguardando...", 3000)
-        #self.wcLabel = QLabel(f"{self.getWordCount()} Words")
-        #self.statusbar.addPermanentWidget(self.wcLabel)
         self.statusbar = StatusClass( self );
         
         newAct = QAction('Conectar em um grupo', self)
         file.addAction(newAct)
         newAct.triggered.connect(self.action_connect)
 
-    
-
     def callback_login(self, xmpp_var):
         form = FormGrupo( self );
         form.set_grupo( xmpp_var );
+        self.statusbar.adicionar( xmpp_var.grupo );
         sub = self.mdiArea.addSubWindow( form );
         form.showMaximized();
         form.carregar_panel();
 
     def action_connect(self, q):
-        #form = FormEditarConhecimento(1,1,1);
-        #form.exec();
         f = FormLogin( self );
         f.exec();
 
@@ -61,17 +53,26 @@ class StatusClass():
     def __init__(self, layout):
         self.statusbar = QStatusBar()
         self.statusbar.showMessage("Carregando...", 2000)
-        self.wcLabel = QLabel(f"{self.getWordCount()} Words")
+        self.wcLabel = QLabel("...")
         self.statusbar.addPermanentWidget(self.wcLabel)
         layout.setStatusBar(self.statusbar);
+        self.grupos = [];
+        x = threading.Thread(target=self.atualizar)
+        x.start();
+
+    def adicionar(self, grupo):
+        self.grupos.append(grupo);
 
     def atualizar(self):
-        return;
-
-    def getWordCount(self):
-        return "1";
-
-
+        while True:
+            try:
+                total = 0;
+                for grupo in self.grupos:
+                    total = total + len(grupo.aguardando_resposta) + len(grupo.message_list_send);
+                self.wcLabel.setText("Pendente: " + str(total)  )
+                self.wcLabel.repaint();
+            finally:
+                time.sleep(1);
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

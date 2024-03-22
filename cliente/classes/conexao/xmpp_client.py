@@ -32,7 +32,7 @@ class XMPPCliente:
         self.stop_recebedor = True;
         self.finalizado = False;
         self.pausa_enviador = False;
-        self.aguardando_resposta =[];
+        
         # TODA VEZ QUE SE GERA O OBJETO CRIA UM PAR DE CHAVE DIFERENTE;
         #           https://cryptobook.nakov.com/asymmetric-key-ciphers/rsa-encrypt-decrypt-examples
         self.cliente = Cliente( jid_participante, self.grupo, chave_local=chave_criptografia );
@@ -109,7 +109,7 @@ class XMPPCliente:
                     if mensagem != None:
                         if not self.connection.isConnected(): self.connection.reconnectAndReauth()
                         mensagem.enviar( self.connection );
-                        self.aguardando_resposta.append( mensagem );
+                        self.grupo.aguardando_resposta.append( mensagem );
                         time.sleep(0.1);
                 elif len(self.grupo.message_list_send) > 0 and ( self.cliente.chave_servidor == None or self.pausa_enviador == True ):
                     print("\033[93mTem mensagem na fila, mas deu problema: \033[0m", "Existe chave:", self.cliente.chave_servidor != None, " Pausa: ", self.pausa_enviador);
@@ -141,12 +141,12 @@ class XMPPCliente:
                     self.callback( user, retorno, message, js );
                 
                 index_aguardando_resposta = -1;
-                for i in range(len(self.aguardando_resposta)):
-                    if self.aguardando_resposta[i].id == message.id:
+                for i in range(len(self.grupo.aguardando_resposta)):
+                    if self.grupo.aguardando_resposta[i].id == message.id:
                         index_aguardando_resposta = i;
                         break;
                 if index_aguardando_resposta >= 0:
-                    buffer = self.aguardando_resposta.pop( index_aguardando_resposta );
+                    buffer = self.grupo.aguardando_resposta.pop( index_aguardando_resposta );
                     if buffer.callback != None:
                         if type("") != type(buffer.callback):
                             buffer.callback(message);

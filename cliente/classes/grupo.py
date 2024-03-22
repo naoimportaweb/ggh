@@ -15,6 +15,7 @@ class Grupo:
         self.tags = [];
         self.message_list_send = [];
         self.clientes = [];
+        self.aguardando_resposta =[];
         self.path_home = os.path.expanduser("~/ggh_cliente/")
         self.path_grupo = self.path_home + "/" + hashlib.md5( jid_grupo.encode() ).hexdigest();
         self.path_grupo_html = self.path_grupo + "/html";
