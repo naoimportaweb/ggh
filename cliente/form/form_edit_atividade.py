@@ -86,15 +86,14 @@ class FormEditarAtividade(QDialog):
         layout.addWidget( widget_botton_resposta );
     
     def btn_click_adicionar_resposta(self):
-        self.index_resposta = self.atividade.adicionar_resposta( self.xmpp_var.cliente.id, 0, "");
-        print( self.atividade.respostas[self.index_resposta].toJson() );
-        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "resposta_adicionar", 
-                                        self.atividade.respostas[self.index_resposta].toJson(), callback=self.btn_click_adicionar_resposta_callback );
+        f = FormAtividadeResposta(self.xmpp_var, self.atividade, index_resposta=None, parent=self );
+        f.exec();
+        #self.index_resposta = self.atividade.adicionar_resposta( self.xmpp_var.cliente.id, 0, "");
+        #self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "resposta_adicionar", self.atividade.respostas[self.index_resposta].toJson(), callback=self.btn_click_adicionar_resposta_callback );
 
     def btn_click_adicionar_resposta_callback(self, message):
-        print( message );
-        f = FormAtividadeResposta(self.xmpp_var, self.atividade, index_resposta=self.index_resposta, parent=self );
-        f.exec();
+        print("tem que dizer que tem que atualizar listagem.");
+        
     
     def btn_click_salvar(self):
         self.atividade.atividade = self.textEditAtividade.toPlainText();

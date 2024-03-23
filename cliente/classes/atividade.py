@@ -39,7 +39,7 @@ class Atividade:
             for resposta in js["respostas"]:
                 buffer = AtividadeResposta();
                 buffer.fromJson(resposta);
-                self.resposta.append( buffer );
+                self.respostas.append( buffer );
 
     def adicionar_resposta(self,id_cliente, pontos, resposta):
         buffer = AtividadeResposta();

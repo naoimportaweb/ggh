@@ -32,7 +32,6 @@ class MDIWindow(QMainWindow):
         bar = self.menuBar()
         file = bar.addMenu("Grupos")
         self.statusbar = StatusClass( self );
-        
         newAct = QAction('Conectar em um grupo', self)
         file.addAction(newAct)
         newAct.triggered.connect(self.action_connect)
@@ -66,11 +65,14 @@ class StatusClass():
     def atualizar(self):
         while True:
             try:
-                total = 0;
-                for grupo in self.grupos:
-                    total = total + len(grupo.aguardando_resposta) + len(grupo.message_list_send);
-                self.wcLabel.setText("Pendente: " + str(total)  )
-                self.wcLabel.repaint();
+                if len(self.grupos) > 0:
+                    total = 0;
+                    for grupo in self.grupos:
+                        if grupo == None or grupo.aguardando_resposta == None or grupo.message_list_send == None:
+                            continue;
+                        total = total + len(grupo.aguardando_resposta) + len(grupo.message_list_send);
+                    self.wcLabel.setText("Pendente: " + str(total)  )
+                    #self.wcLabel.repaint();
             finally:
                 time.sleep(1);
 

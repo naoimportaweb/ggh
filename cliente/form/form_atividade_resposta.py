@@ -6,6 +6,8 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from PySide6 import *
 
+from classes.atividade_resposta import AtividadeResposta;
+
 class FormAtividadeResposta(QDialog):
     def __init__(self, xmpp_var, atividade, index_resposta=None, parent=None):
         super(FormAtividadeResposta, self).__init__(parent)
@@ -53,9 +55,10 @@ class FormAtividadeResposta(QDialog):
 
     def layout_principal(self, layout):
         self.txt_resposta = QTextEdit(self);
-        self.txt_resposta.setPlainText( self.atividade.respostas[self.index_resposta].resposta );
+        if self.index_resposta != None:
+            self.txt_resposta.setPlainText( self.atividade.respostas[self.index_resposta].resposta );
         layout.addWidget( self.txt_resposta );
-        if self.atividade.respostas[self.index_resposta].data_avaliador == None and self.xmpp_var.cliente.id == self.atividade.respostas[self.index_resposta].id_cliente:
+        if self.index_resposta == None or ( self.atividade.respostas[self.index_resposta].data_avaliador == None and self.xmpp_var.cliente.id == self.atividade.respostas[self.index_resposta].id_cliente):
             widget_botton = QWidget();
             botton_layout = QHBoxLayout();
             widget_botton.setLayout( botton_layout );
@@ -94,10 +97,18 @@ class FormAtividadeResposta(QDialog):
         botton_layout.addWidget( btn_aprovar );
         layout.addWidget(widget_botton);
 
-
     def btn_click_reprovar(self):
         print();
     def btn_click_aprovar(self):
         print();
     def btn_click_salvar(self):
-        print("...");
+        if self.index_resposta == None:
+            r = AtividadeResposta();
+            r.id_atividade = self.atividade.id;
+            r.resposta = self.txt_resposta.toPlainText();
+            self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "resposta_adicionar", r.toJson());
+            self.close();
+        else:
+            atividade.respostas[self.index_resposta].resposta = self.txt_resposta.toPlainText();
+            self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "resposta_salvar", self.atividade.respostas[self.index_resposta].toJson());
+            self.close();
