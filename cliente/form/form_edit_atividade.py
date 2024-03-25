@@ -47,7 +47,6 @@ class FormEditarAtividade(QDialog):
         self.layout_resposta( page_respostas_layout ,       self.atividade);
         self.layout_atividade( page_atividade_layout,       self.atividade);
         self.showMaximized() 
-        print("Atividade:", self.atividade.toJson());
 
     def layout_atividade(self, layout, atividade):
         layout.addWidget( QLabel("Atividade", self) );
@@ -59,23 +58,28 @@ class FormEditarAtividade(QDialog):
         self.textEditAtividade.setPlainText( atividade.atividade );
         layout.addWidget( self.textEditAtividade );
     
-    def layout_resposta(self, layout, atividade):
-        layout.addWidget( QLabel("Repostas", self) );
-        self.table = QTableWidget(self)
-        colunas = [{"Título" : ""}];
+    def atualizar_respostas(self):
+        colunas = [{"Título" : "", "Data" : ""}];
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
         self.table.resizeColumnsToContents()
-        self.table.setColumnCount(1)
+        self.table.setColumnCount(2)
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers);
         self.table.setHorizontalHeaderLabels(colunas[0].keys());
         header = self.table.horizontalHeader() ;# https://stackoverflow.com/questions/38098763/pyside-pyqt-how-to-make-set-qtablewidget-column-width-as-proportion-of-the-a
         header.setSectionResizeMode(0, QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         layout.addWidget(self.table);
         self.table.setRowCount( len(  self.atividade.respostas  ) );
         index = 0;
         for resposta in self.atividade.respostas:
-            self.table.setItem( index, 0, QTableWidgetItem( resposta.data ) );
+            self.table.setItem( index, 0, QTableWidgetItem( resposta.resposta ) );
+            self.table.setItem( index, 1, QTableWidgetItem( resposta.data     ) );
             index = index + 1;
+
+    def layout_resposta(self, layout, atividade):
+        layout.addWidget( QLabel("Repostas", self) );
+        self.table = QTableWidget(self)
+        self.atualizar_respostas();
         widget_botton_resposta = QWidget();
         botton_layout_resposta = QHBoxLayout();
         widget_botton_resposta.setLayout(    botton_layout_resposta );

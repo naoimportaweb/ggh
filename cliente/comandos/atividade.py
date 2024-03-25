@@ -6,10 +6,7 @@ from classes.atividade import Atividade;
 class AtividadeComando:    
     def listar(self, cliente, grupo, mensagem):
         lista = mensagem.toJson()["lista"];
-        for elemento in lista:
-            a = Atividade();
-            a.fromJson( elemento );
-            a.salvar( cliente.chave_local, cliente.path_atividade );
+        self.salvar_lista( cliente, lista );
        	return True;
 
     def criar(self, cliente, grupo, mensagem):
@@ -29,4 +26,13 @@ class AtividadeComando:
     
     def resposta_salvar(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
+        lista = mensagem.toJson()["lista"];
+        self.salvar_lista( cliente, lista );
+
         return js["status"];
+
+    def salvar_lista(self, cliente, lista):
+        for elemento in lista:
+            a = Atividade();
+            a.fromJson( elemento );
+            a.salvar( cliente.chave_local, cliente.path_atividade );

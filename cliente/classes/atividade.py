@@ -19,7 +19,6 @@ class Atividade:
         self.id_status = 0;
         self.respostas = [];
         self.atividade = None;
-        self.resposta = [];
     
     def fromJson(self, js ):
         self.id = js["id"];
@@ -52,9 +51,13 @@ class Atividade:
         return retornar;
             
     def toJson(self):
+        respostas_buffer = [];
+        for resposta in self.respostas:
+            respostas_buffer.append( resposta.toJson() );
         return {"id" : self.id, "id_cliente" : self.id_cliente, "id_nivel" : self.id_nivel, "id_grupo" : self.id_grupo, "titulo" : self.titulo,
                 "execucoes" : self.execucoes, "tentativas" : self.tentativas, "instrucao_correcao" : self.instrucao_correcao, "data_maxima" : self.data_maxima,
-                "instrucao" : self.instrucao, "pontos_maximo" : self.pontos_maximo, "id_status" : self.id_status, "atividade" : self.atividade };
+                "instrucao" : self.instrucao, "pontos_maximo" : self.pontos_maximo, "id_status" : self.id_status, "atividade" : self.atividade,
+                "respostas" : respostas_buffer };
 
     def salvar(self, chave, path):
         fs = FsSeguro(chave);

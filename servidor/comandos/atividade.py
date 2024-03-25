@@ -47,7 +47,7 @@ class AtividadeComando:
         sql = "INSERT INTO atividade_cliente(id, id_atividade, id_cliente, resposta, data ) values(%s, %s, %s, %s, %s)";
         values = [my.chave_string("atividade_cliente", "id", 20 ), js["id_atividade"], cliente.id, js["resposta"],  datetime.now().isoformat() ];
         my.execute(sql, values);
-        return {"status" : True, "resposta" : js };
+        return {"status" : True, "resposta" : js , "lista" : self.carregar_uma_atividade(js["id"], cliente) };
     
     def resposta_salvar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
@@ -61,4 +61,14 @@ class AtividadeComando:
         sql = "UPDATE atividade_cliente resposta=%s, data=%s WHERE id=%s";
         values = [ js["resposta"],  datetime.now().isoformat(), js["id"] ];
         my.execute(sql, values);
-        return {"status" : True, "resposta" : js };
+        return {"status" : True, "resposta" : js, "lista" : self.carregar_uma_atividade(js["id"], cliente) };
+
+    def carregar_uma_atividade(self, id, cliente):
+        my = MysqlHelp();
+        js = mensagem.toJson();
+        sql = "SELECT * FROM atividade WHERE id=%s";
+        atividades = my.datatable(sql, [ id ] );
+        for i in range(len(atividades)):
+            sql = "select * from atividade_cliente where id_atividade = %s and id_cliente=%s";
+            atividades[i]["respostas"] = my.datatable(sql, [ atividades[i]["id"], cliente.id ] );
+        return atividades;
