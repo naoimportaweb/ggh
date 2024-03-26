@@ -8,5 +8,4 @@ class ClienteCadastroComando:
         cliente.apelido =       js["apelido"];
         cliente.nivel_posicao = js["nivel_posicao"];
         cliente.tags =          js["tags"];
-        print(cliente.tags);
         return { "apelido" : cliente.apelido };

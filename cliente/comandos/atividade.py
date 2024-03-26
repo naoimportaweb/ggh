@@ -1,5 +1,9 @@
 import uuid, time;
 
+# como o retorno é uma thread e não uma QThread, dá erro no MessageBox.
+#from PyQt6.QtWidgets import QMessageBox
+#QMessageBox.information(self, "LISTA", "uma listagem.", QMessageBox.StandardButton.Ok);
+
 from classes.atividade import Atividade;
 
 #cliente
@@ -16,6 +20,7 @@ class AtividadeComando:
 
     def salvar(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
+        print(js);
         a = Atividade();
         a.fromJson( js["atividade"] );
         a.salvar( cliente.chave_local, cliente.path_atividade );

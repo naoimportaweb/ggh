@@ -97,7 +97,7 @@ class FormAtividadeResposta(QDialog):
                 btn_reprovar.clicked.connect(self.btn_click_reprovar);
                 self.cb_pontos = QComboBox(self);
                 for i in range( self.atividade.pontos_maximo ):
-                    self.cb_pontos.addItem('Ponto: ' + str(i));
+                    self.cb_pontos.addItem('Ponto: ' + str(i + 1));
                 botton_layout.addWidget( btn_reprovar );
                 botton_layout.addStretch();
                 botton_layout.addWidget(self.cb_pontos);

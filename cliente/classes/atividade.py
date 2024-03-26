@@ -42,7 +42,15 @@ class Atividade:
                 buffer = AtividadeResposta();
                 buffer.fromJson(resposta);
                 self.respostas.append( buffer );
-
+    def getStatus(self):
+        if self.id_status == None:
+            return "-";
+        if self.id_status == 0:
+            return "Em edição";
+        elif self.id_status == 1:
+            return "Cancelado/Pausado";
+        elif self.id_status == 2:
+            return "Em produção";
     def adicionar_resposta(self,id_cliente, pontos, resposta):
         buffer = AtividadeResposta();
         buffer.pontos = pontos;

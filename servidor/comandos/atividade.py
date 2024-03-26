@@ -65,6 +65,14 @@ class AtividadeComando:
     def resposta_adicionar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
+        
+        #sql = "SELECT atv.* FROM atividade as atv inner join atividade_cliente as atc on atv.id = atc.id_atividade WHERE atc.id=%s";
+        sql = "SELECT * FROM atividade WHERE id=%s";
+        values = [ js["id_atividade"] ];
+        resposta_banco = my.datatable(sql, values)[0];
+        if resposta_banco["id_status"] != 2:
+            return {"status" : False, "erro" : "A atividade não está em uso."};
+
         sql = "INSERT INTO atividade_cliente(id, id_atividade, id_cliente, resposta, data ) values(%s, %s, %s, %s, %s)";
         values = [my.chave_string("atividade_cliente", "id", 20 ), js["id_atividade"], cliente.id, js["resposta"],  datetime.now().isoformat() ];
         my.execute(sql, values);

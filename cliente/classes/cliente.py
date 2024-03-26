@@ -22,7 +22,7 @@ class Cliente:
         self.chave_local = chave_local;
         self.nivel_posicao = 0;
         self.apelido = "";
-        self.tags = [];
+        self.tags = None;
         self.fs = FsSeguro( chave_local );
         
         self.path_cliente = self.grupo.path_grupo + "/clientes/" + hashlib.md5( jid.encode("utf-8") ).hexdigest();
@@ -45,6 +45,8 @@ class Cliente:
         self.public_key = self.fs.ler_binario(self.path_public_key).decode("utf-8");
     
     def posso_tag(self, sigla):
+        if self.tags == None:
+            return False;
         for tag in self.tags:
             print(tag);
             if tag["sigla"] == sigla:

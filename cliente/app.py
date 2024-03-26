@@ -54,6 +54,8 @@ class StatusClass():
         self.statusbar.showMessage("Carregando...", 2000)
         self.wcLabel = QLabel("...")
         self.statusbar.addPermanentWidget(self.wcLabel)
+        self.btn_historico = QPushButton("Histórico");
+        self.statusbar.addPermanentWidget( self.btn_historico );
         layout.setStatusBar(self.statusbar);
         self.grupos = [];
         x = threading.Thread(target=self.atualizar)

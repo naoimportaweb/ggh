@@ -33,14 +33,15 @@ class PainelAtividade(QtWidgets.QWidget):
         #https://www.pythontutorial.net/pyqt/pyqt-qtablewidget/
         self.table = QTableWidget(self)
         self.table.doubleClicked.connect(self.table_atividade_double)
-        colunas = [{"Título" : ""}];
+        colunas = [{"Título" : "", "Status" : ""}];
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
         self.table.resizeColumnsToContents();
-        self.table.setColumnCount(1);
+        self.table.setColumnCount(2);
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers);
         self.table.setHorizontalHeaderLabels(colunas[0].keys());
         header = self.table.horizontalHeader() 
         header.setSectionResizeMode(0, QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.table.setRowCount(0)
         form_layout.addWidget(self.table);
         
@@ -81,8 +82,8 @@ class PainelAtividade(QtWidgets.QWidget):
                         if len([x for x in self.lista_atividade if x.id == buffer_Atividade.id]) == 0:
                             self.lista_atividade.append( buffer_Atividade );
                             self.table.setRowCount( len(  self.lista_atividade  ) );
-                            self.table.setItem( len(self.lista_atividade) - 1, 0, QTableWidgetItem( buffer_Atividade.titulo ) );
-                            self.table.setItem( len(self.lista_atividade) - 1, 1, QTableWidgetItem("") );
+                            self.table.setItem( len(self.lista_atividade) - 1, 0, QTableWidgetItem( buffer_Atividade.titulo      ) );
+                            self.table.setItem( len(self.lista_atividade) - 1, 1, QTableWidgetItem( buffer_Atividade.getStatus() ) );
             except:
                 traceback.print_exc();
             time.sleep(5);
