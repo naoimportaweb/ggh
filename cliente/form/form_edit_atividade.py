@@ -39,24 +39,92 @@ class FormEditarAtividade(QDialog):
         page_atividade.setLayout(page_atividade_layout);
         tab.addTab(page_atividade,'Atividade');
 
+        page_correcao = QWidget(tab);
+        page_correcao_layout = QVBoxLayout();
+        page_correcao.setLayout(page_correcao_layout);
+        tab.addTab(page_correcao,'Correção');
+
         page_respostas = QWidget(tab);
         page_respostas_layout = QGridLayout();
         page_respostas.setLayout(page_respostas_layout);
         tab.addTab(page_respostas,'Respostas');
 
-        self.layout_resposta( page_respostas_layout ,       self.atividade);
-        self.layout_atividade( page_atividade_layout,       self.atividade);
+        if atividade.id_cliente == self.cliente.id and self.xmpp_var.cliente.posso_tag("atividade_criar"):
+            page_recomendacao_questao = QWidget(tab);
+            page_recomendacao_questao_layout = QVBoxLayout();
+            page_recomendacao_questao.setLayout(page_recomendacao_questao_layout);
+            tab.addTab(page_recomendacao_questao,'Recomendação Correção');
+
+        self.layout_resposta(  page_respostas_layout ,           self.atividade);
+        self.layout_atividade( page_atividade_layout,            self.atividade);
+        self.layout_correcao(  page_correcao_layout,             self.atividade);
+        self.page_recomendacao_questao_layout(  page_recomendacao_questao_layout, self.atividade);
         self.showMaximized() 
+    
+    def layout_correcao(self, layout, atividade):
+        layout.addWidget( QLabel("Pontuação máxima em caso de acerto:", self) );
+        self.txt_pontos_maximo = QLineEdit(self);
+        layout.addWidget( self.txt_pontos_maximo );
+
+        layout.addWidget( QLabel("Pontuação do corretor:", self) );
+        self.txt_pontos_corretor_maximo = QLineEdit(self);
+        layout.addWidget( self.txt_pontos_corretor_maximo );
+        self.txt_pontos_corretor_maximo.setText(str( self.atividade.pontos_correcao_maximo ));
+        self.txt_pontos_maximo.setText( str(self.atividade.pontos_maximo) );
+        layout.addStretch();
+
+    def page_recomendacao_questao_layout(self, layout, atividade):
+        self.txt_recomendacao = QTextEdit(self);
+        self.txt_recomendacao.setPlainText( atividade.instrucao_correcao );
+        layout.addWidget( self.txt_recomendacao );
 
     def layout_atividade(self, layout, atividade):
-        layout.addWidget( QLabel("Atividade", self) );
+        label = QLabel("Atividade", self);
         self.titulo = QLineEdit(self);
-        layout.addWidget( self.titulo );
-        self.titulo.setText( self.atividade.titulo );
+
+        page = QWidget(self);
+        page_layout = QHBoxLayout();
+        page.setLayout(page_layout);
+        page_layout.addWidget(label);
+        page_layout.addWidget(self.titulo);
+
+        btn_aprovar = QPushButton("Aprovar")
+        btn_aprovar.clicked.connect( self.btn_click_aprovar);
+        btn_reprovar = QPushButton("Reprovar")
+        btn_reprovar.clicked.connect( self.btn_click_reprovar);
+        btn_editar = QPushButton("Editar")
+        btn_editar.clicked.connect( self.btn_click_editar);
+        btn_reprovar.setStyleSheet("background-color: red;    color: black");
+        btn_aprovar.setStyleSheet( "background-color: green;  color: black");
+        btn_editar.setStyleSheet(  "background-color: yellow; color: black");
+        if self.atividade.id_status == 0:
+            page_layout.addWidget(btn_aprovar);
+            page_layout.addWidget(btn_reprovar);
+        elif self.atividade.id_status == 1:
+            page_layout.addWidget(btn_aprovar);
+            page_layout.addWidget(btn_editar);
+        elif self.atividade.id_status == 2:
+            page_layout.addWidget(btn_reprovar);
+            page_layout.addWidget(btn_editar);
+
+        layout.addWidget( page );
 
         self.textEditAtividade = QTextEdit(self);
         self.textEditAtividade.setPlainText( atividade.atividade );
+        self.titulo.setText( self.atividade.titulo );
         layout.addWidget( self.textEditAtividade );
+    
+    def btn_click_aprovar(self):
+        self.atividade.id_status = 2;
+        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "atividade_aprovar_reprovar", self.atividade.toJson() );
+    
+    def btn_click_reprovar(self):
+        self.atividade.id_status = 1;
+        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "atividade_aprovar_reprovar", self.atividade.toJson() );
+    
+    def btn_click_editar(self):
+        self.atividade.id_status = 0;
+        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "atividade_aprovar_reprovar", self.atividade.toJson() );
     
     def atualizar_respostas(self):
         colunas = [{"Título" : "", "Status": "", "Pontos" : "", "Data" : ""}];
@@ -89,25 +157,29 @@ class FormEditarAtividade(QDialog):
         self.table.doubleClicked.connect(self.table_resposta_double)
         layout.addWidget(self.table);
         self.atualizar_respostas();
-        widget_botton_resposta = QWidget();
-        botton_layout_resposta = QHBoxLayout();
-        widget_botton_resposta.setLayout(    botton_layout_resposta );
-        btn_salvar_resposta = QPushButton("Enviar uma nova resposta")
-        btn_salvar_resposta.clicked.connect( self.btn_click_adicionar_resposta); 
-        botton_layout_resposta.addStretch();
-        botton_layout_resposta.addWidget(    btn_salvar_resposta );
-        layout.addWidget( widget_botton_resposta );
+        if self.atividade.id_status == 2:
+            widget_botton_resposta = QWidget();
+            botton_layout_resposta = QHBoxLayout();
+            widget_botton_resposta.setLayout(    botton_layout_resposta );
+            btn_salvar_resposta = QPushButton("Enviar uma nova resposta")
+            btn_salvar_resposta.clicked.connect( self.btn_click_adicionar_resposta); 
+            botton_layout_resposta.addStretch();
+            botton_layout_resposta.addWidget(    btn_salvar_resposta );
+            layout.addWidget( widget_botton_resposta );
     
     def btn_click_adicionar_resposta(self):
         f = FormAtividadeResposta(self.xmpp_var, self.atividade, index_resposta=None, parent=self );
         f.exec();
-        #self.index_resposta = self.atividade.adicionar_resposta( self.xmpp_var.cliente.id, 0, "");
-        #self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "resposta_adicionar", self.atividade.respostas[self.index_resposta].toJson(), callback=self.btn_click_adicionar_resposta_callback );
 
     def btn_click_adicionar_resposta_callback(self, message):
         print("tem que dizer que tem que atualizar listagem.");
-        
+    
     def btn_click_salvar(self):
-        self.atividade.atividade = self.textEditAtividade.toPlainText();
-        self.atividade.titulo = self.titulo.text();
+        self.atividade.atividade =                 self.textEditAtividade.toPlainText();
+        self.atividade.titulo =                    self.titulo.text();
+        self.atividade.instrucao_correcao =        self.txt_recomendacao.toPlainText();
+        self.atividade.pontos_maximo =             int(self.txt_pontos_maximo.text());
+        self.atividade.pontos_correcao_maximo    = int(self.txt_pontos_corretor_maximo.text());
+        self.atividade.instrucao_correcao = self.txt_recomendacao.toPlainText();
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "salvar", self.atividade.toJson() );
+#

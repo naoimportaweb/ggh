@@ -27,14 +27,21 @@ class AtividadeComando:
     
     def resposta_salvar(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
-        if js["status"] == True:
+        if js["status"] == True and js.get("lista") != None:
             lista = js["lista"];
             self.salvar_lista( cliente, lista );
         return js["status"];
     
     def resposta_aprovar_reprovar(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
-        if js["status"] == True:
+        if js["status"] == True and js.get("lista") != None:
+            lista = js["lista"];
+            self.salvar_lista( cliente, lista );
+        return js["status"];
+    
+    def atividade_aprovar_reprovar(self, cliente, grupo, mensagem):
+        js = mensagem.toJson();
+        if js["status"] == True and js.get("lista") != None:
             lista = js["lista"];
             self.salvar_lista( cliente, lista );
         return js["status"];

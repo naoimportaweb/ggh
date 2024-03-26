@@ -92,7 +92,7 @@ class MysqlHelp:
             {"nome" : "tag_cliente", "fields" : ["id_cliente", "id_tag"]},
             {"nome" : "mensagem", "fields" : ["id", "id_remetente", "id_destinatario", "mensagem_criptografada", "chave_simetrica_criptografada", "data_hora_envio", "ordem"]},
             {"nome" : "mensagem_nivel", "fields" : ["id_nivel", "id_mensagem"]},
-            {"nome" : "atividade", "fields" : ["id", "id_status", "id_cliente", "id_grupo", "id_nivel", "titulo", "execucoes",  "tentativas", "instrucao_correcao", "data_maxima", "instrucao", "pontos_maximo"]},
+            {"nome" : "atividade", "fields" : ["id", "id_status", "id_cliente", "id_grupo", "id_nivel", "titulo", "execucoes",  "tentativas", "instrucao_correcao", "data_maxima", "instrucao", "pontos_maximo", "pontos_correcao_maximo"]},
             {"nome" : "atividade_cliente", "fields" : ["id", "id_status", "id_atividade", "id_cliente", "resposta", "id_avaliador", "data", "pontos", "data_avaliador", "consideracao_avaliador"]}
         ];
 

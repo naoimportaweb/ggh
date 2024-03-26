@@ -81,11 +81,11 @@ class XMPPCliente:
         self.pausa_enviador = False;
 
     # quando loga, tem que atualizar algumas coisas
-    def atualizar_entrada(self):
-        self.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "regras.html"});
-        self.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "recomendacao.html"});
-        self.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastroComando", "cadastro", {});
-        self.adicionar_mensagem( "comandos.grupo_cadastro" ,"GrupoCadastroComando", "cadastro", {});
+    #def atualizar_entrada(self):
+    #    self.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "regras.html"});
+    #    self.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "recomendacao.html"});
+    #    self.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastroComando", "cadastro", {});
+    #    self.adicionar_mensagem( "comandos.grupo_cadastro" ,"GrupoCadastroComando", "cadastro", {});
     
     def escutar(self):
         while True:

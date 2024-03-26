@@ -38,9 +38,27 @@ class AtividadeComando:
         resposta_banco = my.datatable(sql, values)[0];
         if resposta_banco["id_cliente"] != cliente.id:
             return {"status" : False, "erro" : "A atividade não é sua para você alterar."};
+        if resposta_banco["id_status"] != 0:
+            return {"status" : False, "erro" : "A atividade não pode ser salva pois está em produção ou cancelada."};
+        sql = "UPDATE atividade SET titulo=%s, atividade=%s, execucoes=%s, tentativas=%s, instrucao_correcao=%s, instrucao=%s, pontos_correcao_maximo=%s,     pontos_maximo=%s where id=%s";
+        values = [js["titulo"], js["atividade"], js["execucoes"], js["tentativas"], js["instrucao_correcao"], js["instrucao"], js["pontos_correcao_maximo"],  js["pontos_maximo"], js["id"]];
+        my.execute(sql, values);
+        return {"status" : True, "atividade" : js };
 
-        sql = "UPDATE atividade SET titulo=%s, atividade=%s, execucoes=%s, tentativas=%s, instrucao_correcao=%s, instrucao=%s, pontos_maximo=%s, id_status=%s where id=%s";
-        values = [js["titulo"], js["atividade"], js["execucoes"], js["tentativas"], js["instrucao_correcao"], js["instrucao"], js["pontos_maximo"], js["id_status"], js["id"]];
+    def atividade_aprovar_reprovar(self, cliente, grupo, mensagem):
+        my = MysqlHelp();
+        js = mensagem.toJson();
+        if not cliente.posso_tag("atividade_criar"):
+            return {"status" : False, "erro" : "Não tem permissão para salvar uma atividade."};
+        
+        sql = "SELECT * FROM atividade WHERE id=%s";
+        values = [js["id"]];
+        resposta_banco = my.datatable(sql, values)[0];
+        if resposta_banco["id_cliente"] != cliente.id:
+            return {"status" : False, "erro" : "A atividade não é sua para você alterar."};
+
+        sql = "UPDATE atividade SET id_status=%s where id=%s";
+        values = [ js["id_status"], js["id"]];
         my.execute(sql, values);
         return {"status" : True, "atividade" : js };
 

@@ -14,7 +14,6 @@ class FormGrupo(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         QtWidgets.QWidget.__init__(self, *args, **kwargs);
         self.xmpp_var = None;
-
         self.layout1 = QVBoxLayout()
 
         self.b4 = QPushButton("Chat")
@@ -37,16 +36,17 @@ class FormGrupo(QtWidgets.QWidget):
         self.b8.clicked.connect( self.botao_atividade_click )
         self.layout1.addWidget(self.b8)
 
+        self.b9 = QPushButton("Correções")
+        #self.b9.clicked.connect( self.botao_atividade_click )
+        self.layout1.addWidget(self.b9)
+
         self.b4.setEnabled(False);
         self.b5.setEnabled(False);
         self.b6.setEnabled(False);
         self.b7.setEnabled(False);
         self.b8.setEnabled(False);
-
+        self.b9.setEnabled(False);
         self.layout1.addStretch();
-
-
-
         self.layout = QHBoxLayout();
         self.layout.addLayout( self.layout1 );
         self.setLayout( self.layout );
@@ -79,11 +79,18 @@ class FormGrupo(QtWidgets.QWidget):
     def botao_recomendacoes_click(self):
         self.ativar_layout_especifico( "PainelRecomendacoes" );
 
+    def botao_corrigir_click(self):
+        self.ativar_layout_especifico( "PainelCorrigir" );
+
     def set_grupo(self, xmpp_var):
         self.xmpp_var = xmpp_var;
         self.xmpp_var.set_callback(self.evento_mensagem);
         self.setWindowTitle( xmpp_var.cliente.jid +  " <=#=> " +  xmpp_var.grupo.jid );
-        self.xmpp_var.atualizar_entrada();
+
+        self.xmpp_var.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "regras.html"});
+        self.xmpp_var.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "recomendacao.html"});
+        self.xmpp_var.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastroComando", "cadastro", {}, self.callback_cliente_cadastro);
+        self.xmpp_var.adicionar_mensagem( "comandos.grupo_cadastro" ,"GrupoCadastroComando", "cadastro", {});
 
         self.b4.setEnabled(True);
         self.b5.setEnabled(True);
@@ -105,5 +112,7 @@ class FormGrupo(QtWidgets.QWidget):
     def closeEvent(self, event):
         event.accept();
         self.xmpp_var.disconnect();
-        #self.xmpp_var = None;
-        #QApplication.quit();
+
+    def callback_cliente_cadastro(self):
+        print("é true");
+        self.b9.setEnabled(True);

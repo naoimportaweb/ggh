@@ -19,6 +19,7 @@ class Atividade:
         self.id_status = 0;
         self.respostas = [];
         self.atividade = None;
+        self.pontos_correcao_maximo = 1;
     
     def fromJson(self, js ):
         self.id = js["id"];
@@ -34,6 +35,8 @@ class Atividade:
         self.pontos_maximo = js["pontos_maximo"];
         self.id_status = js["id_status"];
         self.atividade = js.get("atividade");
+        if js.get("pontos_correcao_maximo") != None:
+            self.pontos_correcao_maximo = js["pontos_correcao_maximo"];
         if js.get("respostas") != None:
             for resposta in js["respostas"]:
                 buffer = AtividadeResposta();
@@ -57,7 +60,7 @@ class Atividade:
         return {"id" : self.id, "id_cliente" : self.id_cliente, "id_nivel" : self.id_nivel, "id_grupo" : self.id_grupo, "titulo" : self.titulo,
                 "execucoes" : self.execucoes, "tentativas" : self.tentativas, "instrucao_correcao" : self.instrucao_correcao, "data_maxima" : self.data_maxima,
                 "instrucao" : self.instrucao, "pontos_maximo" : self.pontos_maximo, "id_status" : self.id_status, "atividade" : self.atividade,
-                "respostas" : respostas_buffer };
+                "respostas" : respostas_buffer , "pontos_correcao_maximo" : self.pontos_correcao_maximo};
 
     def salvar(self, chave, path):
         fs = FsSeguro(chave);
