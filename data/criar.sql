@@ -50,12 +50,9 @@ CREATE TABLE atividade(id varchar(255) NOT NULL, id_cliente varchar(255) NOT NUL
 
 CREATE TABLE atividade_cliente( id varchar(255) NOT NULL, id_atividade varchar(255) NOT NULL,
   id_cliente VARCHAR(255) NOT NULL, resposta LONGTEXT, id_avaliador VARCHAR(255) DEFAULT NULL,
-  data DATETIME NOT NULL,
+  data DATETIME NOT NULL, id_status INT default 0,
   pontos INT DEFAULT NULL, data_avaliador DATETIME DEFAULT NULL, consideracao_avaliador LONGTEXT DEFAULT NULL,
   PRIMARY KEY(id) );
-#{"nome" : "atividade_cliente", "fields" : ["id", "id_atividade", "id_cliente", "resposta", "id_avaliador", "data", "pontos", "data_avaliador", "consideracao_avaliador"]}
-#{"nome" : "atividade", "fields" : ["id", "id_cliente", "id_grupo", "id_nivel", "titulo", "execucoes",  "tentativas", "instrucao_correcao", "data_maxima", "instrucao", "pontos_maximo"]}
-
 
 # relacionamento
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 

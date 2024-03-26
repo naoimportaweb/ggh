@@ -59,31 +59,40 @@ class FormEditarAtividade(QDialog):
         layout.addWidget( self.textEditAtividade );
     
     def atualizar_respostas(self):
-        colunas = [{"Título" : "", "Data" : ""}];
+        colunas = [{"Título" : "", "Status": "", "Pontos" : "", "Data" : ""}];
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
         self.table.resizeColumnsToContents()
-        self.table.setColumnCount(2)
+        self.table.setColumnCount(4)
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers);
         self.table.setHorizontalHeaderLabels(colunas[0].keys());
         header = self.table.horizontalHeader() ;# https://stackoverflow.com/questions/38098763/pyside-pyqt-how-to-make-set-qtablewidget-column-width-as-proportion-of-the-a
         header.setSectionResizeMode(0, QHeaderView.Stretch)
         header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        layout.addWidget(self.table);
+        header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
         self.table.setRowCount( len(  self.atividade.respostas  ) );
         index = 0;
         for resposta in self.atividade.respostas:
-            self.table.setItem( index, 0, QTableWidgetItem( resposta.resposta ) );
-            self.table.setItem( index, 1, QTableWidgetItem( resposta.data     ) );
+            self.table.setItem( index, 0, QTableWidgetItem( resposta.resposta       ) );
+            self.table.setItem( index, 1, QTableWidgetItem( resposta.getStatus()    ) );
+            self.table.setItem( index, 2, QTableWidgetItem( resposta.getPontos()    ) );
+            self.table.setItem( index, 3, QTableWidgetItem( resposta.data           ) );
             index = index + 1;
+    
+    def table_resposta_double(self):
+        f = FormAtividadeResposta(self.xmpp_var, self.atividade, index_resposta=self.table.currentRow(), parent=self );
+        f.exec();
 
     def layout_resposta(self, layout, atividade):
         layout.addWidget( QLabel("Repostas", self) );
         self.table = QTableWidget(self)
+        self.table.doubleClicked.connect(self.table_resposta_double)
+        layout.addWidget(self.table);
         self.atualizar_respostas();
         widget_botton_resposta = QWidget();
         botton_layout_resposta = QHBoxLayout();
         widget_botton_resposta.setLayout(    botton_layout_resposta );
-        btn_salvar_resposta = QPushButton("Responder")
+        btn_salvar_resposta = QPushButton("Enviar uma nova resposta")
         btn_salvar_resposta.clicked.connect( self.btn_click_adicionar_resposta); 
         botton_layout_resposta.addStretch();
         botton_layout_resposta.addWidget(    btn_salvar_resposta );
@@ -98,7 +107,6 @@ class FormEditarAtividade(QDialog):
     def btn_click_adicionar_resposta_callback(self, message):
         print("tem que dizer que tem que atualizar listagem.");
         
-    
     def btn_click_salvar(self):
         self.atividade.atividade = self.textEditAtividade.toPlainText();
         self.atividade.titulo = self.titulo.text();

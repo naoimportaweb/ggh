@@ -13,6 +13,7 @@ class AtividadeResposta:
         self.data_avaliador = None;
         self.consideracao_avaliador = None;
         self.resposta = None;
+        self.id_status = 0;
 
     def fromJson(self, js):
         self.id = js["id"];
@@ -23,9 +24,24 @@ class AtividadeResposta:
         self.pontos = js["pontos"];
         self.data_avaliador = js["data_avaliador"];
         self.consideracao_avaliador = js["consideracao_avaliador"];
-        self.resposta = js["resposta"];    
+        self.resposta = js["resposta"]; 
+        if js.get("id_status") != None:
+            self.id_status = js["id_status"];
     
+    def getStatus(self):
+        if self.id_status == 0:
+            return "Aguardando";
+        elif self.id_status == 1:
+            return "Reprovado";
+        else:
+            return "Aprovado"; 
+    
+    def getPontos(self):
+        if self.pontos == None:
+            return "-";
+        return str(self.pontos);
+
     def toJson(self):
         return {"id" : self.id, "id_atividade" : self.id_atividade, "id_cliente" : self.id_cliente, "id_avaliador" : self.id_avaliador,
                  "data" : self.data, "pontos" : self.pontos, "data_avaliador" : self.data_avaliador, "consideracao_avaliador" : self.consideracao_avaliador,
-                 "resposta" : self.resposta};    
+                 "resposta" : self.resposta, "id_status" : self.id_status};    

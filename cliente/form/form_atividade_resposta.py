@@ -44,12 +44,12 @@ class FormAtividadeResposta(QDialog):
         tab.addTab(page_recomendacao,'Recomendações');
         self.layout_recomendacao( page_recomendacao_layout );
 
-        if self.xmpp_var.cliente.posso_tag("atividade_corrigir"):
-            page_aprovacao = QWidget(tab);
-            page_aprovacao_layout = QVBoxLayout();
-            page_aprovacao.setLayout(page_aprovacao_layout);
-            tab.addTab(page_aprovacao,'Aprovação');
-            self.layout_aprovacao( page_aprovacao_layout );
+        #if self.xmpp_var.cliente.posso_tag("atividade_corrigir") and self.atividade.respostas[self.index_resposta].id_status == 0:
+        page_aprovacao = QWidget(tab);
+        page_aprovacao_layout = QVBoxLayout();
+        page_aprovacao.setLayout(page_aprovacao_layout);
+        tab.addTab(page_aprovacao,'Aprovação');
+        self.layout_aprovacao( page_aprovacao_layout );
 
         self.setLayout(self.main_layout);
 
@@ -74,41 +74,67 @@ class FormAtividadeResposta(QDialog):
         layout.addWidget( self.txt_atividade );
 
     def layout_recomendacao(self, layout):
-        txt_recomendacao = QTextEdit(self);
+        self.txt_recomendacao = QTextEdit(self);
         path_html = self.xmpp_var.grupo.path_grupo_html + "/recomendacao.html";
-        txt_recomendacao.setHtml(self.xmpp_var.cliente.fs.ler_raw( path_html ));
-        layout.addWidget( txt_recomendacao );
+        self.txt_recomendacao.setHtml(self.xmpp_var.cliente.fs.ler_raw( path_html ));
+        layout.addWidget( self.txt_recomendacao );
 
     def layout_aprovacao(self, layout):
-        txt_comentario = QTextEdit(self);
-        layout.addWidget( txt_comentario );
+        self.txt_comentario = QTextEdit(self);
+        layout.addWidget( self.txt_comentario );
+        
+        if self.xmpp_var.cliente.posso_tag("atividade_corrigir") and self.atividade.respostas[self.index_resposta].id_status == 0:
+            self.txt_comentario.setPlainText(self.atividade.respostas[self.index_resposta].consideracao_avaliador);
+            widget_botton = QWidget();
+            botton_layout = QHBoxLayout();
+            widget_botton.setLayout( botton_layout );
+            btn_aprovar = QPushButton("APROVAR")
+            btn_reprovar = QPushButton("REPROVAR")
+            btn_reprovar.setStyleSheet("background-color: red; color: black");
+            btn_aprovar.setStyleSheet("background-color: green; color: black");
+            btn_aprovar.clicked.connect(self.btn_click_aprovar);
+            btn_reprovar.clicked.connect(self.btn_click_reprovar);
+            self.cb_pontos = QComboBox(self);
+            self.cb_pontos.addItem('Um ponto');
+            self.cb_pontos.addItem('Dois pontos');
+            self.cb_pontos.addItem('Três pontos');
+            self.cb_pontos.addItem('Quatro pontos');
+            self.cb_pontos.addItem('Cinco pontos');
+            self.cb_pontos.addItem('Dez pontos');
+            botton_layout.addWidget( btn_reprovar );
+            botton_layout.addStretch();
+            botton_layout.addWidget(self.cb_pontos);
+            botton_layout.addWidget( btn_aprovar );
+            layout.addWidget(widget_botton);
+        if self.atividade.respostas[self.index_resposta].id_status == 1:
+            self.txt_comentario.setPlainText( "REPROVADO\n\n" + self.atividade.respostas[self.index_resposta].consideracao_avaliador);
+        elif self.atividade.respostas[self.index_resposta].id_status == 2:
+            self.txt_comentario.setPlainText( "APROVADO, ganhou " + str(self.atividade.respostas[self.index_resposta].pontos)  + " pontos\n\n" +  self.atividade.respostas[self.index_resposta].consideracao_avaliador);
 
-        widget_botton = QWidget();
-        botton_layout = QHBoxLayout();
-        widget_botton.setLayout( botton_layout );
-        btn_aprovar = QPushButton("APROVAR")
-        btn_reprovar = QPushButton("REPROVAR")
-        btn_reprovar.setStyleSheet("background-color: red; color: black");
-        btn_aprovar.setStyleSheet("background-color: green; color: black");
-        btn_aprovar.clicked.connect(self.btn_click_aprovar);
-        btn_reprovar.clicked.connect(self.btn_click_reprovar); 
-        botton_layout.addWidget( btn_reprovar );
-        botton_layout.addStretch();
-        botton_layout.addWidget( btn_aprovar );
-        layout.addWidget(widget_botton);
-
+    def funcao_enviar_aprovacao_reprovacao(self, decisao):
+        self.atividade.respostas[self.index_resposta].consideracao_avaliador = self.txt_comentario.toPlainText();
+        self.atividade.respostas[self.index_resposta].id_status = decisao;
+        self.atividade.respostas[self.index_resposta].pontos = self.cb_pontos.currentIndex() + 1;
+        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "resposta_aprovar_reprovar", self.atividade.respostas[self.index_resposta].toJson());
+        self.atividade.salvar(self.xmpp_var.cliente.chave_local, self.xmpp_var.cliente.path_atividade);
+        self.close();
     def btn_click_reprovar(self):
-        print();
+        self.funcao_enviar_aprovacao_reprovacao(1);
     def btn_click_aprovar(self):
-        print();
+        self.funcao_enviar_aprovacao_reprovacao(2);
     def btn_click_salvar(self):
         if self.index_resposta == None:
             r = AtividadeResposta();
             r.id_atividade = self.atividade.id;
             r.resposta = self.txt_resposta.toPlainText();
             self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "resposta_adicionar", r.toJson());
+            self.atividade.respostas.append(r);
+            self.form_main.atualizar_respostas();
+            self.atividade.salvar(self.xmpp_var.cliente.chave_local, self.xmpp_var.cliente.path_atividade);
             self.close();
         else:
-            atividade.respostas[self.index_resposta].resposta = self.txt_resposta.toPlainText();
+            self.atividade.respostas[self.index_resposta].resposta = self.txt_resposta.toPlainText();
             self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "resposta_salvar", self.atividade.respostas[self.index_resposta].toJson());
+            self.form_main.atualizar_respostas();
+            self.atividade.salvar(self.xmpp_var.cliente.chave_local, self.xmpp_var.cliente.path_atividade);
             self.close();

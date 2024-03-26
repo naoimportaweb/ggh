@@ -32,6 +32,7 @@ class PainelAtividade(QtWidgets.QWidget):
 
         #https://www.pythontutorial.net/pyqt/pyqt-qtablewidget/
         self.table = QTableWidget(self)
+        self.table.doubleClicked.connect(self.table_atividade_double)
         colunas = [{"Título" : ""}];
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
         self.table.resizeColumnsToContents();
@@ -46,10 +47,10 @@ class PainelAtividade(QtWidgets.QWidget):
         widget_acesso = QWidget();
         form_acesso = QHBoxLayout( widget_acesso );
         
-        self.b6 = QPushButton("Acessar atividade")
-        self.b6.setGeometry(10,0,32,32)
-        self.b6.clicked.connect( self.botao_acessar_atividade_click )
-        form_acesso.addWidget( self.b6 );
+        #self.b6 = QPushButton("Acessar atividade")
+        #self.b6.setGeometry(10,0,32,32)
+        #self.b6.clicked.connect( self.botao_acessar_atividade_click )
+        #form_acesso.addWidget( self.b6 );
         form_acesso.addStretch();
 
         #if self.xmpp_var.cliente.posso_tag("atividade_criar"):
@@ -65,6 +66,10 @@ class PainelAtividade(QtWidgets.QWidget):
         self.thread_enviador = threading.Thread(target = self.atualizar_atividade, args=());
         self.thread_enviador.start();
     
+    def table_atividade_double(self):
+        row = self.table.currentRow();
+        f = FormEditarAtividade( self.xmpp_var.cliente, self.xmpp_var, self.lista_atividade[ row ] );
+        f.exec();
     def atualizar_atividade( self ):
         while True:
             try:
@@ -99,11 +104,11 @@ class PainelAtividade(QtWidgets.QWidget):
             self.cmb_nivel.setCurrentIndex(0);
             self.botao_listar_atividade_click();
     
-    def botao_acessar_atividade_click(self):
-        row = self.table.currentRow();
-        f = FormEditarAtividade( self.xmpp_var.cliente, self.xmpp_var, self.lista_atividade[ row ] );
-        f.exec();
-        #self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "carregar", {"id" : self.lista_atividade[row]["id"] } );
+    #def botao_acessar_atividade_click(self):
+    #    row = self.table.currentRow();
+    #    f = FormEditarAtividade( self.xmpp_var.cliente, self.xmpp_var, self.lista_atividade[ row ] );
+    #    f.exec();
+    #    #self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "carregar", {"id" : self.lista_atividade[row]["id"] } );
     
     def botao_novo_atividade_click(self):
         atividade = Atividade();
