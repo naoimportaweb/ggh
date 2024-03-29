@@ -23,8 +23,7 @@ class FormEditarAtividade(QDialog):
 
         tab =       QTabWidget();        
         self.main_layout.addWidget(tab);
-
-        if atividade.id_cliente == self.cliente.id and self.xmpp_var.cliente.posso_tag("atividade_criar"):
+        if atividade.id_cliente == self.cliente.id and self.xmpp_var.cliente.posso_tag("atividade_criar") and self.atividade.id_status == 0:
             self.widget_botton = QWidget();
             self.botton_layout = QHBoxLayout();
             self.widget_botton.setLayout( self.botton_layout );

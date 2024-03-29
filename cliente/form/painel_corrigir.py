@@ -26,13 +26,12 @@ class PainelCorrigir(QtWidgets.QWidget):
         header.setSectionResizeMode(1, QHeaderView.Stretch);
         self.table.setRowCount(0)
         form_layout.addWidget(self.table);
-
         self.setLayout(form_layout);
 
-        
     def atualizar_tela(self):
         if self.layout_carregado:
             return;
         self.layout_carregado = True;
+    
     def evento_mensagem(self, de, texto, message, conteudo_js):
         print();
