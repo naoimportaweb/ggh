@@ -82,6 +82,12 @@ class FormEditarConhecimento(QDialog):
     def layout_editor(self, layout, conhecimento):
         # TAB DE TEXTO -> CONHECIMENTO
         self.editor = TextEdit()
+        palette = QPalette()
+        palette.setColor(QPalette.WindowText, Qt.black);
+        palette.setColor(QPalette.Text, Qt.black);
+        self.editor.setPalette(palette);
+        self.editor.setStyleSheet("background-color: rgb(255, 255, 255);");
+
         self.editor.setAutoFormatting(QTextEdit.AutoAll)
         self.editor.selectionChanged.connect(self.update_format)
         font = QFont('Times', 12)

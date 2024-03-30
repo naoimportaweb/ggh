@@ -32,21 +32,26 @@ class PainelConhecimento(QtWidgets.QWidget):
 
         #https://www.pythontutorial.net/pyqt/pyqt-qtablewidget/
         self.table = QTableWidget(self)
+        self.table.doubleClicked.connect(self.table_conhecimento_double)
         colunas = [{"Título" : "", "Status" : ""}];
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
         self.table.resizeColumnsToContents()
         self.table.setColumnCount(2)
         self.table.setHorizontalHeaderLabels(colunas[0].keys());
         self.table.setRowCount(0)
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers);
+        header = self.table.horizontalHeader() 
+        header.setSectionResizeMode(0, QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         form_layout.addWidget(self.table);
         
         widget_acesso = QWidget();
         form_acesso = QHBoxLayout( widget_acesso );
         
-        self.b6 = QPushButton("Acessar conhecimento")
-        self.b6.setGeometry(10,0,32,32)
-        self.b6.clicked.connect( self.botao_acessar_conhecimento_click )
-        form_acesso.addWidget( self.b6 );
+        #self.b6 = QPushButton("Acessar conhecimento")
+        #self.b6.setGeometry(10,0,32,32)
+        #self.b6.clicked.connect( self.botao_acessar_conhecimento_click )
+        #form_acesso.addWidget( self.b6 );
         form_acesso.addStretch();
 
         self.b4 = QPushButton("Novo conhecimento")
@@ -76,7 +81,6 @@ class PainelConhecimento(QtWidgets.QWidget):
             except:
                 traceback.print_exc();
             time.sleep(5);
-            self.table.resizeColumnsToContents();
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "ConhecimentoComando" and conteudo_js["funcao"] == "listar":
@@ -109,7 +113,8 @@ class PainelConhecimento(QtWidgets.QWidget):
             self.cmb_nivel.setCurrentIndex(0);
             self.botao_listar_conhecimento_click();
     
-    def botao_acessar_conhecimento_click(self):
+    #def botao_acessar_conhecimento_click(self):
+    def table_conhecimento_double(self):
         row = self.table.currentRow();
         f = FormEditarConhecimento( self.xmpp_var.cliente, self.xmpp_var, self.lista_conhecimento[ row ] );
         f.exec();
