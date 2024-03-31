@@ -20,7 +20,7 @@ class MuralComando:
         js["id"] = my.chave_string("mural", "id", 30 );
         sql = "INSERT INTO mural(id, id_grupo, id_cliente, titulo, mensagem, data, id_nivel, id_destinatario, sequencia) values(%s, %s, %s, %s, %s, %s, %s, %s, %s)";
         data = datetime.now().isoformat();
-        sequencia = .strftime("%Y%m%d%H%M%S");
+        sequencia = datetime.now().strftime("%Y%m%d%H%M%S");
         values = [js["id"], grupo.id, cliente.id, js["titulo"], js["mensagem"], data, js["id_nivel"], js["id_destinatario"], sequencia ];
         my.execute(sql, values);
         return {"status" : True, "mural" : js };
