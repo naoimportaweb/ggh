@@ -20,7 +20,9 @@ class AtividadeComando:
 
     def nao_corrigidas(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
-        return js["lista"];
+        if js.get("lista") != None:
+            return js["lista"];
+        return [];
 
     def salvar(self, cliente, grupo, mensagem):
         js = mensagem.toJson();

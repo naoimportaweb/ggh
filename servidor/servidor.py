@@ -27,11 +27,12 @@ class XMPPServer:
     def __init__(self, jid_server, password):
         self.inicializacao = str( uuid.uuid5(uuid.NAMESPACE_URL, jid_server + password + str(time.time())) )[0:16];
         self.grupo = Grupo( jid_server , self.inicializacao);
-        #self.online = {};
         self.password = password;
         self.pausa_enviador = True; # inicamos pausados a thread, pois não estamos logados ainda.
         self.pausa_recebedor = True; # inicamos pausados a thread, pois não estamos logados ainda.
         self.connection = None;     # pipe de conexão com servidor XMPP remoto
+        self.versao = json.loads( open(ROOT + "/data/versao.json", "r").read() );
+        print("..:: ", self.versao["versao"], "::..");
 
     def conectar(self):
         jid = xmpp.protocol.JID( self.grupo.jid );

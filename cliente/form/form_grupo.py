@@ -98,6 +98,7 @@ class FormGrupo(QtWidgets.QWidget):
         self.xmpp_var.set_callback(self.evento_mensagem);
         self.setWindowTitle( xmpp_var.cliente.jid +  " <=#=> " +  xmpp_var.grupo.jid );
 
+        self.xmpp_var.adicionar_mensagem( "comandos.ambiente" ,"AmbienteComando", "dados", {});
         self.xmpp_var.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "regras.html"});
         self.xmpp_var.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "recomendacao.html"});
         self.xmpp_var.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastroComando", "cadastro", {}, self.callback_cliente_cadastro);
@@ -119,6 +120,11 @@ class FormGrupo(QtWidgets.QWidget):
         self.widget_atual = self.widgets[0];
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
+        if conteudo_js["comando"] == "AmbienteComando" and conteudo_js["funcao"] == "dados":
+            if conteudo_js["versao"] != self.xmpp_var.dados["versao"]:
+                print("\033[41mAtenção, a versão do servidor é incompatível com a versão do cliente. A versão do servidor é: " + conteudo_js["versao"] + " \033[0m");
+                #QMessageBox.information(self, "Versão", "Atenção, a versão do servidor é incompatível com a versão do cliente.\n A versão do servidor é: " + conteudo_js["versao"], QMessageBox.StandardButton.Ok);
+
         for buffer in self.widgets:
             buffer.evento_mensagem(de, texto, message, conteudo_js);
     

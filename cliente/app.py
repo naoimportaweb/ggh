@@ -1,4 +1,4 @@
-import sys, os, inspect, time;
+import sys, os, inspect, time, json;
 import threading
 
 CURRENTDIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())));
@@ -32,12 +32,13 @@ class MDIWindow(QMainWindow):
         bar = self.menuBar()
         file = bar.addMenu("Grupos")
         self.statusbar = StatusClass( self );
-        newAct = QAction('Conectar em um grupo', self)
-        file.addAction(newAct)
-        newAct.triggered.connect(self.action_connect)
+        newAct = QAction('Conectar em um grupo', self);
+        file.addAction(newAct);
+        newAct.triggered.connect(self.action_connect);
 
     def callback_login(self, xmpp_var):
         form = FormGrupo( self );
+        xmpp_var.dados = json.loads( open(ROOT + "/data/versao.json", "r").read() );
         form.set_grupo( xmpp_var );
         self.statusbar.adicionar( xmpp_var.grupo );
         sub = self.mdiArea.addSubWindow( form );

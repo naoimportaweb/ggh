@@ -30,10 +30,11 @@ class PainelMural(QtWidgets.QWidget):
         header.setSectionResizeMode(0, QHeaderView.Stretch);
         self.table.setRowCount(0)
         form_layout.addWidget(self.table);
-
-        self.btn_novo = QPushButton("Novo item")
-        self.btn_novo.clicked.connect(self.btn_novo_click); 
-        form_layout.addWidget( self.btn_novo );
+        
+        if self.xmpp_var.cliente.posso_tag("mural_criar"):
+            self.btn_novo = QPushButton("Novo item")
+            self.btn_novo.clicked.connect(self.btn_novo_click); 
+            form_layout.addWidget( self.btn_novo );
 
         self.setLayout(form_layout);
 
