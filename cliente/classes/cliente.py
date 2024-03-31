@@ -23,6 +23,7 @@ class Cliente:
         self.nivel_posicao = 0;
         self.apelido = "";
         self.tags = None;
+        self.pontuacao_data_processamento = None;
         self.fs = FsSeguro( chave_local );
         
         self.path_cliente = self.grupo.path_grupo + "/clientes/" + hashlib.md5( jid.encode("utf-8") ).hexdigest();

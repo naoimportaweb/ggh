@@ -4,6 +4,7 @@ from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
 import random
 
+from datetime import datetime
 from classes.mysqlhelp import MysqlHelp
 
 class Cliente:
@@ -19,6 +20,7 @@ class Cliente:
         self.id_nivel = "";
         self.apelido = None;   # vem do banco de dados, tem que iniciar.
         self.nivel_posicao = 0;
+        self.pontuacao_data_processamento = datetime.now().isoformat();
         self.path_cliente = self.grupo.path_grupo + "/clientes/" + hashlib.md5( self.jid.encode() ).hexdigest();
         self.tags = [];
     
@@ -28,6 +30,7 @@ class Cliente:
         self.public_key = js["public_key"];
         self.apelido = js["apelido"];
         self.pontuacao = js["pontuacao"];
+        self.pontuacao_data_processamento = js["pontuacao_data_processamento"];
         self.carregar_tag();
         if js.get("id_nivel") == None:
             self.carregar_nivel();
@@ -67,10 +70,13 @@ class Cliente:
         sqls = [];
         valuess = [];
         try:
+            self.pontuacao_data_processamento = datetime.now().isoformat();
+            self.pontuacao = 0;
+            
             nivel_inicial = my.datatable("SELECT * FROM nivel WHERE posicao = %s and id_grupo = %s",[ 0, self.grupo.id ])[0];
 
-            sqls.append("INSERT INTO cliente (id, jid, public_key, apelido, pontuacao) values( %s, %s, %s, %s, %s)");
-            valuess.append(  [ self.id, self.jid, self.public_key, my.chave_string("cliente", "apelido", 8 ) , self.pontuacao ]  );
+            sqls.append("INSERT INTO cliente (id, jid, public_key, apelido, pontuacao, pontuacao_data_processamento) values( %s, %s, %s, %s, %s, %s)");
+            valuess.append(  [ self.id, self.jid, self.public_key, my.chave_string("cliente", "apelido", 8 ) , self.pontuacao, self.pontuacao_data_processamento ]  );
 
             sqls.append("INSERT INTO grupo_cliente(id_cliente, id_grupo) values (%s, %s)");
             valuess.append( [ self.id, self.grupo.id ] );

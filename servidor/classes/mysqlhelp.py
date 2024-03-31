@@ -83,7 +83,7 @@ class MysqlHelp:
     def teste(self):
         falhas = 0;
         estruturas = [
-            {"nome" : "cliente", "fields" : ["id", "jid", "public_key", "apelido", "pontuacao"]},
+            {"nome" : "cliente", "fields" : ["id", "jid", "public_key", "apelido", "pontuacao", "pontuacao_data_processamento"]},
             {"nome" : "grupo", "fields" : ["id", "jid", "nome", "descricao"]},
             {"nome" : "grupo_cliente", "fields" : ["id_grupo", "id_cliente"]},
             {"nome" : "mural", "fields" : ["id", "id_grupo", "id_cliente", "titulo", "mensagem", "data", "id_nivel", "id_destinatario", "sequencia"]},

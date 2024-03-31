@@ -1,29 +1,21 @@
 
 # criar tabelas e campos.
-SET @@global.innodb_large_prefix = 1;
 CREATE TABLE cliente ( id varchar(255) NOT NULL, jid varchar(255) unique, public_key LONGTEXT, apelido varchar(255) unique, pontuacao int,
-  chave_simetrica_criptografada LONGTEXT,  PRIMARY KEY(id) );
+  pontuacao_data_processamento datetime, chave_simetrica_criptografada LONGTEXT,  PRIMARY KEY(id) );
 
-CREATE TABLE grupo ( id varchar(255) NOT NULL, jid varchar(255) unique, nome varchar(255), descricao TEXT,
-  PRIMARY KEY(id) );
+CREATE TABLE grupo ( id varchar(255) NOT NULL, jid varchar(255) unique, nome varchar(255), descricao TEXT, PRIMARY KEY(id) );
 
-CREATE TABLE grupo_cliente ( id_grupo varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL,
-  PRIMARY KEY(id_grupo, id_cliente) );
+CREATE TABLE grupo_cliente ( id_grupo varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL,  PRIMARY KEY(id_grupo, id_cliente) );
 
-CREATE TABLE nivel ( id varchar(255) NOT NULL, nome varchar(255), id_grupo varchar(255), posicao int, pontuacao int, tempo int,
-  PRIMARY KEY(id) );
+CREATE TABLE nivel ( id varchar(255) NOT NULL, nome varchar(255), id_grupo varchar(255), posicao int, pontuacao int, tempo int,  PRIMARY KEY(id) );
 
-CREATE TABLE tag ( id varchar(255) NOT NULL, nome varchar(255), sigla varchar(255), id_grupo varchar(255),
-  PRIMARY KEY(id) );
+CREATE TABLE tag ( id varchar(255) NOT NULL, nome varchar(255), sigla varchar(255), id_grupo varchar(255),  PRIMARY KEY(id) );
 
-CREATE TABLE html ( id varchar(255) NOT NULL, nome varchar(255), id_grupo varchar(255), html LONGTEXT,
-  PRIMARY KEY(id) );
+CREATE TABLE html ( id varchar(255) NOT NULL, nome varchar(255), id_grupo varchar(255), html LONGTEXT,  PRIMARY KEY(id) );
 
-CREATE TABLE nivel_cliente ( id_cliente varchar(255) NOT NULL, id_nivel varchar(255) NOT NULL,
-  PRIMARY KEY(id_cliente, id_nivel) );
+CREATE TABLE nivel_cliente ( id_cliente varchar(255) NOT NULL, id_nivel varchar(255) NOT NULL,  PRIMARY KEY(id_cliente, id_nivel) );
 
-CREATE TABLE tag_cliente ( id_cliente varchar(255) NOT NULL, id_tag varchar(255) NOT NULL,
-  PRIMARY KEY(id_cliente, id_tag) );
+CREATE TABLE tag_cliente ( id_cliente varchar(255) NOT NULL, id_tag varchar(255) NOT NULL,  PRIMARY KEY(id_cliente, id_tag) );
 
 CREATE TABLE mensagem( id varchar(255) NOT NULL, id_remetente varchar(255), id_destinatario varchar(255),
   mensagem_criptografada LONGTEXT, chave_simetrica_criptografada LONGTEXT, data_hora_envio datetime, ordem varchar(255),

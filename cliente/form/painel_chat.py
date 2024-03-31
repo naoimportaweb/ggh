@@ -208,15 +208,18 @@ class PainelChat(QtWidgets.QWidget):
         if conteudo_js["comando"] == "MensagemComando" and conteudo_js["funcao"] == "lista_clientes_niveis":
             #{'clientes': [{'id': '91d0cf8f3883a0dcb338d15a47b326c9', 'apelido': 'ok7HdegG', 'public_key': '-----BEGIN PUBLIC KEY-----END PUBLIC KEY-----', 'nivel': '4'}], 'comando': 'Mensagem', 'funcao': 'lista_clientes_niveis', 'modulo': 'comandos.mensagem'}
             for cliente in conteudo_js["clientes"]:
-                rsa = RsaHelper(  cliente["public_key"] );
-                chave_simetrica = str( uuid.uuid5(uuid.NAMESPACE_URL, json.dumps(conteudo_js) + str(time.time()) ) )[0:16];
-                chave_simetrica_criptografada = rsa.encrypt( chave_simetrica );
-                chacha = ChaChaHelper( chave_simetrica );
-                mensagem_criptografada = base64.b64encode( chacha.encrypt( self.txt_mensagem.toPlainText().strip() ) );
-                envelope = {"apelido_remetente" : self.xmpp_var.cliente.apelido, "apelido_destinatario" : cliente["apelido"],
-                        "nivel" : cliente["nivel"], "mensagem_criptografada" : mensagem_criptografada.decode(),
-                        "chave_simetrica_criptografada" : chave_simetrica_criptografada };
-                self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "enviar", envelope );
+                try:
+                    rsa = RsaHelper(  cliente["public_key"] );
+                    chave_simetrica = str( uuid.uuid5(uuid.NAMESPACE_URL, json.dumps(conteudo_js) + str(time.time()) ) )[0:16];
+                    chave_simetrica_criptografada = rsa.encrypt( chave_simetrica );
+                    chacha = ChaChaHelper( chave_simetrica );
+                    mensagem_criptografada = base64.b64encode( chacha.encrypt( self.txt_mensagem.toPlainText().strip() ) );
+                    envelope = {"apelido_remetente" : self.xmpp_var.cliente.apelido, "apelido_destinatario" : cliente["apelido"],
+                            "nivel" : cliente["nivel"], "mensagem_criptografada" : mensagem_criptografada.decode(),
+                            "chave_simetrica_criptografada" : chave_simetrica_criptografada };
+                    self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "enviar", envelope );
+                except:
+                    traceback.print_exc();
             self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {"id_nivel" : self.xmpp_var.grupo.niveis[self.list_nivel.currentRow()].id } );
             self.txt_mensagem.setPlainText("");
             self.txt_mensagem.setDisabled(False);

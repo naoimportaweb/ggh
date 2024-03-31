@@ -46,7 +46,7 @@ class PainelCorrigir(QtWidgets.QWidget):
             self.table.setItem( i, 1, QTableWidgetItem( correcao["resposta"][0:30] ) );
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        if conteudo_js["comando"] == "AtividadeComando" and conteudo_js["funcao"] == "nao_corrigidas":
+        if conteudo_js["comando"] == "AtividadeComando" and conteudo_js["funcao"] == "nao_corrigidas" and conteudo_js.get("lista") != None:
             self.correcoes = conteudo_js["lista"];
             self.atualizar_tabela();
             
