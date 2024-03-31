@@ -33,7 +33,8 @@ CREATE TABLE mensagem_nivel ( id_nivel varchar(255) NOT NULL, id_mensagem varcha
   PRIMARY KEY(id_nivel, id_mensagem) );
 
 CREATE TABLE conhecimento ( id varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL, id_revisor varchar(255) DEFAULT NULL,  id_nivel varchar(255) NOT NULL,
-   id_grupo varchar(255) NOT NULL, titulo varchar(255), tags varchar(255), descricao LONGTEXT, texto LONGTEXT, status int not null, ultima_alteracao varchar(255),
+   id_grupo varchar(255) NOT NULL, titulo varchar(255), tags varchar(255), descricao LONGTEXT, comentario LONGTEXT, texto LONGTEXT, id_status int default 0,
+    ultima_alteracao varchar(255),
   PRIMARY KEY(id) );
 
 CREATE TABLE conhecimento_tag ( id_tag varchar(255) NOT NULL, id_conhecimento varchar(255) NOT NULL,
@@ -54,6 +55,8 @@ CREATE TABLE atividade_cliente( id varchar(255) NOT NULL, id_atividade varchar(2
   pontos INT DEFAULT NULL, data_avaliador DATETIME DEFAULT NULL, consideracao_avaliador LONGTEXT DEFAULT NULL,
   PRIMARY KEY(id) );
 
+SELECT atc.*, atv.titulo, atv.instrucao_correcao, atv.instrucao, atv.pontos_maximo FROM atividade_cliente as atc inner join atividade as atv on atc.id_atividade = atv.id WHERE atc.id_status=0;
+
 # relacionamento
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id); 
@@ -69,7 +72,7 @@ ALTER TABLE mensagem ADD FOREIGN KEY (id_remetente) REFERENCES cliente(id);
 ALTER TABLE mensagem ADD FOREIGN KEY (id_destinatario) REFERENCES cliente(id); 
 ALTER TABLE conhecimento_tag ADD FOREIGN KEY (id_conhecimento) REFERENCES conhecimento(id); 
 ALTER TABLE conhecimento_tag ADD FOREIGN KEY (id_tag) REFERENCES tag(id); 
-ALTER TABLE conhecimento ADD FOREIGN KEY (status) REFERENCES conhecimento_status(id); 
+ALTER TABLE conhecimento ADD FOREIGN KEY (id_status) REFERENCES conhecimento_status(id); 
 
 # EXEMPLO DE GRUPO
 

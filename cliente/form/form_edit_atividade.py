@@ -48,17 +48,17 @@ class FormEditarAtividade(QDialog):
         page_respostas.setLayout(page_respostas_layout);
         tab.addTab(page_respostas,'Respostas');
 
+        self.layout_resposta(  page_respostas_layout ,           self.atividade);
+        self.layout_atividade( page_atividade_layout,            self.atividade);
+        self.layout_correcao(  page_correcao_layout,             self.atividade);
+
         if atividade.id_cliente == self.cliente.id and self.xmpp_var.cliente.posso_tag("atividade_criar"):
             page_recomendacao_questao = QWidget(tab);
             page_recomendacao_questao_layout = QVBoxLayout();
             page_recomendacao_questao.setLayout(page_recomendacao_questao_layout);
             tab.addTab(page_recomendacao_questao,'Recomendação Correção');
-
-        self.layout_resposta(  page_respostas_layout ,           self.atividade);
-        self.layout_atividade( page_atividade_layout,            self.atividade);
-        self.layout_correcao(  page_correcao_layout,             self.atividade);
-        self.page_recomendacao_questao_layout(  page_recomendacao_questao_layout, self.atividade);
-        self.showMaximized() 
+            self.page_recomendacao_questao_layout(  page_recomendacao_questao_layout, self.atividade);
+        self.showMaximized();
     
     def layout_correcao(self, layout, atividade):
         layout.addWidget( QLabel("Pontuação máxima em caso de acerto:", self) );
@@ -86,26 +86,26 @@ class FormEditarAtividade(QDialog):
         page.setLayout(page_layout);
         page_layout.addWidget(label);
         page_layout.addWidget(self.titulo);
-
-        btn_aprovar = QPushButton("Aprovar")
-        btn_aprovar.clicked.connect( self.btn_click_aprovar);
-        btn_reprovar = QPushButton("Reprovar")
-        btn_reprovar.clicked.connect( self.btn_click_reprovar);
-        btn_editar = QPushButton("Editar")
-        btn_editar.clicked.connect( self.btn_click_editar);
-        btn_reprovar.setStyleSheet("background-color: red;    color: black");
-        btn_aprovar.setStyleSheet( "background-color: green;  color: black");
-        btn_editar.setStyleSheet(  "background-color: yellow; color: black");
-        if self.atividade.id_status == 0:
-            page_layout.addWidget(btn_aprovar);
-            page_layout.addWidget(btn_reprovar);
-        elif self.atividade.id_status == 1:
-            page_layout.addWidget(btn_aprovar);
-            page_layout.addWidget(btn_editar);
-        elif self.atividade.id_status == 2:
-            page_layout.addWidget(btn_reprovar);
-            page_layout.addWidget(btn_editar);
-
+        
+        if self.xmpp_var.cliente.id == self.atividade.id_cliente:
+            btn_aprovar = QPushButton("Aprovar")
+            btn_aprovar.clicked.connect( self.btn_click_aprovar);
+            btn_reprovar = QPushButton("Reprovar")
+            btn_reprovar.clicked.connect( self.btn_click_reprovar);
+            btn_editar = QPushButton("Editar")
+            btn_editar.clicked.connect( self.btn_click_editar);
+            btn_reprovar.setStyleSheet("background-color: red;    color: black");
+            btn_aprovar.setStyleSheet( "background-color: green;  color: black");
+            btn_editar.setStyleSheet(  "background-color: yellow; color: black");
+            if self.atividade.id_status == 0:
+                page_layout.addWidget(btn_aprovar);
+                page_layout.addWidget(btn_reprovar);
+            elif self.atividade.id_status == 1:
+                page_layout.addWidget(btn_aprovar);
+                page_layout.addWidget(btn_editar);
+            elif self.atividade.id_status == 2:
+                page_layout.addWidget(btn_reprovar);
+                page_layout.addWidget(btn_editar);
         layout.addWidget( page );
 
         self.textEditAtividade = QTextEdit(self);

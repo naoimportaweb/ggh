@@ -41,7 +41,7 @@ class Mensagem:
         self.cliente = cliente;
         self.comando = comando;
         self.callback = callback;
-        self.MAX_SIZE_CHAT = 4000;
+        self.MAX_SIZE_CHAT = 9999999;
 
     def fromString(self, mensagem):
         self.versao = mensagem[0:2];

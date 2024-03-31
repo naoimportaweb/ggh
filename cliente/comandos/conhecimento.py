@@ -18,7 +18,7 @@ class ConhecimentoComando:
     def listar(self, cliente, grupo, mensagem):
         return mensagem.toJson()["lista"];
     
-    def aprovar(self, cliente, grupo, mensagem):
+    def alterar_status(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
         return js["status"];
     

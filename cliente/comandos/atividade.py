@@ -18,6 +18,10 @@ class AtividadeComando:
         js = mensagem.toJson();
         return js["status"];
 
+    def nao_corrigidas(self, cliente, grupo, mensagem):
+        js = mensagem.toJson();
+        return js["lista"];
+
     def salvar(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
         print(js);

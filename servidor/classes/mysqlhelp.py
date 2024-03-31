@@ -88,6 +88,7 @@ class MysqlHelp:
             {"nome" : "grupo_cliente", "fields" : ["id_grupo", "id_cliente"]},
             {"nome" : "nivel", "fields" : ["id", "nome", "id_grupo", "posicao", "pontuacao", "tempo"]},
             {"nome" : "tag", "fields" : ["id", "nome", "id_grupo"]},
+            {"nome" : "conhecimento", "fields" : ["id", "id_cliente", "id_revisor", "id_nivel", "id_grupo", "titulo", "tags", "descricao", "comentario", "texto", "id_status", "ultima_alteracao" ]},
             {"nome" : "nivel_cliente", "fields" : ["id_cliente", "id_nivel"]},
             {"nome" : "tag_cliente", "fields" : ["id_cliente", "id_tag"]},
             {"nome" : "mensagem", "fields" : ["id", "id_remetente", "id_destinatario", "mensagem_criptografada", "chave_simetrica_criptografada", "data_hora_envio", "ordem"]},

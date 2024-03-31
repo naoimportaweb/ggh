@@ -77,7 +77,7 @@ class PainelConhecimento(QtWidgets.QWidget):
                             self.lista_conhecimento.append( buffer_conhecimento );
                             self.table.setRowCount( len(  self.lista_conhecimento  ) );
                             self.table.setItem( len(self.lista_conhecimento) - 1, 0, QTableWidgetItem( buffer_conhecimento.titulo ) );
-                            self.table.setItem( len(self.lista_conhecimento) - 1, 1, QTableWidgetItem("") );
+                            self.table.setItem( len(self.lista_conhecimento) - 1, 1, QTableWidgetItem( buffer_conhecimento.nome_status ) );
             except:
                 traceback.print_exc();
             time.sleep(5);

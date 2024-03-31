@@ -21,7 +21,9 @@ class Conhecimento:
         self.tags = None;
         self.descricao = None;
         self.texto = None;
-        self.status = 0;
+        self.id_status = 0;
+        self.nome_status = "";
+        self.comentario = "";
     
     def fromJson(self, js ):
         self.id = js["id"];
@@ -33,10 +35,14 @@ class Conhecimento:
         self.tags = js["tags"];
         self.descricao = js["descricao"];
         self.texto = js["texto"];
-        self.status = js["status"];
+        self.id_status = js["id_status"];
+        if js.get("nome_status") != None:
+            self.nome_status = js["nome_status"];
+        if js.get("comentario") != None:
+            self.comentario = js["comentario"];
     
     def toJson(self):
-        return {"id" : self.id, "id_cliente" : self.id_cliente, "id_revisor" : self.id_revisor, "id_nivel" : self.id_nivel, "id_grupo" : self.id_grupo, "titulo" : self.titulo, "tags" : self.tags, "descricao" : self.descricao, "texto" : self.texto, "status" : self.status};
+        return {"id" : self.id, "id_cliente" : self.id_cliente, "id_revisor" : self.id_revisor, "id_nivel" : self.id_nivel, "id_grupo" : self.id_grupo, "titulo" : self.titulo, "tags" : self.tags, "descricao" : self.descricao, "texto" : self.texto, "id_status" : self.id_status, "comentario" : self.comentario};
 
     def setHtml(self, html):
         self.texto = html;

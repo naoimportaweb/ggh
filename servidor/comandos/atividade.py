@@ -8,8 +8,8 @@ class AtividadeComando:
     def listar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql = "select atv.* from atividade as atv where atv.id_nivel in ( select id_nivel from nivel_cliente where id_cliente = %s )";
-        atividades = my.datatable(sql, [ cliente.id ] );
+        sql = "select atv.* from atividade as atv where atv.id_nivel in ( select id_nivel from nivel_cliente where id_cliente = %s ) and ( atv.id_status = 2 or atv.id_cliente = %s );";
+        atividades = my.datatable(sql, [ cliente.id, cliente.id ] );
         for i in range(len(atividades)):
             sql = "select * from atividade_cliente where id_atividade = %s and id_cliente=%s";
             atividades[i]["respostas"] = my.datatable(sql, [ atividades[i]["id"], cliente.id ] );
@@ -115,4 +115,11 @@ class AtividadeComando:
             atividades[i]["respostas"] = my.datatable(sql, [ atividades[i]["id"], cliente.id ] );
         return atividades;
 
-
+    def nao_corrigidas(self, cliente, grupo, mensagem):
+        my = MysqlHelp();
+        js = mensagem.toJson();
+        if not cliente.posso_tag("atividade_corrigir"):
+            return {"status" : False, "erro" : "Não tem permissão para aprovar ou reprovar."};
+        sql = "SELECT atc.*, atv.titulo, atv.instrucao_correcao, atv.atividade, atv.pontos_maximo FROM atividade_cliente as atc inner join atividade as atv on atc.id_atividade = atv.id WHERE atc.id_status=%s";
+        resposta_banco = my.datatable(sql, [ 0 ]);
+        return {"status" : True, "lista" : resposta_banco};        

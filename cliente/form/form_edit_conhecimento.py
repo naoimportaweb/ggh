@@ -51,12 +51,9 @@ class FormEditarConhecimento(QDialog):
         page_tag.setLayout(page_tag_layout);
         tab.addTab(page_tag,'TAGs');
 
-        page_apr = QWidget(tab);
-        page_apr_layout = QGridLayout();
-        page_apr.setLayout(page_apr_layout);
-        tab.addTab(page_apr,'Aprovação');
+
         
-        if self.xmpp_var.cliente.id == conhecimento.id_cliente and conhecimento.status == 0:
+        if self.xmpp_var.cliente.id == conhecimento.id_cliente and conhecimento.id_status == 0:
             self.b5 = QPushButton("Salvar conhecimento")
             self.b5.clicked.connect( self.botao_salvar_conhecimento_click )
             page_inferior = QWidget(self);
@@ -70,14 +67,57 @@ class FormEditarConhecimento(QDialog):
         self.layout_principal( page_elementos_layout, self.conhecimento);
         self.layout_editor(    page_text_layout,      self.conhecimento);
         self.layout_tag( page_tag_layout,             self.conhecimento);
-        self.layout_aprovacao( page_apr_layout,       self.conhecimento);
+        
+        if self.xmpp_var.cliente.posso_tag("aprovador_conhecimento"):
+            page_apr = QWidget(tab);
+            page_apr_layout = QGridLayout();
+            page_apr.setLayout(page_apr_layout);
+            tab.addTab(page_apr,'Aprovação');
+            self.layout_aprovacao( page_apr_layout,       self.conhecimento);
+        
         self.showMaximized() 
 
     def layout_tag(self, layout, conhecimento):
         layout.addWidget( QLabel("TAGs:", self) );
 
     def layout_aprovacao(self, layout, conhecimento):
-        layout.addWidget( QLabel("Aprovação:", self) );
+        page = QWidget(self);
+        page_layout = QHBoxLayout();
+        page.setLayout(page_layout);
+        #page_layout.addWidget(label);
+        #page_layout.addWidget(self.titulo);
+        self.txt_comentario = QTextEdit(self);
+        layout.addWidget( self.txt_comentario );
+
+        btn_aprovar = QPushButton("Aprovar")
+        btn_aprovar.clicked.connect( self.btn_click_aprovar);
+        btn_reprovar = QPushButton("Reprovar")
+        btn_reprovar.clicked.connect( self.btn_click_reprovar);
+        btn_editar = QPushButton("Editar")
+        btn_editar.clicked.connect( self.btn_click_editar);
+        btn_reprovar.setStyleSheet("background-color: red;    color: black");
+        btn_aprovar.setStyleSheet( "background-color: green;  color: black");
+        btn_editar.setStyleSheet(  "background-color: yellow; color: black");
+        if self.conhecimento.id_status == 0:
+            page_layout.addWidget(btn_aprovar);
+            page_layout.addWidget(btn_reprovar);
+        elif self.conhecimento.id_status == 1:
+            page_layout.addWidget(btn_aprovar);
+            page_layout.addWidget(btn_editar);
+        elif self.conhecimento.id_status == 2:
+            page_layout.addWidget(btn_reprovar);
+            page_layout.addWidget(btn_editar);
+        layout.addWidget( page );
+    
+    def mudar_status_conhecimento(self, id_status): # 0 desenv, 1 aguardando, 2 aprovado, 3 reprovado (tabela no banco)
+        self.conhecimento.id_status = id_status;
+        self.xmpp_var.adicionar_mensagem("comandos.conhecimento" ,"ConhecimentoComando", "alterar_status", self.conhecimento.toJson() );
+    def btn_click_aprovar(self):
+        self.mudar_status_conhecimento(2);
+    def btn_click_reprovar(self):
+        self.mudar_status_conhecimento(3);
+    def btn_click_editar(self):
+        self.mudar_status_conhecimento(0);
 
     def layout_editor(self, layout, conhecimento):
         # TAB DE TEXTO -> CONHECIMENTO
@@ -87,6 +127,7 @@ class FormEditarConhecimento(QDialog):
         palette.setColor(QPalette.Text, Qt.black);
         self.editor.setPalette(palette);
         self.editor.setStyleSheet("background-color: rgb(255, 255, 255);");
+        self.editor.setReadOnly(True);
 
         self.editor.setAutoFormatting(QTextEdit.AutoAll)
         self.editor.selectionChanged.connect(self.update_format)
@@ -97,7 +138,32 @@ class FormEditarConhecimento(QDialog):
         self.editor.setHtml( conhecimento.texto );
         layout.addWidget( QLabel("Conhecimento", self) );
         layout.addWidget(self.editor)
+        if self.conhecimento.id_status == 0:
+            widget_botton = QWidget();
+            botton_layout = QHBoxLayout();
+            widget_botton.setLayout( botton_layout );
+            btn_importar_html = QPushButton("Importar HTML");
+            btn_importar_html.clicked.connect(self.btn_importar_html_click)
+            botton_layout.addWidget( btn_importar_html );
+            layout.addWidget(widget_botton);
 
+
+    def btn_importar_html_click(self):
+        dialog = QFileDialog(self)
+        dialog.setDirectory('/')
+        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        dialog.setNameFilter("HTML (*.html *.htm)")
+        dialog.setViewMode(QFileDialog.ViewMode.List)
+        if dialog.exec():
+            filenames = dialog.selectedFiles();
+            if filenames:
+                html = open(filenames[0],"r").read();
+                if re.search(r'src="(.*?)"', html) != None:
+                    QMessageBox.information(self, "HTML com problemas", "Não pode ter nenhum arquivo anexado.", QMessageBox.StandardButton.Ok);
+                if re.search(r'href="(.*?)"', html) != None:
+                    QMessageBox.information(self, "HTML com problemas", "Não pode ter nenhum link externo.", QMessageBox.StandardButton.Ok);
+                self.editor.setHtml( html );
+    
     def layout_principal(self, layout, conhecimento):
         self.titulo = QLineEdit(conhecimento.titulo, self);
         self.cmb_nivel = QComboBox(); 
@@ -114,11 +180,14 @@ class FormEditarConhecimento(QDialog):
         layout.addWidget( QLabel("Título", self) );
         layout.addWidget( self.titulo);
         layout.addStretch();
+        if self.conhecimento.id_status != 0:
+            self.titulo.setReadOnly(True);
 
     def botao_salvar_conhecimento_click(self):
         self.conhecimento.setHtml( self.editor.toHtml() );
         self.conhecimento.titulo = self.titulo.text();
         self.conhecimento.id_nivel = self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id;
+        
         self.xmpp_var.adicionar_mensagem("comandos.conhecimento" ,"ConhecimentoComando", "salvar", self.conhecimento.toJson() );
     
     def block_signals(self, objects, b):
