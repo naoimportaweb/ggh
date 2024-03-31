@@ -55,7 +55,8 @@ CREATE TABLE atividade_cliente( id varchar(255) NOT NULL, id_atividade varchar(2
   pontos INT DEFAULT NULL, data_avaliador DATETIME DEFAULT NULL, consideracao_avaliador LONGTEXT DEFAULT NULL,
   PRIMARY KEY(id) );
 
-SELECT atc.*, atv.titulo, atv.instrucao_correcao, atv.instrucao, atv.pontos_maximo FROM atividade_cliente as atc inner join atividade as atv on atc.id_atividade = atv.id WHERE atc.id_status=0;
+CREATE TABLE mural(id varchar(255) NOT NULL, id_grupo varchar(255), id_cliente varchar(255), titulo varchar(255), mensagem longtext,
+  data DATETIME, id_nivel varchar(255) DEFAULT NULL, id_destinatario varchar(255) DEFAULT NULL, sequencia VARCHAR(255) NOT NULL );
 
 # relacionamento
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
@@ -73,6 +74,10 @@ ALTER TABLE mensagem ADD FOREIGN KEY (id_destinatario) REFERENCES cliente(id);
 ALTER TABLE conhecimento_tag ADD FOREIGN KEY (id_conhecimento) REFERENCES conhecimento(id); 
 ALTER TABLE conhecimento_tag ADD FOREIGN KEY (id_tag) REFERENCES tag(id); 
 ALTER TABLE conhecimento ADD FOREIGN KEY (id_status) REFERENCES conhecimento_status(id); 
+ALTER TABLE mural ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
+ALTER TABLE mural ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id); 
+ALTER TABLE mural ADD FOREIGN KEY (id_nivel) REFERENCES nivel(id); 
+ALTER TABLE mural ADD FOREIGN KEY (id_destinatario) REFERENCES cliente(id); 
 
 # EXEMPLO DE GRUPO
 
@@ -104,13 +109,10 @@ insert into conhecimento_status(id, nome) values(3, "Reprovado");
 
 insert into html(id, nome, html, id_grupo) values ('regras.html'      ,'Regras','<html><body>Regras</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
 insert into html(id, nome, html, id_grupo) values ('recomendacao.html','Recomendação','<html><body>Recomendação</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
-insert into tag(id, nome, sigla, id_grupo) values ('gd583d0879894266bb8916f9abce53bc', 
-        'Aprovador Conhecimento', 'atividade_criar', 'a639ffc7a87856c52ea8b6a75dff4ff7');
-insert into tag(id, nome, sigla, id_grupo) values ('fd583d0879894266bb8916f9abce53bc', 
-       'Criar atividade', 'aprovador_conhecimento', 'a639ffc7a87856c52ea8b6a75dff4ff7');
+insert into tag(id, nome, sigla, id_grupo) values ('gd583d0879894266bb8916f9abce53bc', 'Aprovador Conhecimento', 'atividade_criar', 'a639ffc7a87856c52ea8b6a75dff4ff7');
+insert into tag(id, nome, sigla, id_grupo) values ('fd583d0879894266bb8916f9abce53bc', 'Criar atividade', 'aprovador_conhecimento', 'a639ffc7a87856c52ea8b6a75dff4ff7');
+insert into tag(id, nome, sigla, id_grupo) values ('kd583d0879894266bb8916f9abce53bc', 'Criar Mural', 'mural_criar', 'a639ffc7a87856c52ea8b6a75dff4ff7');
 
-insert into tag_cliente(id_tag, id_cliente) values ('gd583d0879894266bb8916f9abce53bc', 
-  '91d0cf8f3883a0dcb338d15a47b326c9');
-insert into tag_cliente(id_tag, id_cliente) values ('fd583d0879894266bb8916f9abce53bc', 
-  '91d0cf8f3883a0dcb338d15a47b326c9');
-
+insert into tag_cliente(id_tag, id_cliente) values ('gd583d0879894266bb8916f9abce53bc',   '91d0cf8f3883a0dcb338d15a47b326c9');
+insert into tag_cliente(id_tag, id_cliente) values ('fd583d0879894266bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');
+insert into tag_cliente(id_tag, id_cliente) values ('kd583d0879894266bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');

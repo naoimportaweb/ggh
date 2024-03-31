@@ -10,6 +10,7 @@ from form.painel_recomendacoes import PainelRecomendacoes
 from form.painel_conhecimento import PainelConhecimento
 from form.painel_atividade import PainelAtividade
 from form.painel_corrigir import PainelCorrigir;
+from form.painel_mural import PainelMural;
 
 class FormGrupo(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
@@ -20,6 +21,10 @@ class FormGrupo(QtWidgets.QWidget):
         self.b4 = QPushButton("Chat")
         self.b4.clicked.connect( self.botao_chat_click )
         self.layout1.addWidget(self.b4)
+
+        self.b10 = QPushButton("Mural")
+        self.b10.clicked.connect( self.botao_mural_click )
+        self.layout1.addWidget(self.b10)
 
         self.b5 = QPushButton("Regras")
         self.b5.clicked.connect( self.botao_regras_click )
@@ -47,6 +52,7 @@ class FormGrupo(QtWidgets.QWidget):
         self.b7.setEnabled(False);
         self.b8.setEnabled(False);
         self.b9.setEnabled(False);
+        self.b10.setEnabled(False);
         
         self.layout1.addStretch();
         self.layout = QHBoxLayout();
@@ -65,6 +71,9 @@ class FormGrupo(QtWidgets.QWidget):
             else:
                 buffer.setParent( None );
                 buffer.ativo = False;
+
+    def botao_mural_click(self):
+        self.ativar_layout_especifico( "PainelMural" );
 
     def botao_atividade_click(self):
         self.ativar_layout_especifico( "PainelAtividade" );
@@ -100,10 +109,11 @@ class FormGrupo(QtWidgets.QWidget):
         self.b7.setEnabled(True);
         self.b8.setEnabled(True);
         self.b9.setEnabled(True);
+        self.b10.setEnabled(True);
 
     def carregar_panel( self ):
         self.widgets = [PainelChat(self.xmpp_var), PainelRegras(self.xmpp_var), PainelRecomendacoes(self.xmpp_var), PainelConhecimento( self.xmpp_var ),
-                       PainelAtividade( self.xmpp_var ), PainelCorrigir(self.xmpp_var) ];
+                       PainelAtividade( self.xmpp_var ), PainelCorrigir(self.xmpp_var), PainelMural(self.xmpp_var) ];
         self.widgets[0].ativo = True;
         self.layout.addWidget( self.widgets[0] );
         self.widget_atual = self.widgets[0];
