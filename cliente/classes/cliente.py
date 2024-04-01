@@ -1,4 +1,5 @@
 import uuid, os, sys, hashlib, json;
+import base64
 
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
@@ -45,6 +46,12 @@ class Cliente:
         self.private_key = RSA.importKey( self.fs.ler_binario( self.path_private_key ) );
         self.public_key = self.fs.ler_binario(self.path_public_key).decode("utf-8");
     
+    def toJson(self):
+        with open( self.path_private_key , "rb") as f:
+            encoded_private_key = base64.b64encode(f.read()).decode("utf-8");
+        buffer = {"jid" : self.jid, "public_key" : self.public_key, "chave_servidor" : self.chave_servidor, "private_key" : encoded_private_key, 
+            "jid_grupo" : self.grupo.jid };
+        return buffer;
     def posso_tag(self, sigla):
         if self.tags == None:
             return False;

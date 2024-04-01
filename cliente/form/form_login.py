@@ -19,12 +19,12 @@ class FormLogin(QDialog):
         self.form_main = parent;
         self.jid_grupo = QLineEdit('', self);
         self.jid_pessoa = QLineEdit('', self);
-        self.chave_criptografia = QLineEdit('', self);
         self.password = QLineEdit('', self);
-
+        self.chave_criptografia = QLineEdit('', self);
+        
+        self.protocolo_proxy = QLineEdit('http', self);
         self.servidor_proxy = QLineEdit('127.0.0.1', self);
         self.porta_proxy = QLineEdit('9051', self);
-        self.protocolo_proxy = QLineEdit('http', self);
 
         if os.path.exists(os.path.expanduser("~/.ggh_client.json")):
             buffer_config = json.loads( open(os.path.expanduser("~/.ggh_client.json"), 'r').read() );

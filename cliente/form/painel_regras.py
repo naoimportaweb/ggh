@@ -1,6 +1,6 @@
 import time, base64, uuid, os, sys, json, traceback, threading;
 
-from PySide6.QtGui import QAction;
+from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from PySide6 import QtWidgets;
 from PySide6.QtCore import Qt, QObject
@@ -27,7 +27,11 @@ class PainelRegras(QtWidgets.QWidget):
         html = self.fs.ler_raw( self.path_html );
         if self.xmpp_var.cliente.posso_tag("recomendacao_editar"):
             self.txt_texto = QTextEdit(self);
-            #self.txt_texto.setPlainText( html );
+            palette = QPalette()
+            palette.setColor(QPalette.WindowText, Qt.black);
+            palette.setColor(QPalette.Text, Qt.black);
+            self.txt_texto.setPalette(palette);
+            self.txt_texto.setStyleSheet("background-color: rgb(255, 255, 255);");
             self.txt_texto.setHtml( html );
             form_layout.addWidget( self.txt_texto );
 
@@ -41,6 +45,11 @@ class PainelRegras(QtWidgets.QWidget):
             form_layout.addWidget( b4_widget );
         else:
             self.tb = QTextBrowser(self);
+            palette = QPalette()
+            palette.setColor(QPalette.WindowText, Qt.black);
+            palette.setColor(QPalette.Text, Qt.black);
+            self.tb.setPalette(palette);
+            self.tb.setStyleSheet("background-color: rgb(255, 255, 255);");
             self.tb.setAcceptRichText(True);
             self.tb.setOpenExternalLinks(False);
             self.tb.setHtml(self.fs.ler_raw( self.path_html ));

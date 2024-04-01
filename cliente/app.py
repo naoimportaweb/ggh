@@ -13,6 +13,7 @@ from classes.conexao.xmpp_client import XMPPCliente;
 #from api.aeshelp import AesHelper;
 
 from form.form_login  import FormLogin;
+from form.form_login_importar import FormImportar;
 from form.form_painel import FormPainel;
 from form.form_grupo  import FormGrupo;
 from form.form_edit_conhecimento import FormEditarConhecimento
@@ -32,9 +33,12 @@ class MDIWindow(QMainWindow):
         bar = self.menuBar()
         file = bar.addMenu("Grupos")
         self.statusbar = StatusClass( self );
-        newAct = QAction('Conectar em um grupo', self);
+        newAct = QAction('Conectar em um grupo com login', self);
         file.addAction(newAct);
         newAct.triggered.connect(self.action_connect);
+        newAct2 = QAction('Conectar em um grupo com chave', self);
+        file.addAction(newAct2);
+        newAct2.triggered.connect(self.action_connect_key);
 
     def callback_login(self, xmpp_var):
         form = FormGrupo( self );
@@ -47,6 +51,9 @@ class MDIWindow(QMainWindow):
 
     def action_connect(self, q):
         f = FormLogin( self );
+        f.exec();
+    def action_connect_key(self):
+        f = FormImportar(self);
         f.exec();
 
 class StatusClass():
