@@ -13,7 +13,6 @@ from classes.grupo import Grupo;
 class FormImportar(QDialog):
     def __init__(self, parent=None):
         super(FormImportar, self).__init__(parent)
-        #self.setStyleSheet("border: 1px solid rgba(0, 0, 0, 0.15);")
         self.setWindowTitle("Grupo")
         self.setGeometry(400, 400, 800, 500)
         self.form_main = parent;
