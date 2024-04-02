@@ -27,6 +27,7 @@ class Cliente:
     def fromJson(self, js):
         self.id = js["id"];
         self.jid = js["jid"];
+        self.id_nivel = js["id_nivel"];
         self.public_key = js["public_key"];
         self.apelido = js["apelido"];
         self.pontuacao = js["pontuacao"];
@@ -57,9 +58,8 @@ class Cliente:
     
     def carregar_nivel(self):
         my = MysqlHelp();
-        cadastro = my.datatable( "select ni.id as id_nivel, ni.posicao as posicao from nivel_cliente as nic inner join nivel as ni on nic.id_nivel = ni.id where ni.id_grupo = %s and nic.id_cliente = %s order by ni.posicao desc", [ self.grupo.id, self.id ] );
+        cadastro = my.datatable( "select * from nivel as ni where ni.id_grupo = %s and ni.id = %s", [ self.grupo.id, self.id_nivel ] );
         self.nivel_posicao = cadastro[0]["posicao"];
-        self.id_nivel = cadastro[0]["id_nivel"];
     
     def carregar_tag(self):
         my = MysqlHelp();
@@ -75,14 +75,11 @@ class Cliente:
             
             nivel_inicial = my.datatable("SELECT * FROM nivel WHERE posicao = %s and id_grupo = %s",[ 0, self.grupo.id ])[0];
 
-            sqls.append("INSERT INTO cliente (id, jid, public_key, apelido, pontuacao, pontuacao_data_processamento) values( %s, %s, %s, %s, %s, %s)");
-            valuess.append(  [ self.id, self.jid, self.public_key, my.chave_string("cliente", "apelido", 8 ) , self.pontuacao, self.pontuacao_data_processamento ]  );
+            sqls.append("INSERT INTO cliente (id, jid, public_key, apelido, pontuacao, pontuacao_data_processamento, id_nivel) values( %s, %s, %s, %s, %s, %s, %s)");
+            valuess.append(  [ self.id, self.jid, self.public_key, my.chave_string("cliente", "apelido", 8 ) , self.pontuacao, self.pontuacao_data_processamento, nivel_inicial["id"] ]  );
 
             sqls.append("INSERT INTO grupo_cliente(id_cliente, id_grupo) values (%s, %s)");
             valuess.append( [ self.id, self.grupo.id ] );
-
-            sqls.append("INSERT INTO nivel_cliente(id_cliente, id_nivel) values (%s, %s)");
-            valuess.append( [ self.id, nivel_inicial["id"] ] );
 
             my.executes(sqls, valuess);
             my = None;           
@@ -100,10 +97,11 @@ class Cliente:
     
     def posso_nivel(self, nivel_id):
         my = MysqlHelp();
-        cadastro = my.datatable( "select ni.id as id_nivel, ni.posicao as posicao from nivel_cliente as nic inner join nivel as ni on nic.id_nivel = ni.id where ni.id = %s and ni.id_grupo = %s and nic.id_cliente = %s order by ni.posicao desc", [ nivel_id, self.grupo.id, self.id ] );
+        cadastro = my.datatable(  "select * from nivel as ni where ni.id = %s and ni.id_grupo= %s", [ nivel_id, self.grupo.id ] );
         if len(cadastro) > 0:
             return cadastro[0]["posicao"] <= self.nivel_posicao;
         return False;
+    
     def posso_tag(self, sigla):
         my = MysqlHelp();
         sql = "SELECT tg.* FROM tag  as tg inner join tag_cliente as tgc on tg.id = tgc.id_tag where tg.sigla = %s and tgc.id_cliente =  %s";

@@ -16,16 +16,19 @@ class MensagemComando:
         my = MysqlHelp();
         js = mensagem.toJson();
         #https://stackoverflow.com/questions/60884078/use-a-list-in-prepared-statement
-        sql_clientes = "select distinct cl.id as id, cl.apelido as apelido, cl.public_key as public_key, nicl.id_nivel as nivel from cliente as cl inner join nivel_cliente as nicl on cl.id = nicl.id_cliente where nicl.id_nivel = %s ";
+        sql_clientes = "select distinct cl.id as id, cl.apelido as apelido, cl.public_key as public_key from cliente as cl where cl.id_nivel = %s ";
         lista_clientes = my.datatable(sql_clientes, [ js["nivel"] ]);
         return {"clientes" : lista_clientes };
 
     def enviar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql_cliente = "select cl.id, ni.posicao from cliente as cl inner join nivel_cliente as nicl on cl.id = nicl.id_cliente inner join nivel as ni on nicl.id_nivel = ni.id where cl.apelido = %s";
+        sql_cliente = "select cl.id, ni.posicao from cliente as cl inner join nivel as ni on ni.id = cli.id_nivel where cl.apelido = %s";
+        
         sql_niveis = "select * from nivel as ni where ni.posicao <= (select posicao from nivel where id = %s )";
-        cliente_remetente =    my.datatable( sql_cliente, [ js["apelido_remetente"] ] )[0];
+        #TODO: REVER LINHA ABAIXO, VEJA QUE CARREGA O CLIENTE QUE SOU EU.....
+        #cliente_remetente =    my.datatable( sql_cliente, [ js["apelido_remetente"] ] )[0];
+        cliente_remetente =    my.datatable( sql_cliente, [ cliente.id ] )[0];
         cliente_destinatario = my.datatable( sql_cliente, [ js["apelido_destinatario"] ] )[0];
         niveis = my.datatable( sql_niveis, [ js["nivel"] ] );
         id_mensagem = my.chave_string("mensagem", "id", 20 );

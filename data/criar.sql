@@ -1,6 +1,6 @@
 
 # criar tabelas e campos.
-CREATE TABLE cliente ( id varchar(255) NOT NULL, jid varchar(255) unique, public_key LONGTEXT, apelido varchar(255) unique, pontuacao int,
+CREATE TABLE cliente ( id varchar(255) NOT NULL, jid varchar(255) unique, id_nivel varchar(255), public_key LONGTEXT, apelido varchar(255) unique, pontuacao int,
   pontuacao_data_processamento datetime, chave_simetrica_criptografada LONGTEXT,  PRIMARY KEY(id) );
 
 CREATE TABLE grupo ( id varchar(255) NOT NULL, jid varchar(255) unique, nome varchar(255), descricao TEXT, PRIMARY KEY(id) );
@@ -12,8 +12,6 @@ CREATE TABLE nivel ( id varchar(255) NOT NULL, nome varchar(255), id_grupo varch
 CREATE TABLE tag ( id varchar(255) NOT NULL, nome varchar(255), sigla varchar(255), id_grupo varchar(255),  PRIMARY KEY(id) );
 
 CREATE TABLE html ( id varchar(255) NOT NULL, nome varchar(255), id_grupo varchar(255), html LONGTEXT,  PRIMARY KEY(id) );
-
-CREATE TABLE nivel_cliente ( id_cliente varchar(255) NOT NULL, id_nivel varchar(255) NOT NULL,  PRIMARY KEY(id_cliente, id_nivel) );
 
 CREATE TABLE tag_cliente ( id_cliente varchar(255) NOT NULL, id_tag varchar(255) NOT NULL,  PRIMARY KEY(id_cliente, id_tag) );
 
@@ -53,8 +51,8 @@ CREATE TABLE mural(id varchar(255) NOT NULL, id_grupo varchar(255), id_cliente v
 # relacionamento
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id); 
-ALTER TABLE nivel_cliente ADD FOREIGN KEY (id_nivel) REFERENCES nivel(id); 
-ALTER TABLE nivel_cliente ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id); 
+
+
 ALTER TABLE tag_cliente ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id); 
 ALTER TABLE mensagem_nivel ADD FOREIGN KEY (id_mensagem) REFERENCES mensagem(id); 
 ALTER TABLE mensagem_nivel ADD FOREIGN KEY (id_nivel) REFERENCES nivel(id); 
@@ -77,7 +75,6 @@ delete from grupo_cliente;
 delete from mensagem;
 delete from mensagem_nivel;
 delete from nivel;
-delete from nivel_cliente;
 delete from tag;
 delete from html;
 delete from tag_cliente;  

@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import sys, os, inspect, time, json;
 import threading
 
@@ -22,7 +24,6 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction,  QPalette, QColor;
 from PySide6.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QMdiArea, QMainWindow, QStatusBar, QLabel;
 from PySide6 import QtWidgets;
-
 
 class MDIWindow(QMainWindow):
     def __init__(self):
