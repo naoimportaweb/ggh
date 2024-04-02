@@ -24,6 +24,7 @@ class FormImportar(QDialog):
         widget0.setLayout( widget0_layout );
         label0 = QLabel("Chave de descriptografia");
         self.txt_chave = QLineEdit('', self);
+        self.txt_chave.setEchoMode(QLineEdit.Password)
         widget0_layout.addWidget( label0 );
         widget0_layout.addWidget( self.txt_chave );
         self.main_layout.addWidget( widget0 );
