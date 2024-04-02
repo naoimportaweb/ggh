@@ -38,9 +38,7 @@ class Grupo:
         mensagem_objeto = Mensagem( cliente, cliente.jid, self.jid, comando=comando_objeto, criptografia="&2&", callback=callback);
         self.message_list_send.append( mensagem_objeto );
     
-    def importar_cliente(self, file, chave):
-        fs = FsSeguro(chave);
-        js = fs.ler_json( file );
+    def importar_cliente(self, js):
         path_cliente = self.path_grupo + "/clientes/" + hashlib.md5( js["jid"].encode("utf-8") ).hexdigest()
         path_public_key = path_cliente + "/public_key.txt";
         path_private_key = path_cliente + "/private_key.txt";
@@ -52,6 +50,6 @@ class Grupo:
         
         with open(path_private_key, "wb") as f:
             f.write( base64.b64decode( js["private_key"] ) );
-        with open(path_public_key, "w") as f:
-            f.write( js["public_key"] );
+        with open(path_public_key,  "wb") as f:
+            f.write( base64.b64decode( js["public_key"] ) );
         return js;

@@ -43,24 +43,12 @@ class PainelConta(QtWidgets.QWidget):
     def layout_dados(self, layout):
         print();
     def layout_login(self, layout):
-        btn_gerar_imagem = QPushButton("Responder")
+        btn_gerar_imagem = QPushButton("Gerar arquivo chave (exportar)")
         btn_gerar_imagem.clicked.connect(self.btn_gerar_imagem_click); 
         layout.addWidget( btn_gerar_imagem );
     def btn_gerar_imagem_click(self):
         dialog = QFileDialog()
         folder_path = dialog.getExistingDirectory(None, "Select Folder")
-        self.xmpp_var.cliente.fs.escrever_json(folder_path + "/chave.txt", self.xmpp_var.cliente.toJson());
-        #dialog = QFileDialog(self)
-        #dialog.setDirectory('/')
-        #dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        #dialog.setNameFilter("Image (*.gif *.jpg *.png)")
-        #dialog.setViewMode(QFileDialog.ViewMode.List)
-        #if dialog.exec():
-        #    filenames = dialog.selectedFiles();
-        #    if filenames:
-        #        self.xmpp_var.cliente.fs.escrever_json("/tmp/chave.txt", self.xmpp_var.cliente.toJson());
-        #        #chacha = ChaChaHelper(self.xmpp_var.cliente.chave_local);
-        #        #print( "Cliente: ", json.dumps(self.xmpp_var.cliente.toJson()) );
-        #        #stg = SteganoHelper(chacha);
-        #        #stg.encode(filenames[0], "um texto idiota.");
-        #        #print("Foi obtido da imagem: ", stg.decode("/tmp/hacker_stegano_.png"));
+        path_arquivo = folder_path + "/chave.gif";
+        self.xmpp_var.cliente.fs.escrever_json(path_arquivo, self.xmpp_var.cliente.toJson());
+        QMessageBox.information(self, "Arquivo criado", "O arquivo foi salvo, o path é:\n" + path_arquivo, QMessageBox.StandardButton.Ok);

@@ -17,6 +17,7 @@ class Cliente:
         self.jid = jid;
         self.public_key = None;
         self.private_key = None;
+        self.password = None;
         self.chave_servidor = None;
         self.grupo = grupo;
         self.key_pair = None;
@@ -49,7 +50,9 @@ class Cliente:
     def toJson(self):
         with open( self.path_private_key , "rb") as f:
             encoded_private_key = base64.b64encode(f.read()).decode("utf-8");
-        buffer = {"jid" : self.jid, "public_key" : self.public_key, "chave_servidor" : self.chave_servidor, "private_key" : encoded_private_key, 
+        with open( self.path_public_key ,  "rb") as f:
+            encoded_public_key = base64.b64encode(f.read()).decode("utf-8");
+        buffer = {"jid" : self.jid, "public_key" : encoded_public_key, "password" : self.password, "private_key" : encoded_private_key, 
             "jid_grupo" : self.grupo.jid };
         return buffer;
     def posso_tag(self, sigla):

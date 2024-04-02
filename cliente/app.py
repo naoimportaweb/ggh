@@ -39,6 +39,15 @@ class MDIWindow(QMainWindow):
         newAct2 = QAction('Conectar em um grupo com chave', self);
         file.addAction(newAct2);
         newAct2.triggered.connect(self.action_connect_key);
+    
+    def callback_import_login(self, xmpp_var):
+        form = FormGrupo( self );
+        xmpp_var.dados = json.loads( open(ROOT + "/data/versao.json", "r").read() );
+        form.set_grupo( xmpp_var );
+        self.statusbar.adicionar( xmpp_var.grupo );
+        sub = self.mdiArea.addSubWindow( form );
+        form.showMaximized();
+        form.carregar_panel();
 
     def callback_login(self, xmpp_var):
         form = FormGrupo( self );
