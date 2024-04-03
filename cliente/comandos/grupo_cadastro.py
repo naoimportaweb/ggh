@@ -20,13 +20,9 @@ class GrupoCadastroComando:
     def lista_clientes(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
         return True;
-    #def iniciar(self, cliente, grupo, mensagem):
-    #    js = mensagem.toJson();
-    #    cliente.chave_publica_salvar( js["chave"] );
-    #    return { "chave" :  cliente.chave_servidor };
     def participar(self, cliente, grupo, mensagem):
         js = mensagem.toJson();
         cliente.chave_servidor = js["chave"];
-        return None;
+        return {"status" : True};
     def ping(self, cliente, grupo, mensagem):
         return {"status" : True};

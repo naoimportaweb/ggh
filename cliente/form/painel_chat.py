@@ -194,18 +194,25 @@ class PainelChat(QtWidgets.QWidget):
             self.btn_envio.setDisabled(True);
     
     def atualizar_tela(self):
-        return;
+        for nivel in self.xmpp_var.grupo.niveis:
+            item = QListWidgetItem( "Nível: " + nivel.nome)
+            if self.xmpp_var.cliente.nivel_posicao >= nivel.posicao:
+                if self.xmpp_var.cliente.nivel_posicao >= nivel.posicao:
+                    self.list_nivel.addItem(item)
+        #self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {} );
+        if self.list_nivel.currentRow() < 0:
+            self.list_nivel.setCurrentRow(0);
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        if conteudo_js["comando"] == "GrupoCadastroComando":
-            for nivel in self.xmpp_var.grupo.niveis:
-                item = QListWidgetItem( "Nível: " + nivel.nome)
-                if self.xmpp_var.cliente.nivel_posicao >= nivel.posicao:
-                    if self.xmpp_var.cliente.nivel_posicao >= nivel.posicao:
-                        self.list_nivel.addItem(item)
-            #self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {} );
-            if self.list_nivel.currentRow() < 0:
-                self.list_nivel.setCurrentRow(0);
+        #if conteudo_js["comando"] == "GrupoCadastroComando":
+        #    for nivel in self.xmpp_var.grupo.niveis:
+        #        item = QListWidgetItem( "Nível: " + nivel.nome)
+        #        if self.xmpp_var.cliente.nivel_posicao >= nivel.posicao:
+        #            if self.xmpp_var.cliente.nivel_posicao >= nivel.posicao:
+        #                self.list_nivel.addItem(item)
+        #    #self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {} );
+        #    if self.list_nivel.currentRow() < 0:
+        #        self.list_nivel.setCurrentRow(0);
         if conteudo_js["comando"] == "MensagemComando" and conteudo_js["funcao"] == "lista_clientes_niveis":
             #{'clientes': [{'id': '91d0cf8f3883a0dcb338d15a47b326c9', 'apelido': 'ok7HdegG', 'public_key': '-----BEGIN PUBLIC KEY-----END PUBLIC KEY-----', 'nivel': '4'}], 'comando': 'Mensagem', 'funcao': 'lista_clientes_niveis', 'modulo': 'comandos.mensagem'}
             for cliente in conteudo_js["clientes"]:

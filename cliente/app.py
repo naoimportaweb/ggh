@@ -41,23 +41,22 @@ class MDIWindow(QMainWindow):
         file.addAction(newAct2);
         newAct2.triggered.connect(self.action_connect_key);
     
-    def callback_import_login(self, xmpp_var):
+    def carregar(self, xmpp_var):
+        xmpp_var.iniciar();
+        while True:
+            if xmpp_var.dados_basicos_carregados == True:
+                break;
+            time.sleep(1);
         form = FormGrupo( self );
-        xmpp_var.dados = json.loads( open(ROOT + "/data/versao.json", "r").read() );
         form.set_grupo( xmpp_var );
         self.statusbar.adicionar( xmpp_var.grupo );
         sub = self.mdiArea.addSubWindow( form );
         form.showMaximized();
-        form.carregar_panel();
+        #form.carregar_panel();
 
     def callback_login(self, xmpp_var):
-        form = FormGrupo( self );
         xmpp_var.dados = json.loads( open(ROOT + "/data/versao.json", "r").read() );
-        form.set_grupo( xmpp_var );
-        self.statusbar.adicionar( xmpp_var.grupo );
-        sub = self.mdiArea.addSubWindow( form );
-        form.showMaximized();
-        form.carregar_panel();
+        self.carregar(xmpp_var);
 
     def action_connect(self, q):
         f = FormLogin( self );

@@ -46,21 +46,7 @@ class FormGrupo(QtWidgets.QWidget):
         self.b8 = QPushButton("Atividades")
         self.b8.clicked.connect( self.botao_atividade_click )
         self.layout1.addWidget(self.b8)
-
-        self.b9 = QPushButton("Correções")
-        self.b9.clicked.connect( self.botao_correcoes_click )
-        self.layout1.addWidget(self.b9)
-
-        self.b4.setEnabled(False);
-        self.b5.setEnabled(False);
-        self.b6.setEnabled(False);
-        self.b7.setEnabled(False);
-        self.b8.setEnabled(False);
-        self.b9.setEnabled(False);
-        self.b10.setEnabled(False);
-        self.b11.setEnabled(False);
         
-        self.layout1.addStretch();
         self.layout = QHBoxLayout();
         self.layout.addLayout( self.layout1 );
         self.setLayout( self.layout );
@@ -108,23 +94,20 @@ class FormGrupo(QtWidgets.QWidget):
         self.xmpp_var.adicionar_mensagem( "comandos.ambiente" ,"AmbienteComando", "dados", {});
         self.xmpp_var.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "regras.html"});
         self.xmpp_var.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "recomendacao.html"});
-        self.xmpp_var.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastroComando", "cadastro", {}, self.callback_cliente_cadastro);
-        self.xmpp_var.adicionar_mensagem( "comandos.grupo_cadastro" ,"GrupoCadastroComando", "cadastro", {});
 
-        self.b4.setEnabled(True);
-        self.b5.setEnabled(True);
-        self.b6.setEnabled(True);
-        self.b7.setEnabled(True);
-        self.b8.setEnabled(True);
-        self.b9.setEnabled(True);
-        self.b10.setEnabled(True);
-        self.b11.setEnabled(True);
+        if self.xmpp_var.cliente.posso_tag("atividade_corrigir"):
+            self.b9 = QPushButton("Correções")
+            self.b9.clicked.connect( self.botao_correcoes_click )
+            self.layout1.addWidget(self.b9)
+        self.layout1.addStretch();
+        self.carregar_panel();
 
     def carregar_panel( self ):
-        self.widgets = [PainelChat(self.xmpp_var), PainelRegras(self.xmpp_var), PainelRecomendacoes(self.xmpp_var), PainelConhecimento( self.xmpp_var ),
-                       PainelAtividade( self.xmpp_var ), PainelCorrigir(self.xmpp_var), PainelMural(self.xmpp_var), PainelConta(self.xmpp_var) ];
+        self.widgets = [PainelConta(self.xmpp_var), PainelChat(self.xmpp_var), PainelRegras(self.xmpp_var), PainelRecomendacoes(self.xmpp_var), PainelConhecimento( self.xmpp_var ),
+                       PainelAtividade( self.xmpp_var ), PainelCorrigir(self.xmpp_var), PainelMural(self.xmpp_var) ];
         self.widgets[0].ativo = True;
         self.layout.addWidget( self.widgets[0] );
+        self.widgets[0].atualizar_tela();
         self.widget_atual = self.widgets[0];
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
@@ -141,4 +124,4 @@ class FormGrupo(QtWidgets.QWidget):
         self.xmpp_var.disconnect();
 
     def callback_cliente_cadastro(self):
-        self.b9.setEnabled(True);
+        return;

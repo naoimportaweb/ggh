@@ -43,7 +43,7 @@ class Cliente:
         criar_diretorio_se_nao_existe(self.path_atividade);
         
         if not os.path.exists( self.path_private_key ):
-            print("\033[91mATENÇÃO:\033[0m\033[96mNão existe o caminho: "+ self.path_private_key +"\033[0m");
+            #p rint("\033[91mATENÇÃO:\033[0m\033[96mNão existe o caminho: "+ self.path_private_key +"\033[0m");
             self.criar_chaves();
         self.private_key = RSA.importKey( self.fs.ler_binario( self.path_private_key ) );
         self.public_key = self.fs.ler_binario(self.path_public_key).decode("utf-8");

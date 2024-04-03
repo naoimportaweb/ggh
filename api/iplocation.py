@@ -26,5 +26,5 @@ print(  requests.get('https://api.ipify.org').text  );
 
 
 #iplocation = IPLocation();
-#print( 'Detalhes de sua localização:\n ')
-#print( 'IP : {4} \nRegion : {1} \nCountry : {2} \nCity : {3} \nOrg : {0}'.format( iplocation.ip, iplocation.region, iplocation.country, iplocation.city, iplocation.org ))
+#p rint( 'Detalhes de sua localização:\n ')
+#p rint( 'IP : {4} \nRegion : {1} \nCountry : {2} \nCity : {3} \nOrg : {0}'.format( iplocation.ip, iplocation.region, iplocation.country, iplocation.city, iplocation.org ))

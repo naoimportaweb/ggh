@@ -27,25 +27,94 @@ class PainelConta(QtWidgets.QWidget):
         page_login = QWidget(tab);
         page_login_layout = QVBoxLayout();
         page_login.setLayout(page_login_layout);
-        tab.addTab(page_login,'Dados');
+        tab.addTab(page_login,'Autenticação');
         self.layout_login( page_login_layout );
+
+        page_tags = QWidget(tab);
+        page_tags_layout = QVBoxLayout();
+        page_tags.setLayout(page_tags_layout);
+        tab.addTab(page_tags,'TAGs');
+        self.layout_tag( page_tags_layout );
+
+        page_niveis = QWidget(tab);
+        page_niveis_layout = QVBoxLayout();
+        page_niveis.setLayout(page_niveis_layout);
+        tab.addTab(page_niveis,'Níveis');
+        self.layout_nivel( page_niveis_layout );
 
         self.setLayout(self.main_layout);
 
     def atualizar_tela(self):
         if self.layout_carregado:
             return;
+        if self.xmpp_var.cliente.tags == None:
+            return;
+        self.table.setRowCount(len(self.xmpp_var.cliente.tags));
+        for i in range(len(self.xmpp_var.cliente.tags)):
+            self.table.setItem( i, 0, QTableWidgetItem( self.xmpp_var.cliente.tags[i]["sigla"] ) );
+            self.table.setItem( i, 1, QTableWidgetItem( self.xmpp_var.cliente.tags[i]["nome"] ) );
+        
+        adicionado = 0;
+        for i in range(len(self.xmpp_var.grupo.niveis)):
+            if self.xmpp_var.grupo.niveis[i].posicao <= self.xmpp_var.cliente.nivel_posicao:
+                self.table1.setRowCount(adicionado + 1);
+                self.table1.setItem( adicionado, 0, QTableWidgetItem( self.xmpp_var.grupo.niveis[i].nome ) );
+                adicionado = adicionado + 1;
         self.layout_carregado = True;
 
+
     def evento_mensagem(self, de, texto, message, conteudo_js):
+        if conteudo_js["comando"] == "ClienteCadastroComando" and conteudo_js["funcao"] == "alterar_nome":
+            self.lb_apelido.setText( self.xmpp_var.cliente.apelido );
+    
+    def layout_tag(self, layout):
+        self.table = QTableWidget(self)
+        colunas = [{"sigla" : "", "Título" : ""}];
+        self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
+        self.table.resizeColumnsToContents();
+        self.table.setColumnCount(2);
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers);
+        self.table.setHorizontalHeaderLabels(colunas[0].keys());
+        header = self.table.horizontalHeader() 
+        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.Stretch);
+        layout.addWidget(self.table);
+
+    def layout_nivel(self, layout):
+        self.table1 = QTableWidget(self)
+        colunas = [{"Nome" : ""}];
+        self.table1.setSelectionBehavior(QAbstractItemView.SelectRows); 
+        self.table1.resizeColumnsToContents();
+        self.table1.setColumnCount(1);
+        self.table1.setEditTriggers(QAbstractItemView.NoEditTriggers);
+        self.table1.setHorizontalHeaderLabels(colunas[0].keys());
+        header = self.table1.horizontalHeader() 
+        header.setSectionResizeMode(0, QHeaderView.Stretch);
+        layout.addWidget(self.table1);
+    
+    def layout_dados(self, layout):
+        widget = QWidget(self);
+        widget_layout = QHBoxLayout();
+        widget.setLayout(widget_layout);
+        widget_layout.addWidget(QLabel("Apelido", self));
+        self.lb_apelido = QLabel("<b>" + self.xmpp_var.cliente.apelido + "</b>", self );
+        widget_layout.addWidget(self.lb_apelido);
+        btn_rename = QPushButton("Gerar novo apelido")
+        btn_rename.clicked.connect(self.widget_layout_click); 
+        widget_layout.addWidget( btn_rename );
+        widget_layout.addStretch();
+        layout.addWidget(widget);
+        layout.addStretch();
+
+    def widget_layout_click(self):
+        self.xmpp_var.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastroComando", "alterar_nome", {});
         return;
 
-    def layout_dados(self, layout):
-        return;
     def layout_login(self, layout):
         btn_gerar_imagem = QPushButton("Gerar arquivo chave (exportar)")
         btn_gerar_imagem.clicked.connect(self.btn_gerar_imagem_click); 
         layout.addWidget( btn_gerar_imagem );
+    
     def btn_gerar_imagem_click(self):
         dialog = QFileDialog()
         folder_path = dialog.getExistingDirectory(None, "Select Folder")

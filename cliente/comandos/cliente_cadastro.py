@@ -12,3 +12,7 @@ class ClienteCadastroComando:
         cliente.pontuacao =     js["pontuacao"];
         cliente.id_nivel =     js["id_nivel"];
         return { "apelido" : cliente.apelido };
+    def alterar_nome(self, cliente, grupo, mensagem):
+        js = mensagem.toJson();
+        cliente.apelido =       js["apelido"];
+        return {"status" : True};

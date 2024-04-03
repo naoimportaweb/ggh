@@ -97,7 +97,7 @@ class XMPPServer:
             message = Mensagem( cliente,  user, self.grupo.jid ); # cliente, jid_from, jid_to
             if message.fromString( text ):
                 js = message.toJson( );
-                print("Chegou: ", js["comando"], js["funcao"]);
+                #p rint("Chegou: ", js["comando"], js["funcao"]);
                 MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"])
                 instance = MyClass()
                 retorno_metodo = getattr(instance, js["funcao"])( cliente, self.grupo, message );

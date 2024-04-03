@@ -66,20 +66,25 @@ class FormImportar(QDialog):
                 return None;
     
     def btn_importar_chave(self):
-        chave = self.txt_chave.text();
-        fs = FsSeguro( chave );
-        path_file_key = self.arquivo(filtro="Key File (*.gif)");
-        js = fs.ler_json( path_file_key );
+        try:
+            chave = self.txt_chave.text();
+            fs = FsSeguro( chave );
+            path_file_key = self.arquivo(filtro="Key File (*.gif)");
+            js = fs.ler_json( path_file_key );
 
-        grupo = Grupo( js["jid_grupo"] );
-        grupo.importar_cliente( js ) ;
+            if js.get("jid") == None:
+                raise Exception("Não foi possível descriptografar o arquivo.")
+            grupo = Grupo( js["jid_grupo"] );
+            grupo.importar_cliente( js ) ;
 
-        xmpp_var = XMPPCliente( js["jid"], js["password"], js["jid_grupo"], chave );
-        if xmpp_var.proxy( self.protocolo_proxy.text() , self.servidor_proxy.text() , self.porta_proxy.text() ):
-            if xmpp_var.conectar():
-                self.form_main.callback_import_login( xmpp_var );
-                self.close();
+            xmpp_var = XMPPCliente( js["jid"], js["password"], js["jid_grupo"], chave );
+            if xmpp_var.proxy( self.protocolo_proxy.text() , self.servidor_proxy.text() , self.porta_proxy.text() ):
+                if xmpp_var.conectar():
+                    self.form_main.callback_login( xmpp_var );
+                    self.close();
+                else:
+                    QMessageBox.information(self, "Falha de autenticação", "Não foi possível autenticar no serviço XMPP do participante, confirme que seu usuário XMPP está correto e que a senha também esteja correta.", QMessageBox.StandardButton.Ok);
             else:
-                QMessageBox.information(self, "Falha de autenticação", "Não foi possível autenticar no serviço XMPP do participante, confirme que seu usuário XMPP está correto e que a senha também esteja correta.", QMessageBox.StandardButton.Ok);
-        else:
-            QMessageBox.information(self, "Proxy não existe", "O proxy não funcionou, veja o manual.", QMessageBox.StandardButton.Ok);
+                QMessageBox.information(self, "Proxy não existe", "O proxy não funcionou, veja o manual.", QMessageBox.StandardButton.Ok);
+        except:
+                 QMessageBox.information(self, "Falha", "Confirme se digitou a chave correta e se tem conectividade com a Internet.", QMessageBox.StandardButton.Ok);    

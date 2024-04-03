@@ -30,12 +30,10 @@ class PainelMural(QtWidgets.QWidget):
         header.setSectionResizeMode(0, QHeaderView.Stretch);
         self.table.setRowCount(0)
         form_layout.addWidget(self.table);
-        
-        if self.xmpp_var.cliente.posso_tag("mural_criar"):
+        if xmpp_var.cliente.posso_tag("mural_criar"):
             self.btn_novo = QPushButton("Novo item")
             self.btn_novo.clicked.connect(self.btn_novo_click); 
             form_layout.addWidget( self.btn_novo );
-
         self.setLayout(form_layout);
 
     def atualizar_tela(self):
@@ -60,6 +58,7 @@ class PainelMural(QtWidgets.QWidget):
         f = FormMuralAdicionar( self.xmpp_var );
         f.exec();
         self.xmpp_var.adicionar_mensagem( "comandos.mural" ,"MuralComando", "listar", {} );
+    
     def table_mural_double(self):
         row = self.table.currentRow();
         f = FormMuralVer(self.xmpp_var, self.mensagens[row]);

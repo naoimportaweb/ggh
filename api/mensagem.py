@@ -101,6 +101,7 @@ class Mensagem:
         return retornar;
 
     def enviar(self, connection):
+        #p rint("Enviado: ", self.comando.comando, self.comando.funcao);
         body = self.toString();
         if len(body) > self.MAX_SIZE_CHAT:
             partes = int(len(body)/self.MAX_SIZE_CHAT);
@@ -114,6 +115,7 @@ class Mensagem:
             msg_xmpp = xmpp.Message( to=self.jid_to, body= self.cabecalho( 0, 0 ) + body );
             msg_xmpp.setAttr('type', 'chat');
             connection.send( msg_xmpp );
+
 
     def toString(self, comando=None ):
         retornar = "";

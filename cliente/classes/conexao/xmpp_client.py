@@ -32,6 +32,7 @@ class XMPPCliente:
         self.stop_recebedor = True;
         self.finalizado = False;
         self.pausa_enviador = False;
+        self.dados_basicos_carregados = False;
         
         # TODA VEZ QUE SE GERA O OBJETO CRIA UM PAR DE CHAVE DIFERENTE;
         #           https://cryptobook.nakov.com/asymmetric-key-ciphers/rsa-encrypt-decrypt-examples
@@ -64,14 +65,17 @@ class XMPPCliente:
             self.thread_recebedor.start();
             self.thread_enviador = threading.Thread(target = self.enviador, args=());
             self.thread_enviador.start();
-            # abaixo tem um parametro chamado HOST que não serve para coisa alguma no código, serve só para pessoas curiosas se ferrarem tentando identificar o que é
+            # iniciar a chave.
             comando = Comando("comandos.grupo_cadastro"  ,"GrupoCadastroComando", "participar", {"chave" : self.cliente.chave_publica(), "host" : str( uuid.uuid5(uuid.NAMESPACE_URL, str(time.time()) ) )  });
             mensagem = Mensagem( self.cliente, self.cliente.jid, self.grupo.jid, comando=comando, criptografia="&0&");
-            # -------1-------------------------------- GERAR NOVA CHAVE PÚBLICA E ENVIAR AQUI------------------------->
             mensagem.enviar( self.connection );
-            # <------2-------------------------------- RECEBER CHAVE SIMÉTRICA E GUARDAR, guardar em self.chave_servidor------------------------------
             return True;
         return False;
+    
+    def callback_interno(self, de, texto, message, conteudo_js):
+        
+        if conteudo_js["comando"] == "ClienteCadastroComando" and conteudo_js["funcao"] == "cadastro":
+            self.dados_basicos_carregados = True;
     
     def set_callback(self, callback):
         self.callback = callback;
@@ -82,11 +86,9 @@ class XMPPCliente:
         self.pausa_enviador = False;
 
     # quando loga, tem que atualizar algumas coisas
-    #def atualizar_entrada(self):
-    #    self.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "regras.html"});
-    #    self.adicionar_mensagem( "comandos.html" ,"HtmlComando", "get", {"path" : "recomendacao.html"});
-    #    self.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastroComando", "cadastro", {});
-    #    self.adicionar_mensagem( "comandos.grupo_cadastro" ,"GrupoCadastroComando", "cadastro", {});
+    def iniciar(self):   
+        self.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastroComando", "cadastro", {});
+        self.adicionar_mensagem( "comandos.grupo_cadastro" ,"GrupoCadastroComando", "cadastro", {});
     
     def escutar(self):
         while True:
@@ -125,21 +127,26 @@ class XMPPCliente:
     
     def processar_mensagem(self, conn, mess):
         try:
-            if self.callback == None:
-                return;
+            #if self.callback == None:
+            #    print("callback null");
+            #    return;
             text = mess.getBody();
             if text == None:
+                print("Text null");
                 return;
             user=mess.getFrom();
             message = Mensagem( self.cliente, mess['to'], self.grupo.jid );
             if message.fromString( text ):
                 js = message.toJson( );
-                #p rint("\033[91mChegou reposta:", js["modulo"],  js["comando"], js["funcao"], "\033[0m");
+                print("\033[91mChegou reposta:", js["modulo"],  js["comando"], js["funcao"], "\033[0m");
                 MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"]);
                 instance = MyClass();
                 retorno = getattr(instance, js["funcao"])( self.cliente, self.grupo, message );
-                if retorno != None and self.callback != None:
-                    self.callback( user, retorno, message, js );
+                
+                if retorno != None:
+                    self.callback_interno(user, retorno, message, js);
+                    if self.callback != None:
+                        self.callback( user, retorno, message, js );
                 
                 index_aguardando_resposta = -1;
                 for i in range(len(self.grupo.aguardando_resposta)):
