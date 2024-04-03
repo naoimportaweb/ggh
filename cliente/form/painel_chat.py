@@ -194,6 +194,7 @@ class PainelChat(QtWidgets.QWidget):
             self.btn_envio.setDisabled(True);
     
     def atualizar_tela(self):
+        self.list_nivel.clear()
         for nivel in self.xmpp_var.grupo.niveis:
             item = QListWidgetItem( "Nível: " + nivel.nome)
             if self.xmpp_var.cliente.nivel_posicao >= nivel.posicao:

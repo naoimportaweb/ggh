@@ -13,4 +13,5 @@ class ClienteCadastroComando:
         sql = "update cliente set apelido = %s where id=%s";
         apelido = my.chave_string("cliente", "apelido", 8 );
         my.execute(sql, [apelido, cliente.id]);
+        cliente.apelido = apelido;
         return {"status" : True, "apelido" : apelido};
