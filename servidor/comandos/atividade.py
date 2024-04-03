@@ -8,8 +8,8 @@ class AtividadeComando:
     def listar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql = "select atv.* from atividade as atv where atv.id_nivel in ( select id from nivel where id_grupo=%s and  ) and ( atv.id_status = 2 or atv.id_cliente = %s );";
-        atividades = my.datatable(sql, [ cliente.id, cliente.id ] );
+        sql = "select atv.* from atividade as atv inner join nivel as ni on atv.id_nivel = ni.id where ( atv.id_cliente = %s ) or ( ni.posicao <= ( select posicao from nivel where id_grupo=%s and id=%s  and atv.id_status = 2 ))";
+        atividades = my.datatable(sql, [ cliente.id , grupo.id, cliente.id_nivel ] );
         for i in range(len(atividades)):
             sql = "select * from atividade_cliente where id_atividade = %s and id_cliente=%s";
             atividades[i]["respostas"] = my.datatable(sql, [ atividades[i]["id"], cliente.id ] );

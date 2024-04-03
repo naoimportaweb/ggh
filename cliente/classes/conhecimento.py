@@ -1,7 +1,7 @@
 import json, re, base64, requests;
 
 from api.fsseguro import FsSeguro;
-
+from classes.dado import Dado;
 def hexuuid():
     return uuid.uuid4().hex
 def splitext(p):
@@ -10,7 +10,7 @@ def striphtml(data):
     p = re.compile(r'<.*?>')
     return p.sub('', data)
 
-class Conhecimento:
+class Conhecimento(Dado):
     def __init__(self):
         self.id = None;
         self.id_cliente = None;
@@ -35,11 +35,9 @@ class Conhecimento:
         self.tags = js["tags"];
         self.descricao = js["descricao"];
         self.texto = js["texto"];
-        self.id_status = js["id_status"];
-        if js.get("nome_status") != None:
-            self.nome_status = js["nome_status"];
-        if js.get("comentario") != None:
-            self.comentario = js["comentario"];
+        self.id_status = self.campo(js, "id_status");
+        self.nome_status = self.campo(js, "nome_status");
+        self.comentario = self.campo(js, "comentario");
     
     def toJson(self):
         return {"id" : self.id, "id_cliente" : self.id_cliente, "id_revisor" : self.id_revisor, "id_nivel" : self.id_nivel, "id_grupo" : self.id_grupo, "titulo" : self.titulo, "tags" : self.tags, "descricao" : self.descricao, "texto" : self.texto, "id_status" : self.id_status, "comentario" : self.comentario};

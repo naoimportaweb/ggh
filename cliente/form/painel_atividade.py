@@ -72,10 +72,11 @@ class PainelAtividade(QtWidgets.QWidget):
         f = FormEditarAtividade( self.xmpp_var.cliente, self.xmpp_var, self.lista_atividade[ row ] );
         f.exec();
         self.ativo = True;
-        self.atualizar_atividade();
+        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
     
     def atualizar_atividade( self ):
         if self.ativo == False:
+            print("Atividade inativa.");
             return;
         if self.cmb_nivel.currentIndex() >= 0 and self.ativo:
             lista_buffer = os.listdir(  self.xmpp_var.cliente.path_atividade  );
@@ -90,8 +91,8 @@ class PainelAtividade(QtWidgets.QWidget):
                 self.table.setItem( i, 1, QTableWidgetItem( self.lista_atividade[i].getStatus() ) );
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        if conteudo_js["comando"] == "AtividadeComando" and (conteudo_js["funcao"] == "salvar" or conteudo_js["funcao"] == "criar" ):
-            self.lista_atividade = [];
+        if conteudo_js["comando"] == "AtividadeComando" and (conteudo_js["funcao"] == "salvar" or conteudo_js["funcao"] == "criar" or conteudo_js["funcao"] == "atividade_aprovar_reprovar" ):
+            #self.lista_atividade = [];
             self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
         elif conteudo_js["comando"] == "AtividadeComando" and conteudo_js["funcao"] == "listar" :
             self.atualizar_atividade();
