@@ -7,7 +7,6 @@ from PySide6.QtCore import Qt, QObject
 from PySide6.QtCore import  QFileSystemWatcher, QSettings, Signal, Slot, QThread;
 from api.fsseguro import FsSeguro
 
-
 class PainelRegras(QtWidgets.QWidget):
     def __init__( self, xmpp_var ):
         super().__init__();
@@ -59,6 +58,5 @@ class PainelRegras(QtWidgets.QWidget):
         self.setLayout(form_layout);
         self.layout_carregado = True;
 
-        
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        print();
+        return;

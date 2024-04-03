@@ -24,6 +24,7 @@ class Cliente:
         self.chave_local = chave_local;
         self.nivel_posicao = 0;
         self.apelido = "";
+        self.id_nivel = None;
         self.tags = None;
         self.pontuacao_data_processamento = None;
         self.fs = FsSeguro( chave_local );
@@ -59,7 +60,7 @@ class Cliente:
         if self.tags == None:
             return False;
         for tag in self.tags:
-            print(tag);
+            
             if tag["sigla"] == sigla:
                 return True;
         return False;

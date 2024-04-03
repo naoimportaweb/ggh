@@ -141,5 +141,4 @@ class FormGrupo(QtWidgets.QWidget):
         self.xmpp_var.disconnect();
 
     def callback_cliente_cadastro(self):
-        print("é true");
         self.b9.setEnabled(True);

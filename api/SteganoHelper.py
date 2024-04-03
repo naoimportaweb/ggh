@@ -86,9 +86,4 @@ class SteganoHelper():
                 if self.crypt != None:
                     data = self.crypt.decrypt(data);  
                 return data;
-#if __name__ == '__main__' :
-#    key = "12345678901234567890123456789012".encode();
-#    sa = SalsaHelper(key=key);
-#    stg = SteganoHelper(sa);
-#    stg.encode("/tmp/hacker.png", "Aied é 10, Aied é Pop, Aied tá no Youtube");
-#    print("Foi obtido da imagem: ", stg.decode("/tmp/hacker_stegano_.png"));
+

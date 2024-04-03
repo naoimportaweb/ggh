@@ -61,4 +61,4 @@ class PainelRecomendacoes(QtWidgets.QWidget):
 
         
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        print();
+        return;

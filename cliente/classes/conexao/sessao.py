@@ -7,4 +7,4 @@ class Sessao():
     	self.chave_comunicacao = "";
 
     def iniciar():
-    	print("se conectar... e pegar uma chave de comunicacao");
+    	return;

@@ -16,19 +16,21 @@ class MensagemComando:
         my = MysqlHelp();
         js = mensagem.toJson();
         #https://stackoverflow.com/questions/60884078/use-a-list-in-prepared-statement
-        sql_clientes = "select distinct cl.id as id, cl.apelido as apelido, cl.public_key as public_key from cliente as cl where cl.id_nivel = %s ";
-        lista_clientes = my.datatable(sql_clientes, [ js["nivel"] ]);
+        sql = "select * from nivel where id= %s";
+        nivel = my.datatable( sql, [js["nivel"]])[0];
+        sql = "select distinct cl.id as id, cl.apelido as apelido, cl.public_key as public_key, cl.id_nivel as id_nivel from cliente as cl where cl.id_nivel in (select id from nivel where posicao >= %s) ";
+        lista_clientes = my.datatable(sql, [ nivel["posicao"] ]);
         return {"clientes" : lista_clientes };
 
     def enviar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql_cliente = "select cl.id, ni.posicao from cliente as cl inner join nivel as ni on ni.id = cli.id_nivel where cl.apelido = %s";
+        sql_cliente = "select cl.id, ni.posicao from cliente as cl inner join nivel as ni on ni.id = cl.id_nivel where cl.apelido = %s";
         
         sql_niveis = "select * from nivel as ni where ni.posicao <= (select posicao from nivel where id = %s )";
         #TODO: REVER LINHA ABAIXO, VEJA QUE CARREGA O CLIENTE QUE SOU EU.....
-        #cliente_remetente =    my.datatable( sql_cliente, [ js["apelido_remetente"] ] )[0];
-        cliente_remetente =    my.datatable( sql_cliente, [ cliente.id ] )[0];
+        cliente_remetente =    my.datatable( sql_cliente, [ js["apelido_remetente"] ] )[0];
+        #cliente_remetente =    my.datatable( sql_cliente, [ cliente.id ] )[0];
         cliente_destinatario = my.datatable( sql_cliente, [ js["apelido_destinatario"] ] )[0];
         niveis = my.datatable( sql_niveis, [ js["nivel"] ] );
         id_mensagem = my.chave_string("mensagem", "id", 20 );
@@ -51,8 +53,8 @@ class MensagemComando:
     def listar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql = "select mess.id as id, mess.ordem as ordem, mess.id_remetente as id_remetente, mess.id_destinatario as id_destinatario, mess.mensagem_criptografada as mensagem_criptografada, mess.chave_simetrica_criptografada as chave_simetrica_criptografada,  TO_CHAR(mess.data_hora_envio, 'YY-MM-DD HH24:MI:SS') as  data_hora_envio, messn.id_nivel as id_nivel, rem.apelido as apelido_remetente, des.apelido as apelido_destinatario from mensagem as mess inner join mensagem_nivel as messn on mess.id = messn.id_mensagem inner join cliente as rem on mess.id_remetente = rem.id inner join cliente as des on des.id = mess.id_destinatario where mess.id_destinatario = %s and messn.id_nivel = %s"
-        buffers = my.datatable(sql, [ cliente.id, js["id_nivel"] ] );
+        sql = "select mess.id as id, mess.ordem as ordem, mess.id_remetente as id_remetente, mess.id_destinatario as id_destinatario, mess.mensagem_criptografada as mensagem_criptografada, mess.chave_simetrica_criptografada as chave_simetrica_criptografada,  TO_CHAR(mess.data_hora_envio, 'YY-MM-DD HH24:MI:SS') as  data_hora_envio, messn.id_nivel as id_nivel, rem.apelido as apelido_remetente, des.apelido as apelido_destinatario from mensagem as mess inner join mensagem_nivel as messn on mess.id = messn.id_mensagem inner join cliente as rem on mess.id_remetente = rem.id inner join cliente as des on des.id = mess.id_destinatario where mess.id_destinatario = %s "
+        buffers = my.datatable(sql, [ cliente.id ] );
         return { "retorno" : buffers  };
 
     def delete(self, cliente, grupo, mensagem):

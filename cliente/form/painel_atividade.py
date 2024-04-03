@@ -47,14 +47,8 @@ class PainelAtividade(QtWidgets.QWidget):
         
         widget_acesso = QWidget();
         form_acesso = QHBoxLayout( widget_acesso );
-        
-        #self.b6 = QPushButton("Acessar atividade")
-        #self.b6.setGeometry(10,0,32,32)
-        #self.b6.clicked.connect( self.botao_acessar_atividade_click )
-        #form_acesso.addWidget( self.b6 );
         form_acesso.addStretch();
 
-        #if self.xmpp_var.cliente.posso_tag("atividade_criar"):
         self.b4 = QPushButton("Nova atividade")
         self.b4.setGeometry(10,0,32,32)
         self.b4.clicked.connect( self.botao_novo_atividade_click )
@@ -63,8 +57,6 @@ class PainelAtividade(QtWidgets.QWidget):
 
         form_layout.addWidget(widget_acesso);
         self.setLayout(form_layout);
-        #self.thread_enviador = threading.Thread(target = self.atualizar_atividade, args=());
-        #self.thread_enviador.start();
 
     def table_atividade_double(self):
         row = self.table.currentRow();
@@ -73,22 +65,19 @@ class PainelAtividade(QtWidgets.QWidget):
         f.exec();
         self.ativo = True;
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
-    
+
     def atualizar_atividade( self ):
-        if self.ativo == False:
-            print("Atividade inativa.");
-            return;
-        if self.cmb_nivel.currentIndex() >= 0 and self.ativo:
-            lista_buffer = os.listdir(  self.xmpp_var.cliente.path_atividade  );
-            self.lista_atividade = [];
-            for buffer_nome_atividade in lista_buffer:
-                buffer_Atividade = Atividade( );
-                buffer_Atividade.carregar( self.xmpp_var.cliente.chave_local, self.xmpp_var.cliente.path_atividade + "/" + buffer_nome_atividade );
+        lista_buffer = os.listdir(  self.xmpp_var.cliente.path_atividade  );
+        self.lista_atividade = [];
+        for buffer_nome_atividade in lista_buffer:
+            buffer_Atividade = Atividade( );
+            buffer_Atividade.carregar( self.xmpp_var.cliente.chave_local, self.xmpp_var.cliente.path_atividade + "/" + buffer_nome_atividade );
+            if buffer_Atividade.id_nivel == self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id:
                 self.lista_atividade.append( buffer_Atividade );
-            self.table.setRowCount( len(  self.lista_atividade  ) );
-            for i in range(len(self.lista_atividade)):
-                self.table.setItem( i, 0, QTableWidgetItem( self.lista_atividade[i].titulo      ) );
-                self.table.setItem( i, 1, QTableWidgetItem( self.lista_atividade[i].getStatus() ) );
+        self.table.setRowCount( len(  self.lista_atividade  ) );
+        for i in range(len(self.lista_atividade)):
+            self.table.setItem( i, 0, QTableWidgetItem( self.lista_atividade[i].titulo      ) );
+            self.table.setItem( i, 1, QTableWidgetItem( self.lista_atividade[i].getStatus() ) );
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "AtividadeComando" and (conteudo_js["funcao"] == "salvar" or conteudo_js["funcao"] == "criar" or conteudo_js["funcao"] == "atividade_aprovar_reprovar" ):

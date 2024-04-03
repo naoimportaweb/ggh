@@ -19,7 +19,6 @@ def copiar_recursivo(path):
         if os.path.isdir( buffer_path ):
         	copiar_recursivo( buffer_path );
         else:
-        	print("copiar: ", buffer_path[ len(path_projeto): ] );
         	os.makedirs(os.path.dirname(path_deploy + buffer_path[ len(path_projeto): ]), exist_ok=True)
         	shutil.copyfile( buffer_path, path_deploy + buffer_path[ len(path_projeto): ]  );
 

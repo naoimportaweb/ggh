@@ -38,10 +38,10 @@ class PainelConta(QtWidgets.QWidget):
         self.layout_carregado = True;
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        print();
+        return;
 
     def layout_dados(self, layout):
-        print();
+        return;
     def layout_login(self, layout):
         btn_gerar_imagem = QPushButton("Gerar arquivo chave (exportar)")
         btn_gerar_imagem.clicked.connect(self.btn_gerar_imagem_click); 

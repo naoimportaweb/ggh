@@ -40,7 +40,7 @@ class XMPPServer:
         #self.connection.connect( server=("133.125.37.233", 5222 ), proxy={'host':'127.0.0.1', 'port': 9051}, secure=1  );
         self.connection.connect( );
         if self.connection.auth(user=jid.getNode(), password=self.password, resource=jid.getResource()) != None:
-            print("Conectado.");
+            print("Conectado :)");
             self.connection.sendInitPresence();
             self.connection.RegisterHandler('message', self.processar_mensagem);
             time.sleep(5);
@@ -97,6 +97,7 @@ class XMPPServer:
             message = Mensagem( cliente,  user, self.grupo.jid ); # cliente, jid_from, jid_to
             if message.fromString( text ):
                 js = message.toJson( );
+                print("Chegou: ", js["comando"], js["funcao"]);
                 MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"])
                 instance = MyClass()
                 retorno_metodo = getattr(instance, js["funcao"])( cliente, self.grupo, message );

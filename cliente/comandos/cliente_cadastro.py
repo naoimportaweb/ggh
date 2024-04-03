@@ -10,4 +10,5 @@ class ClienteCadastroComando:
         cliente.tags =          js["tags"];
         cliente.pontuacao_data_processamento = js["pontuacao_data_processamento"];
         cliente.pontuacao =     js["pontuacao"];
+        cliente.id_nivel =     js["id_nivel"];
         return { "apelido" : cliente.apelido };

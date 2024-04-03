@@ -171,7 +171,7 @@ class FormEditarAtividade(QDialog):
         f.exec();
 
     def btn_click_adicionar_resposta_callback(self, message):
-        print("tem que dizer que tem que atualizar listagem.");
+        return;
     
     def btn_click_salvar(self):
         self.atividade.atividade =                 self.textEditAtividade.toPlainText();

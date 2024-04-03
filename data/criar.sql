@@ -71,11 +71,13 @@ ALTER TABLE mural ADD FOREIGN KEY (id_destinatario) REFERENCES cliente(id);
 
 # EXEMPLO DE GRUPO
 
+delete from atividade_cliente;
+delete from mural;
 delete from grupo_cliente;
 delete from mensagem;
 delete from mensagem_nivel;
-delete from nivel;
 delete from tag;
+delete from atividade;
 delete from html;
 delete from tag_cliente;  
 delete from conhecimento_tag;
@@ -83,6 +85,7 @@ delete from conhecimento;
 delete from conhecimento_status;
 delete from cliente;
 delete from grupo;
+delete from nivel;
 
 # Carga de dados iniciais par um projeto exemplo
 insert into grupo(id, jid, nome, descricao) values("a639ffc7a87856c52ea8b6a75dff4ff7", "database.xmpp@xmpp.jp", "DEV Cypherpunk", "");
@@ -98,10 +101,11 @@ insert into conhecimento_status(id, nome) values(3, "Reprovado");
 
 insert into html(id, nome, html, id_grupo) values ('regras.html'      ,'Regras','<html><body>Regras</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
 insert into html(id, nome, html, id_grupo) values ('recomendacao.html','Recomendação','<html><body>Recomendação</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
-insert into tag(id, nome, sigla, id_grupo) values ('gd583d0879894266bb8916f9abce53bc', 'Aprovador Conhecimento', 'atividade_criar', 'a639ffc7a87856c52ea8b6a75dff4ff7');
-insert into tag(id, nome, sigla, id_grupo) values ('fd583d0879894266bb8916f9abce53bc', 'Criar atividade', 'aprovador_conhecimento', 'a639ffc7a87856c52ea8b6a75dff4ff7');
-insert into tag(id, nome, sigla, id_grupo) values ('kd583d0879894266bb8916f9abce53bc', 'Criar Mural', 'mural_criar', 'a639ffc7a87856c52ea8b6a75dff4ff7');
 
-insert into tag_cliente(id_tag, id_cliente) values ('gd583d0879894266bb8916f9abce53bc',   '91d0cf8f3883a0dcb338d15a47b326c9');
+insert into tag(id, nome, sigla, id_grupo) values ('gd583d0879894266bb8916f9abce53bc', 'Criar atividade',            'atividade_criar',        'a639ffc7a87856c52ea8b6a75dff4ff7');
+insert into tag(id, nome, sigla, id_grupo) values ('fd583d0879894266bb8916f9abce53bc', 'Aprovador Conhecimento',     'aprovador_conhecimento', 'a639ffc7a87856c52ea8b6a75dff4ff7');
+insert into tag(id, nome, sigla, id_grupo) values ('kd583d0879894266bb8916f9abce53bc', 'Criar Mural',                'mural_criar',            'a639ffc7a87856c52ea8b6a75dff4ff7');
+
+insert into tag_cliente(id_tag, id_cliente) values ('gd583d0879894266bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');
 insert into tag_cliente(id_tag, id_cliente) values ('fd583d0879894266bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');
 insert into tag_cliente(id_tag, id_cliente) values ('kd583d0879894266bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');

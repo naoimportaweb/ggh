@@ -90,7 +90,7 @@ class Cliente:
         return False;       
     
     def chave_publica_salvar(self, chave):
-        print("Função chave_publica_salvar depreciada.");
+        
         self.public_key = chave;
         my = MysqlHelp();
         my.execute("UPDATE cliente SET public_key= %s where id = %s ", [ self.public_key, self.id ]);

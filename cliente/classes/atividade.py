@@ -72,7 +72,6 @@ class Atividade:
 
     def salvar(self, chave, path):
         fs = FsSeguro(chave);
-        print("Salvar: ", path + "/" + self.id);
         fs.escrever_json( path + "/" + self.id, self.toJson() );
 
     def carregar(self, chave, path):

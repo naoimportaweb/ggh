@@ -72,6 +72,7 @@ class PainelChat(QtWidgets.QWidget):
         self.xmpp_var = xmpp_var;
         self.ativo = False;
         self.mensagens_adicionadas_chat = [];
+        #self.mensagens_remover = [];
         self.fs = FsSeguro( self.xmpp_var.cliente.chave_local );
         self.form_layout = QHBoxLayout( self );
         self.list_nivel = QListWidget()
@@ -172,7 +173,7 @@ class PainelChat(QtWidgets.QWidget):
                     return;
                 index = self.list_nivel.currentRow();
                 if index != -1 and self.ativo:
-                    self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {"id_nivel" : self.xmpp_var.grupo.niveis[index].id } );
+                    self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", { } );
             except KeyboardInterrupt:
                 sys.exit(0);
             except:
@@ -193,16 +194,16 @@ class PainelChat(QtWidgets.QWidget):
             self.btn_envio.setDisabled(True);
     
     def atualizar_tela(self):
-        print();  
+        return;
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "GrupoCadastroComando":
             for nivel in self.xmpp_var.grupo.niveis:
                 item = QListWidgetItem( "Nível: " + nivel.nome)
                 if self.xmpp_var.cliente.nivel_posicao >= nivel.posicao:
-                    if self.xmpp_var.cliente.nivel_posicao == nivel.posicao:
+                    if self.xmpp_var.cliente.nivel_posicao >= nivel.posicao:
                         self.list_nivel.addItem(item)
-                self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {"id_nivel" : nivel.id} );
+            #self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {} );
             if self.list_nivel.currentRow() < 0:
                 self.list_nivel.setCurrentRow(0);
         if conteudo_js["comando"] == "MensagemComando" and conteudo_js["funcao"] == "lista_clientes_niveis":
@@ -215,12 +216,12 @@ class PainelChat(QtWidgets.QWidget):
                     chacha = ChaChaHelper( chave_simetrica );
                     mensagem_criptografada = base64.b64encode( chacha.encrypt( self.txt_mensagem.toPlainText().strip() ) );
                     envelope = {"apelido_remetente" : self.xmpp_var.cliente.apelido, "apelido_destinatario" : cliente["apelido"],
-                            "nivel" : cliente["nivel"], "mensagem_criptografada" : mensagem_criptografada.decode(),
+                            "nivel" : cliente["id_nivel"], "mensagem_criptografada" : mensagem_criptografada.decode(),
                             "chave_simetrica_criptografada" : chave_simetrica_criptografada };
                     self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "enviar", envelope );
                 except:
                     traceback.print_exc();
-            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {"id_nivel" : self.xmpp_var.grupo.niveis[self.list_nivel.currentRow()].id } );
+            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {} );
             self.txt_mensagem.setPlainText("");
             self.txt_mensagem.setDisabled(False);
             self.btn_envio.setDisabled(False);
