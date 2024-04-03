@@ -23,11 +23,11 @@ class PainelConhecimento(QtWidgets.QWidget):
         form_pesquisa = QHBoxLayout( widget_pesquisa );
         form_pesquisa.addWidget( QLabel("Nível", self) );
         form_pesquisa.addWidget( self.cmb_nivel );
-        form_pesquisa.addStretch();
         self.b5 = QPushButton("Atualizar lista")
         self.b5.setGeometry(10,0,32,32)
         self.b5.clicked.connect( self.botao_listar_conhecimento_click )
         form_pesquisa.addWidget( self.b5 );
+        form_pesquisa.addStretch();
         form_layout.addWidget(widget_pesquisa);
 
         #https://www.pythontutorial.net/pyqt/pyqt-qtablewidget/
