@@ -15,3 +15,6 @@ class ClienteCadastroComando:
         my.execute(sql, [apelido, cliente.id]);
         cliente.apelido = apelido;
         return {"status" : True, "apelido" : apelido};
+    def atualizar_tags(self, cliente, grupo, mensagem):
+        cliente.carregar_tag();
+        return {"status" : True, "tags" : cliente.tags};

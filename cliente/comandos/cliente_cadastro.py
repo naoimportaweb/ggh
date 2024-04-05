@@ -16,3 +16,7 @@ class ClienteCadastroComando:
         js = mensagem.toJson();
         cliente.apelido =       js["apelido"];
         return {"status" : True};
+    def atualizar_tags(self, cliente, grupo, mensagem):
+        js = mensagem.toJson();
+        cliente.tags =          js["tags"];
+        return cliente.tags;

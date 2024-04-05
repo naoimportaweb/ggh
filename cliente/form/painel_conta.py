@@ -44,30 +44,46 @@ class PainelConta(QtWidgets.QWidget):
 
         self.setLayout(self.main_layout);
 
-    def atualizar_tela(self):
-        if self.layout_carregado:
-            return;
-        if self.xmpp_var.cliente.tags == None:
-            return;
+    def recarregar_tags(self):
         self.table.setRowCount(len(self.xmpp_var.cliente.tags));
         for i in range(len(self.xmpp_var.cliente.tags)):
             self.table.setItem( i, 0, QTableWidgetItem( self.xmpp_var.cliente.tags[i]["sigla"] ) );
             self.table.setItem( i, 1, QTableWidgetItem( self.xmpp_var.cliente.tags[i]["nome"] ) );
-        
+    
+    def recarregar_niveis(self):
         adicionado = 0;
         for i in range(len(self.xmpp_var.grupo.niveis)):
             if self.xmpp_var.grupo.niveis[i].posicao <= self.xmpp_var.cliente.nivel_posicao:
                 self.table1.setRowCount(adicionado + 1);
                 self.table1.setItem( adicionado, 0, QTableWidgetItem( self.xmpp_var.grupo.niveis[i].nome ) );
                 adicionado = adicionado + 1;
+
+    def atualizar_tela(self):
+        if self.layout_carregado:
+            return;
+        if self.xmpp_var.cliente.tags == None:
+            return;
+        self.recarregar_niveis();
+        self.recarregar_tags();
         self.layout_carregado = True;
 
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "ClienteCadastroComando" and conteudo_js["funcao"] == "alterar_nome":
             self.lb_apelido.setText( self.xmpp_var.cliente.apelido );
+        elif conteudo_js["comando"] == "ClienteCadastroComando" and conteudo_js["funcao"] == "atualizar_tags":
+            self.recarregar_tags();
     
     def layout_tag(self, layout):
+        widget = QWidget(self);
+        widget_layout = QHBoxLayout();
+        widget.setLayout(widget_layout);
+        widget_layout.addStretch();
+        btn_atualizar_tag = QPushButton("Atualizar as TAGs")
+        btn_atualizar_tag.clicked.connect(self.btn_atualizar_tag_click); 
+        widget_layout.addWidget( btn_atualizar_tag );
+        layout.addWidget(widget);
+
         self.table = QTableWidget(self)
         colunas = [{"sigla" : "", "Título" : ""}];
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
@@ -115,6 +131,9 @@ class PainelConta(QtWidgets.QWidget):
         btn_gerar_imagem.clicked.connect(self.btn_gerar_imagem_click); 
         layout.addWidget( btn_gerar_imagem );
     
+    def btn_atualizar_tag_click(self):
+        self.xmpp_var.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastroComando", "atualizar_tags", {});
+
     def btn_gerar_imagem_click(self):
         dialog = QFileDialog()
         folder_path = dialog.getExistingDirectory(None, "Select Folder")

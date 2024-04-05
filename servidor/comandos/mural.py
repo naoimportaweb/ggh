@@ -8,8 +8,8 @@ class MuralComando:
     def listar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql = "select * from mural where id_nivel = %s or id_destinatario=%s ";
-        lista = my.datatable(sql, [ cliente.id_nivel, cliente.id ]);
+        sql = "select * from mural where id_nivel in (select id from nivel where posicao <= %s) or id_destinatario=%s ";
+        lista = my.datatable(sql, [ cliente.nivel_posicao, cliente.id ]);
         return {"lista" : lista };
     def criar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
