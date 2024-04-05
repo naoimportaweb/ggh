@@ -70,6 +70,7 @@ class XMPPServer:
             except:
                 print(".", end="");
                 traceback.print_exc();
+                time.sleep( 5 );
             if len(self.grupo.lista_envio) == 0 or self.pausa_enviador:
                 time.sleep( 5 );
     
@@ -83,6 +84,7 @@ class XMPPServer:
                 sys.exit(1);
             except:
                 print(".", end="");
+                time.sleep( 5 );
             
 
     def processar_mensagem(self, conn, mess):

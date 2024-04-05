@@ -101,6 +101,7 @@ class XMPPCliente:
                 return;
             except:
                 print(".", end="");
+                time.sleep(5);
     
     def enviador(self):
         while True:
@@ -121,7 +122,7 @@ class XMPPCliente:
                 sys.exit(1);
             except:
                 print(".", end="");
-                traceback.print_exc();
+                time.sleep(3);
             if len(self.grupo.message_list_send) == 0 or self.cliente.chave_servidor == None or self.pausa_enviador == True:
                 time.sleep( 5 );   
     

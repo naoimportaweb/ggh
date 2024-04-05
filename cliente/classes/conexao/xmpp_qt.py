@@ -61,7 +61,7 @@ class ThreadReceber(Object):
             except KeyboardInterrupt:
                 return;
             except:
-                print(".", end="");
+                time.sleep(10);
         self.progress.emit(i + 1)
         self.finished.emit()
 
