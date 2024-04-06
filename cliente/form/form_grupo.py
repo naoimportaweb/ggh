@@ -65,26 +65,23 @@ class FormGrupo(QtWidgets.QWidget):
             else:
                 buffer.setParent( None );
                 buffer.ativo = False;
+    
+    def botao_operacoes_click(self):
+        self.ativar_layout_especifico( "PainelOperacao" );
     def botao_conta_click(self):
         self.ativar_layout_especifico( "PainelConta" );
     def botao_mural_click(self):
         self.ativar_layout_especifico( "PainelMural" );
-
     def botao_atividade_click(self):
         self.ativar_layout_especifico( "PainelAtividade" );
-
     def botao_conhecimento_click(self):
         self.ativar_layout_especifico( "PainelConhecimento" );
-
     def botao_chat_click(self):
         self.ativar_layout_especifico( "PainelChat" );
-    
     def botao_regras_click(self):
         self.ativar_layout_especifico( "PainelRegras" );
-    
     def botao_recomendacoes_click(self):
         self.ativar_layout_especifico( "PainelRecomendacoes" );
-
     def botao_correcoes_click(self):
         self.ativar_layout_especifico( "PainelCorrigir" );
 
@@ -101,6 +98,10 @@ class FormGrupo(QtWidgets.QWidget):
             self.b9 = QPushButton("Correções")
             self.b9.clicked.connect( self.botao_correcoes_click )
             self.layout1.addWidget(self.b9)
+        #if self.xmpp_var.cliente.posso_tag("operacao_criar"):
+        self.b12 = QPushButton("Operações")
+        self.b12.clicked.connect( self.botao_operacoes_click )
+        self.layout1.addWidget(self.b12)
         self.layout1.addStretch();
         self.carregar_panel();
 
