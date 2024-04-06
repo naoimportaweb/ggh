@@ -6,7 +6,8 @@ from PySide6 import QtWidgets;
 from PySide6.QtGui import QPalette;
 from PySide6.QtCore import Qt;
 
-#from classes.operacao import Operacao;
+from classes.operacao import Operacao;
+from form.form_operacao_adicionar import FormOperacaoAdicionar;
 
 class PainelOperacao(QtWidgets.QWidget):
     def __init__( self, xmpp_var ):
@@ -17,8 +18,8 @@ class PainelOperacao(QtWidgets.QWidget):
         form_layout = QVBoxLayout( self );
         self.operacoes = [];
         self.table = QTableWidget(self)
-        self.table.doubleClicked.connect(self.table_mural_double)
-        colunas = [{"" : "", "" : ""}];
+        self.table.doubleClicked.connect(self.table_operacao_double)
+        colunas = [{"nome" : "", "data_inicio" : ""}];
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
         self.table.resizeColumnsToContents();
         self.table.setColumnCount(2);
@@ -38,32 +39,37 @@ class PainelOperacao(QtWidgets.QWidget):
         self.xmpp_var.adicionar_mensagem( "comandos.operacao" ,"OperacaoComando", "listar", {} );
     
     def atualizar_tabela(self):
-        return;
-        #self.table.setRowCount( len( self.mensagens ) );
-        #for i in range(len(self.mensagens)):
-        #    self.table.setItem( i, 0, QTableWidgetItem( self.mensagens[i].titulo ) );
-        #    self.table.setItem( i, 1, QTableWidgetItem( self.mensagens[i].data ) );
+        self.table.setRowCount( len( self.operacoes ) );
+        for i in range(len(self.operacoes)):
+            self.table.setItem( i, 0, QTableWidgetItem( self.operacoes[i].titulo ) );
+            self.table.setItem( i, 1, QTableWidgetItem( self.operacoes[i].data_inicio ) );
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        return;
-        #if conteudo_js["comando"] == "MuralComando" and conteudo_js["funcao"] == "listar":
-        #    self.mensagens = [];
-        #    for i in range(len( conteudo_js["lista"] )):
-        #        mural = Mural();
-        #        mural.fromJson( conteudo_js["lista"][i] );
-        #        self.mensagens.append(mural);
-        #    self.atualizar_tabela();
+        if conteudo_js["comando"] == "OperacaoComando" and conteudo_js["funcao"] == "listar":
+            self.operacoes = [];
+            for i in range(len( conteudo_js["lista"] )):
+                operacao = Operacao();
+                operacao.fromJson( conteudo_js["lista"][i] );
+                self.operacoes.append(operacao);
+            self.atualizar_tabela();
     
     def btn_novo_click(self):     
-        return;
-        #f = FormMuralAdicionar( self.xmpp_var );
-        #f.exec();
-        #self.xmpp_var.adicionar_mensagem( "comandos.mural" ,"MuralComando", "listar", {} );
+        operacao = Operacao();
+        operacao.id = "1";
+        operacao.nome = "aaaa"
+        operacao.sigla = "#OpAaaa"
+        operacao.data_inicio = "2024-01-01 00:00:01"
+        operacao.data_fim = "2024-01-01 00:00:01"
+
+
+        self.operacoes.append( operacao );
+        f = FormOperacaoAdicionar( self.xmpp_var, operacao );
+        f.exec();
+        self.xmpp_var.adicionar_mensagem( "comandos.operacao" ,"OperacaoComando", "listar", {} );
     
-    def table_mural_double(self):
-        return;
-        #row = self.table.currentRow();
-        #f = FormMuralVer(self.xmpp_var, self.mensagens[row]);
-        #f.exec();
+    def table_operacao_double(self):
+        row = self.table.currentRow();
+        f = FormOperacaoAdicionar(self.xmpp_var, self.operacoes[row]);
+        f.exec();
 
 

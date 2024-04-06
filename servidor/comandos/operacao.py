@@ -8,4 +8,4 @@ from datetime import datetime
 
 class OperacaoComando:    
     def listar(self, cliente, grupo, mensagem):
-        return {"status" : True, "operacoes" : Operacao.listar_json( cliente.nivel_posicao )};
+        return {"status" : True, "lista" : Operacao.listar_json( cliente.nivel_posicao )};

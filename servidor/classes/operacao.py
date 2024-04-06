@@ -15,6 +15,7 @@ class Operacao():
         self.foco = None;
         self.operacao_status = None;
         self.niveis = None;
+        self.sigla = None;
         self.atividades = None;
     
     def carregar_capos(self, js):
@@ -24,6 +25,7 @@ class Operacao():
         self.id_operacao_status = js["id_operacao_status"];
         self.data_inicio = js["data_inicio"];
         self.data_fim = js["data_fim"];
+        self.sigla = js["sigla"];
         self.missao = js["missao"];
         self.foco = js["foco"];
         return True;
@@ -46,7 +48,7 @@ class Operacao():
         self.carregar_niveis();
         self.carregar_atividades();
         self.carregar_status();
-        return {"id" : js["id"],"nome" : js["nome"],"id_operacao_status" : js["id_operacao_status"],"nome_operacao_status" : self.operacao_status["nome"],"data_inicio" : js["data_inicio"],"data_fim" : js["data_fim"],"missao" : js["missao"],"foco" :  js["foco"], "atividades" : self.atividades, "niveis" : self.niveis };
+        return {"id" : js["id"], "sigla" : js["sigla"], "nome" : js["nome"],"id_operacao_status" : js["id_operacao_status"],"nome_operacao_status" : self.operacao_status["nome"],"data_inicio" : js["data_inicio"],"data_fim" : js["data_fim"],"missao" : js["missao"],"foco" :  js["foco"], "atividades" : self.atividades, "niveis" : self.niveis };
     @stticmethod
     def listar(id_nivel):
         my = MysqlHelp();
