@@ -1,9 +1,10 @@
 import time, base64, uuid, os, sys, json, traceback, threading;
 
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
-from PySide6 import QtWidgets;
-from PySide6.QtCore import *
+from PySide6.QtGui import QPalette;
+from PySide6.QtCore import Qt;
+from PySide6.QtWidgets import  QGridLayout, QTextEdit, QTextBrowser, QLineEdit, QTextBrowser, QHBoxLayout, QVBoxLayout, QWidget, QVBoxLayout, QComboBox, QPushButton, QTableWidget, QTableWidgetItem, QLabel, QAbstractItemView, QHeaderView;
+from PySide6 import   QtWidgets;
+#
 from api.fsseguro import FsSeguro
 
 

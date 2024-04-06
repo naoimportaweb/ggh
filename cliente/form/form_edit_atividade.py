@@ -2,11 +2,10 @@ import sys, os, json, base64, re, requests;
 
 sys.path.append("../"); # estamos em /form, 
 
-from PySide6.QtGui import *
+from PySide6.QtGui import QPalette;
+from PySide6.QtCore import Qt;
 from PySide6 import QtWidgets;
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
-
+from PySide6.QtWidgets import QGridLayout,QTextEdit, QTabWidget, QLineEdit, QDialog, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QTableWidget, QTableWidgetItem, QLabel, QAbstractItemView, QHeaderView;
 from form.form_atividade_resposta import FormAtividadeResposta
 
 class FormEditarAtividade(QDialog):

@@ -2,9 +2,11 @@ import sys, os, json;
 
 sys.path.append("../"); # estamos em /form, 
 
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
-from PySide6 import *
+from PySide6.QtGui import QPalette, QFont;
+from PySide6.QtCore import Qt;
+from PySide6.QtWidgets import QTextEdit, QTabWidget, QDialog, QHBoxLayout, QVBoxLayout, QWidget, QComboBox, QPushButton;
+#from PySide6.QtWidgets import QGridLayout, QTextEdit, QTabWidget,  QLineEdit, QDialog, QHBoxLayout, QVBoxLayout, QWidget, QVBoxLayout, QComboBox, QPushButton, QTableWidget, QTableWidgetItem, QLabel, QAbstractItemView, QHeaderView;
+
 
 from classes.atividade_resposta import AtividadeResposta;
 

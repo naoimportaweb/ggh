@@ -1,8 +1,9 @@
 import time, base64, uuid, os, sys, json, traceback, threading;
 
-from PySide6.QtWidgets import *
+from PySide6.QtWidgets import  QTextEdit, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton;
 from PySide6 import QtWidgets;
-from PySide6.QtCore import *
+from PySide6.QtGui import QPalette;
+from PySide6.QtCore import Qt;
 
 from form.painel_chat import PainelChat
 from form.painel_regras import PainelRegras
@@ -12,6 +13,7 @@ from form.painel_atividade import PainelAtividade
 from form.painel_corrigir import PainelCorrigir;
 from form.painel_mural import PainelMural;
 from form.painel_conta import PainelConta;
+from form.painel_operacao import PainelOperacao;
 
 class FormGrupo(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
@@ -104,7 +106,8 @@ class FormGrupo(QtWidgets.QWidget):
 
     def carregar_panel( self ):
         self.widgets = [PainelConta(self.xmpp_var), PainelChat(self.xmpp_var), PainelRegras(self.xmpp_var), PainelRecomendacoes(self.xmpp_var), PainelConhecimento( self.xmpp_var ),
-                       PainelAtividade( self.xmpp_var ), PainelCorrigir(self.xmpp_var), PainelMural(self.xmpp_var) ];
+                       PainelAtividade( self.xmpp_var ), PainelCorrigir(self.xmpp_var), 
+                       PainelMural(self.xmpp_var), PainelOperacao(self.xmpp_var) ];
         self.widgets[0].ativo = True;
         self.layout.addWidget( self.widgets[0] );
         self.widgets[0].atualizar_tela();

@@ -3,7 +3,7 @@ import sys, os, json;
 sys.path.append("../"); # estamos em /form, 
 
 from PySide6.QtGui import QAction;
-from PySide6.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QMdiArea, QMainWindow, QFormLayout, QLabel, QMessageBox;
+from PySide6.QtWidgets import  QTextEdit, QLineEdit, QApplication, QDialog, QLineEdit, QPushButton, QMdiArea, QMainWindow, QFormLayout, QLabel, QMessageBox;
 from PySide6 import QtWidgets;
 
 from classes.conexao.xmpp_client import XMPPCliente;

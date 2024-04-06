@@ -154,7 +154,7 @@ else:
 os.environ["database"] = json.dumps( configuracao["database"] );
 my = MysqlHelp();
 print("- Testando o Banco de Dados.");
-if my.teste() > 0:
+if my.teste( json.loads(open(ROOT + "/data/modelo.json", "r").read()) ) > 0:
     print("Você tem que corrigir os erros relacionados a falta de tabela/colunas no banco de dados.");
     sys.exit(1);
 my = None;

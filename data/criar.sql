@@ -48,11 +48,30 @@ CREATE TABLE atividade_cliente( id varchar(255) NOT NULL, id_atividade varchar(2
 CREATE TABLE mural(id varchar(255) NOT NULL, id_grupo varchar(255), id_cliente varchar(255), titulo varchar(255), mensagem longtext,
   data DATETIME, id_nivel varchar(255) DEFAULT NULL, id_destinatario varchar(255) DEFAULT NULL, sequencia VARCHAR(255) NOT NULL );
 
+
+
+CREATE TABLE operacao_status (id int not null, nome varchar(255), PRIMARY KEY(id) );
+
+CREATE TABLE operacao (id varchar(255) NOT NULL, nome varchar(255), id_grupo varchar(255), id_operacao_status int, data_inicio datetime, data_fim datetime, missao longtext, foco longtext, PRIMARY KEY(id));
+
+CREATE TABLE operacao_nivel(id_operacao varchar(255), id_nivel varchar(255), PRIMARY KEY(id_operacao, id_nivel));
+CREATE TABLE operacao_atividade(id_atividade varchar(255), id_operacao varchar(255), PRIMARY KEY( id_atividade,id_operacao  ));
+
+
+
+
+
+ALTER TABLE operacao ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
+ALTER TABLE operacao ADD FOREIGN KEY (id_operacao_status) REFERENCES operacao_status(id); 
+ALTER TABLE operacao_nivel ADD FOREIGN KEY (id_nivel) REFERENCES nivel(id); 
+ALTER TABLE operacao_nivel ADD FOREIGN KEY (id_operacao) REFERENCES operacao(id); 
+ALTER TABLE operacao_atividade ADD FOREIGN KEY (id_operacao) REFERENCES operacao(id); 
+ALTER TABLE operacao_atividade ADD FOREIGN KEY (id_atividade) REFERENCES atividade(id); 
+
+
 # relacionamento
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id); 
-
-
 ALTER TABLE tag_cliente ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id); 
 ALTER TABLE mensagem_nivel ADD FOREIGN KEY (id_mensagem) REFERENCES mensagem(id); 
 ALTER TABLE mensagem_nivel ADD FOREIGN KEY (id_nivel) REFERENCES nivel(id); 
@@ -71,6 +90,10 @@ ALTER TABLE mural ADD FOREIGN KEY (id_destinatario) REFERENCES cliente(id);
 
 # EXEMPLO DE GRUPO
 
+delete from operacao_nivel;
+delete from operacao_atividade;
+delete from operacao;
+delete from operacao_status;
 delete from atividade_cliente;
 delete from mural;
 delete from grupo_cliente;
@@ -93,6 +116,9 @@ insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("41f38c
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("117072decd99445b4973e81d67edc91e5", "a639ffc7a87856c52ea8b6a75dff4ff7", "Anarquista", 10,        1000,     90);
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("81a01e3b7dbc24a468a8252eafeb91e9a", "a639ffc7a87856c52ea8b6a75dff4ff7", "Cypher programmer", 20, 10000,    180);
 insert into nivel(id, id_grupo, nome, posicao, pontuacao, tempo) values ("516734dcbd0c44a6daddfb1c9dd034f70", "a639ffc7a87856c52ea8b6a75dff4ff7", "CypherPunk", 30,        -1,       365);
+
+insert into operacao_status(id, nome) values(0, "Em desenvolvimento");
+insert into operacao_status(id, nome) values(1, "Em operacao");
 
 insert into conhecimento_status(id, nome) values(0, "Em desenvolvimento");
 insert into conhecimento_status(id, nome) values(1, "Aguardando aprovação");

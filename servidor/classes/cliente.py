@@ -34,11 +34,6 @@ class Cliente:
         self.pontuacao_data_processamento = js["pontuacao_data_processamento"];
         self.carregar_tag();
         self.carregar_nivel();
-        #if js.get("id_nivel") == None:
-        #    self.carregar_nivel();
-        #else:
-        #    self.nivel_posicao = js["posicao"];
-        #    self.id_nivel =      js["id_nivel"];
 
     def existo(self):
         my = MysqlHelp();
