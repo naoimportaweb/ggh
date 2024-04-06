@@ -12,8 +12,8 @@ class Operacao():
         self.missao = None;
         self.foco = None;
         self.operacao_status = None;
-        self.niveis = None;
-        self.atividades = None;
+        self.niveis = [];
+        self.atividades = [];
     def fromJson(self, js):
         self.id = js["id"];
         self.nome = js["nome"];

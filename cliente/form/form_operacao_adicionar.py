@@ -79,9 +79,19 @@ class FormOperacaoAdicionar(QDialog):
         self.txt_nome.setText(operacao.nome);
         self.txt_foco.setPlainText(operacao.foco);
         self.txt_missao.setPlainText(operacao.missao);
-        self.data_fim.setDateTime(    QDateTime.fromString( operacao.data_fim, "yyyy-MM-dd HH:mm:ss"));
+        self.data_fim.setDateTime(    QDateTime.fromString( operacao.data_fim,    "yyyy-MM-dd HH:mm:ss"));
         self.data_inicio.setDateTime( QDateTime.fromString( operacao.data_inicio, "yyyy-MM-dd HH:mm:ss"));
+        self.atualizar_tabela_niveis();
 
+    def atualizar_tabela_niveis(self):
+        
+        self.tabela_niveis.setRowCount( len( self.operacao.niveis ) );
+        for i in range(len(self.operacao.niveis)):
+            self.tabela_niveis.setItem( i, 0, QTableWidgetItem( self.operacao.niveis[1].nome ) );
+    def atualizar_tabela_atividades(self):
+        self.tabela_atividade.setRowCount( len( self.operacao.atividades ) );
+        for i in range(len(self.operacao.atividades)):
+            self.tabela_atividade.setItem( i, 0, QTableWidgetItem( self.operacao.atividades[1].titulo ) );
 
     def layout_missao(self, layout):
         self.txt_missao = QTextEdit(self);

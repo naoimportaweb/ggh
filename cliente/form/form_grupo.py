@@ -1,6 +1,6 @@
 import time, base64, uuid, os, sys, json, traceback, threading;
 
-from PySide6.QtWidgets import  QTextEdit, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton;
+from PySide6.QtWidgets import QApplication, QTextEdit, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton;
 from PySide6 import QtWidgets;
 from PySide6.QtGui import QPalette;
 from PySide6.QtCore import Qt;
@@ -16,10 +16,11 @@ from form.painel_conta import PainelConta;
 from form.painel_operacao import PainelOperacao;
 
 class FormGrupo(QtWidgets.QWidget):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, form_pai, *args, **kwargs):
         QtWidgets.QWidget.__init__(self, *args, **kwargs);
         self.xmpp_var = None;
         self.layout1 = QVBoxLayout()
+        self.form_pai = form_pai;
 
         self.b11 = QPushButton("Conta")
         self.b11.clicked.connect( self.botao_conta_click )
@@ -118,8 +119,7 @@ class FormGrupo(QtWidgets.QWidget):
         if conteudo_js["comando"] == "AmbienteComando" and conteudo_js["funcao"] == "dados":
             if conteudo_js["versao"] != self.xmpp_var.dados["versao"]:
                 print("\033[41mAtenção, a versão do servidor é incompatível com a versão do cliente. A versão do servidor é: " + conteudo_js["versao"] + " \033[0m");
-                #QMessageBox.information(self, "Versão", "Atenção, a versão do servidor é incompatível com a versão do cliente.\n A versão do servidor é: " + conteudo_js["versao"], QMessageBox.StandardButton.Ok);
-
+                self.close();
         for buffer in self.widgets:
             buffer.evento_mensagem(de, texto, message, conteudo_js);
     

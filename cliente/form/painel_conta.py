@@ -14,7 +14,6 @@ class PainelConta(QtWidgets.QWidget):
         super().__init__();
         self.xmpp_var = xmpp_var;
         self.ativo = False;
-        self.layout_carregado = False;
         self.main_layout = QVBoxLayout( self );
         tab = QTabWidget();  
         self.main_layout.addWidget(tab);   
@@ -46,12 +45,16 @@ class PainelConta(QtWidgets.QWidget):
         self.setLayout(self.main_layout);
 
     def recarregar_tags(self):
+        if self.xmpp_var.cliente.tags == None:
+            return;
         self.table.setRowCount(len(self.xmpp_var.cliente.tags));
         for i in range(len(self.xmpp_var.cliente.tags)):
             self.table.setItem( i, 0, QTableWidgetItem( self.xmpp_var.cliente.tags[i]["sigla"] ) );
             self.table.setItem( i, 1, QTableWidgetItem( self.xmpp_var.cliente.tags[i]["nome"] ) );
     
     def recarregar_niveis(self):
+        if self.xmpp_var.grupo.niveis == None:
+            return;
         adicionado = 0;
         for i in range(len(self.xmpp_var.grupo.niveis)):
             if self.xmpp_var.grupo.niveis[i].posicao <= self.xmpp_var.cliente.nivel_posicao:
@@ -60,18 +63,12 @@ class PainelConta(QtWidgets.QWidget):
                 adicionado = adicionado + 1;
 
     def atualizar_tela(self):
-        if self.layout_carregado:
-            return;
-        if self.xmpp_var.cliente.tags == None:
-            return;
         self.recarregar_niveis();
         self.recarregar_tags();
-        self.layout_carregado = True;
-
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "ClienteCadastroComando" and conteudo_js["funcao"] == "alterar_nome":
-            self.lb_apelido.setText( self.xmpp_var.cliente.apelido );
+            self.lb_apelido.setText( "<b>" + self.xmpp_var.cliente.apelido + "</b>" );
         elif conteudo_js["comando"] == "ClienteCadastroComando" and conteudo_js["funcao"] == "atualizar_tags":
             self.recarregar_tags();
     
