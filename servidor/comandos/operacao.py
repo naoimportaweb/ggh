@@ -12,7 +12,7 @@ class OperacaoComando:
         my = MysqlHelp();
         sql = "select * from nivel where id=%s";
         nivel = my.datatable( sql, [ js["id_nivel"]  ])[0];
-        sql = "select op.* from operacao as op where op.id_nivel in (select id from nivel where posicao <= %s )";
+        sql = "select op.*, ni.nome as nome_nivel from operacao as op inner join nivel as ni on op.id_nivel = ni.id where op.id_nivel in (select id from nivel where posicao <= %s ) order by ni.posicao asc";
         dados = my.datatable(sql, [ nivel["posicao"] ]);
         return {"status" : True, "lista" : dados};
     def novo(self, cliente, grupo, mensagem):

@@ -65,7 +65,7 @@ class FormEditarAtividade(QDialog):
         self.showMaximized();
     
     def layout_operacao(self, layout, atividade):
-        self.tabela_atividade = Utilitario.widget_tabela(self, ["sigla", "nome"], tamanhos=[ QHeaderView.Stretch, QHeaderView.ResizeToContents ]);
+        self.tabela_atividade = Utilitario.widget_tabela(self, ["sigla", "nome"], tamanhos=[ QHeaderView.ResizeToContents, QHeaderView.Stretch ]);
         layout.addWidget( self.tabela_atividade );
         self.tabela_atividade.setRowCount( len( self.atividade.operacoes ) );
         for i in range(len(self.atividade.operacoes)):

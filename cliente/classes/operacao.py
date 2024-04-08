@@ -14,6 +14,7 @@ class Operacao():
         self.operacao_status = None;
         self.id_nivel = None;
         self.atividades = [];
+        self.nome_nivel = "";
     def fromJson(self, js):
         self.id = js["id"];
         self.nome = js["nome"];
@@ -25,6 +26,7 @@ class Operacao():
         self.data_fim = js["data_fim"];
         self.missao = js["missao"];
         self.foco = js["foco"];
+        self.nome_nivel = js["nome_nivel"];
         if js.get("atividades") != None:
             self.atividades = js["atividades"];
         return True;

@@ -34,18 +34,25 @@ class FormOperacaoAdicionar(QDialog):
         self.layout_foco  (    Utilitario.widget_tab( tab,  "Foco"      )) ;
         self.layout_atividades(Utilitario.widget_tab( tab, "Atividades")) ;
         
-        btn_salvar =    QPushButton("Salvar Operação", self);
-        btn_salvar.clicked.connect(self.btn_salvar_click);
-        self.main_layout.addWidget( btn_salvar );
-        self.setLayout(self.main_layout);
+        if self.xmpp_var.cliente.posso_tag("operacao_criar"):
+            btn_salvar =    QPushButton("Salvar Operação", self);
+            btn_salvar.clicked.connect(self.btn_salvar_click);
+            self.main_layout.addWidget( btn_salvar );
+        else:
+            self.txt_sigla.setReadOnly(True);
+            self.txt_nome.setReadOnly(True);
+            self.txt_foco.setReadOnly(True);
+            self.txt_missao.setReadOnly(True);
+            self.data_fim.setReadOnly(True);
+            self.data_inicio.setReadOnly(True);
 
-        #if operacao.id != None:
         self.txt_sigla.setText(operacao.sigla);
         self.txt_nome.setText(operacao.nome);
         self.txt_foco.setPlainText(operacao.foco);
         self.txt_missao.setPlainText(operacao.missao);
         self.data_fim.setDateTime(    QDateTime.fromString( operacao.data_fim,    "yyyy-MM-dd HH:mm:ss"));
         self.data_inicio.setDateTime( QDateTime.fromString( operacao.data_inicio, "yyyy-MM-dd HH:mm:ss"));
+        self.setLayout(self.main_layout);
 
     def atualizar_tabela_atividades(self):
         self.tabela_atividade.setRowCount( len( self.operacao.atividades ) );
@@ -71,17 +78,21 @@ class FormOperacaoAdicionar(QDialog):
         self.txt_nome =    QLineEdit(self);
         self.data_inicio = QDateTimeEdit(self);
         self.data_fim =    QDateTimeEdit(self);
-        btn_data_inicio_agora = QPushButton("Agora", self);
-        btn_data_fim_agora =    QPushButton("Agora", self);
-
-        self.data_inicio.setDisplayFormat("yyyy-MM-dd HH:mm:ss");
-        self.data_fim.setDisplayFormat("yyyy-MM-dd HH:mm:ss");
-        btn_data_inicio_agora.clicked.connect(self.btn_data_inicio_agora_click); 
-        btn_data_fim_agora.clicked.connect(self.btn_data_fim_agora_click); 
-
+        
         Utilitario.widget_linha(self, layout, [ QLabel("Sigla") , self.txt_sigla ]);
         Utilitario.widget_linha(self, layout, [ QLabel("Operação") , self.txt_nome ]);
-        Utilitario.widget_linha(self, layout, [ QLabel("Início"), self.data_inicio, btn_data_inicio_agora, QLabel("Fim"), self.data_fim, btn_data_fim_agora]);
+
+        if self.xmpp_var.cliente.posso_tag("operacao_criar"):
+            btn_data_inicio_agora = QPushButton("Agora", self);
+            btn_data_fim_agora =    QPushButton("Agora", self);
+            self.data_inicio.setDisplayFormat("yyyy-MM-dd HH:mm:ss");
+            self.data_fim.setDisplayFormat("yyyy-MM-dd HH:mm:ss");
+            btn_data_inicio_agora.clicked.connect(self.btn_data_inicio_agora_click); 
+            btn_data_fim_agora.clicked.connect(self.btn_data_fim_agora_click); 
+            Utilitario.widget_linha(self, layout, [ QLabel("Início"), self.data_inicio, btn_data_inicio_agora, QLabel("Fim"), self.data_fim, btn_data_fim_agora]);
+        else:
+            Utilitario.widget_linha(self, layout, [ QLabel("Início"), self.data_inicio, QLabel("Fim"), self.data_fim]);
+
         layout.addStretch();
     def tabela_atividade_click(self):
         return;
