@@ -13,6 +13,8 @@ class AtividadeComando:
         for i in range(len(atividades)):
             sql = "select * from atividade_cliente where id_atividade = %s and id_cliente=%s";
             atividades[i]["respostas"] = my.datatable(sql, [ atividades[i]["id"], cliente.id ] );
+            sql = "SELECT op.sigla, op.nome FROM operacao as op inner join operacao_atividade as opa on op.id = opa.id_operacao where opa.id_atividade=%s";
+            atividades[i]["operacoes"] = my.datatable(sql, [ atividades[i]["id"] ] );
         return { "lista" : atividades  };
 
     def criar(self, cliente, grupo, mensagem):
@@ -123,3 +125,17 @@ class AtividadeComando:
         sql = "SELECT atc.*, atv.titulo, atv.instrucao_correcao, atv.atividade, atv.pontos_maximo FROM atividade_cliente as atc inner join atividade as atv on atc.id_atividade = atv.id WHERE atc.id_status=%s";
         resposta_banco = my.datatable(sql, [ 0 ]);
         return {"status" : True, "lista" : resposta_banco};        
+    def associar_operacao(self, cliente, grupo, mensagem):
+        my = MysqlHelp();
+        if not cliente.posso_tag("operacao_criar"):
+            return {"status" : False, "erro" : "Não tem permissão para criar uma operação."};
+        js = mensagem.toJson();
+        sql = "select id, sigla, nome from operacao where sigla=%s";
+        values = [js["sigla"]];
+        operacao = my.datatable(sql, values)[0];
+
+        sql = "INSERT into operacao_atividade(id_atividade, id_operacao) values (%s, %s)";
+        values = [ js["id_atividade"], operacao["id"] ];
+        my.execute(sql, values);
+        operacao["id"] = "";
+        return {"status" : True, "operacao" :  operacao };

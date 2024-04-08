@@ -62,3 +62,5 @@ class AtividadeComando:
             a = Atividade();
             a.fromJson( elemento );
             a.salvar( cliente.chave_local, cliente.path_atividade );
+    def associar_operacao(self, cliente, grupo, mensagem):
+        return mensagem.toJson();

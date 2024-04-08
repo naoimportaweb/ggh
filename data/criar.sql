@@ -51,17 +51,14 @@ CREATE TABLE mural(id varchar(255) NOT NULL, id_grupo varchar(255), id_cliente v
 
 
 CREATE TABLE operacao_status (id int not null, nome varchar(255), PRIMARY KEY(id) );
-CREATE TABLE operacao (id varchar(255) NOT NULL, sigla varchar(255), nome varchar(255), id_grupo varchar(255), id_operacao_status int, data_inicio datetime, data_fim datetime, missao longtext, foco longtext, PRIMARY KEY(id));
-CREATE TABLE operacao_nivel(id_operacao varchar(255), id_nivel varchar(255), PRIMARY KEY(id_operacao, id_nivel));
+CREATE TABLE operacao (id varchar(255) NOT NULL, id_nivel varchar(255), sigla varchar(255) unique, nome varchar(255) unique, id_grupo varchar(255), id_operacao_status int, data_inicio datetime, data_fim datetime, missao longtext, foco longtext, PRIMARY KEY(id));
 CREATE TABLE operacao_atividade(id_atividade varchar(255), id_operacao varchar(255), PRIMARY KEY( id_atividade,id_operacao  ));
 
 ALTER TABLE operacao ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
 ALTER TABLE operacao ADD FOREIGN KEY (id_operacao_status) REFERENCES operacao_status(id); 
-ALTER TABLE operacao_nivel ADD FOREIGN KEY (id_nivel) REFERENCES nivel(id); 
-ALTER TABLE operacao_nivel ADD FOREIGN KEY (id_operacao) REFERENCES operacao(id); 
+ALTER TABLE operacao ADD FOREIGN KEY (id_nivel) REFERENCES nivel(id); 
 ALTER TABLE operacao_atividade ADD FOREIGN KEY (id_operacao) REFERENCES operacao(id); 
 ALTER TABLE operacao_atividade ADD FOREIGN KEY (id_atividade) REFERENCES atividade(id); 
-
 
 # relacionamento
 ALTER TABLE grupo_cliente ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 

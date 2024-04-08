@@ -8,6 +8,9 @@ from PySide6 import QtWidgets;
 from PySide6.QtWidgets import QGridLayout,QTextEdit, QTabWidget, QLineEdit, QDialog, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QTableWidget, QTableWidgetItem, QLabel, QAbstractItemView, QHeaderView;
 from form.form_atividade_resposta import FormAtividadeResposta
 
+from form.funcoes import Utilitario;
+from form.form_input import FormInput;
+
 class FormEditarAtividade(QDialog):
     def __init__(self, cliente, xmpp_var, atividade, parent=None):
         super(FormEditarAtividade, self).__init__(parent);
@@ -19,7 +22,6 @@ class FormEditarAtividade(QDialog):
         self.main_layout = QVBoxLayout( self );
         self.textEditAtividade = None;
         self.table = None;
-
         tab =       QTabWidget();        
         self.main_layout.addWidget(tab);
         if atividade.id_cliente == self.cliente.id and self.xmpp_var.cliente.posso_tag("atividade_criar") and self.atividade.id_status == 0:
@@ -47,9 +49,12 @@ class FormEditarAtividade(QDialog):
         page_respostas.setLayout(page_respostas_layout);
         tab.addTab(page_respostas,'Respostas');
 
+        page_operacao_layout = Utilitario.widget_tab(tab, "Operações");
+
         self.layout_resposta(  page_respostas_layout ,           self.atividade);
         self.layout_atividade( page_atividade_layout,            self.atividade);
         self.layout_correcao(  page_correcao_layout,             self.atividade);
+        self.layout_operacao(  page_operacao_layout,             self.atividade);
 
         if atividade.id_cliente == self.cliente.id and self.xmpp_var.cliente.posso_tag("atividade_criar"):
             page_recomendacao_questao = QWidget(tab);
@@ -58,6 +63,28 @@ class FormEditarAtividade(QDialog):
             tab.addTab(page_recomendacao_questao,'Recomendação Correção');
             self.page_recomendacao_questao_layout(  page_recomendacao_questao_layout, self.atividade);
         self.showMaximized();
+    
+    def layout_operacao(self, layout, atividade):
+        self.tabela_atividade = Utilitario.widget_tabela(self, ["sigla", "nome"], tamanhos=[ QHeaderView.Stretch, QHeaderView.ResizeToContents ]);
+        layout.addWidget( self.tabela_atividade );
+        self.tabela_atividade.setRowCount( len( self.atividade.operacoes ) );
+        for i in range(len(self.atividade.operacoes)):
+            self.tabela_atividade.setItem( i, 0, QTableWidgetItem( self.atividade.operacoes[i]["sigla"] ) );
+            self.tabela_atividade.setItem( i, 1, QTableWidgetItem( self.atividade.operacoes[i]["nome"] ) );
+        btn_adicionar_operacao = QPushButton("Adicionar em uma Operação")
+        btn_adicionar_operacao.clicked.connect( self.btn_adicionar_operacao_click);
+        layout.addWidget( btn_adicionar_operacao );
+    
+    def btn_adicionar_operacao_click(self):
+        f = FormInput( "Informe a sigla da operação:", self.callback_input_operacao );
+        f.exec();
+    
+    def callback_input_operacao(self, valor):    
+        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "associar_operacao", {"id_atividade" : self.atividade.id , "sigla" : valor} );
+        self.atividade.operacoes.append( {"sigla" : valor, "nome" : valor} );
+        self.tabela_atividade.setRowCount( len( self.atividade.operacoes ) );
+        self.tabela_atividade.setItem( len(self.atividade.operacoes) - 1, 0, QTableWidgetItem( valor ) );
+        self.tabela_atividade.setItem( len(self.atividade.operacoes) - 1, 1, QTableWidgetItem( valor ) );
     
     def layout_correcao(self, layout, atividade):
         layout.addWidget( QLabel("Pontuação máxima em caso de acerto:", self) );

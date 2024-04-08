@@ -17,6 +17,8 @@ class PainelOperacao(QtWidgets.QWidget):
         self.layout_carregado = False;
         form_layout = QVBoxLayout( self );
         self.operacoes = [];
+        self.cmb_nivel = QComboBox(); 
+        self.cmb_nivel.activated.connect(self.cmb_nivel_selected)
         self.table = QTableWidget(self)
         self.table.doubleClicked.connect(self.table_operacao_double)
         colunas = [{"nome" : "", "data_inicio" : ""}];
@@ -29,19 +31,27 @@ class PainelOperacao(QtWidgets.QWidget):
         header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(0, QHeaderView.Stretch);
         self.table.setRowCount(0)
+        form_layout.addWidget( self.cmb_nivel );
         form_layout.addWidget(self.table);
         self.btn_novo = QPushButton("Novo item")
         self.btn_novo.clicked.connect(self.btn_novo_click); 
         form_layout.addWidget( self.btn_novo );
         self.setLayout(form_layout);
-
+    
+    def cmb_nivel_selected(self):
+        self.xmpp_var.adicionar_mensagem( "comandos.operacao" ,"OperacaoComando", "listar", { "id_nivel" : self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id } );
     def atualizar_tela(self):
-        self.xmpp_var.adicionar_mensagem( "comandos.operacao" ,"OperacaoComando", "listar", {} );
+        self.cmb_nivel.clear();
+        if len(self.xmpp_var.grupo.niveis) > 0:
+            for nivel in self.xmpp_var.grupo.niveis:
+                self.cmb_nivel.addItem(nivel.nome);
+            self.cmb_nivel.setCurrentIndex(0);
+            self.xmpp_var.adicionar_mensagem( "comandos.operacao" ,"OperacaoComando", "listar", { "id_nivel" : self.xmpp_var.grupo.niveis[0].id } );
     
     def atualizar_tabela(self):
         self.table.setRowCount( len( self.operacoes ) );
         for i in range(len(self.operacoes)):
-            self.table.setItem( i, 0, QTableWidgetItem( self.operacoes[i].titulo ) );
+            self.table.setItem( i, 0, QTableWidgetItem( self.operacoes[i].nome ) );
             self.table.setItem( i, 1, QTableWidgetItem( self.operacoes[i].data_inicio ) );
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
@@ -52,20 +62,15 @@ class PainelOperacao(QtWidgets.QWidget):
                 operacao.fromJson( conteudo_js["lista"][i] );
                 self.operacoes.append(operacao);
             self.atualizar_tabela();
-    
+        elif conteudo_js["comando"] == "OperacaoComando" and conteudo_js["funcao"] == "novo":
+            self.xmpp_var.adicionar_mensagem( "comandos.operacao" ,"OperacaoComando", "listar", { "id_nivel" : self.xmpp_var.grupo.niveis[0].id } );
     def btn_novo_click(self):     
         operacao = Operacao();
-        operacao.id = "1";
-        operacao.nome = "aaaa"
-        operacao.sigla = "#OpAaaa"
-        operacao.data_inicio = "2024-01-01 00:00:01"
-        operacao.data_fim = "2024-01-01 00:00:01"
-
-
-        self.operacoes.append( operacao );
-        f = FormOperacaoAdicionar( self.xmpp_var, operacao );
-        f.exec();
-        self.xmpp_var.adicionar_mensagem( "comandos.operacao" ,"OperacaoComando", "listar", {} );
+        numero = str(time.time());
+        operacao.nome = "Nova operação Número: " + numero;
+        operacao.sigla = "#OpNovo_" + numero;
+        operacao.id_nivel = self.xmpp_var.grupo.niveis[0].id;
+        self.xmpp_var.adicionar_mensagem( "comandos.operacao" ,"OperacaoComando", "novo", operacao.toJson() );
     
     def table_operacao_double(self):
         row = self.table.currentRow();
