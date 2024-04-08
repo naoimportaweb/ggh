@@ -25,6 +25,8 @@ from PySide6.QtGui import QAction,  QPalette, QColor;
 from PySide6.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QMdiArea, QMainWindow, QStatusBar, QLabel;
 from PySide6 import QtWidgets;
 
+from classes.singleton.configuracao import Configuracao;
+
 class MDIWindow(QMainWindow):
     def __init__(self):
         super().__init__()

@@ -14,6 +14,13 @@ class Utilitario():
         for control in controls:
             widget1_layout.addWidget( control );
         layout.addWidget(widget1);
+    def widget_layout(form, controls):
+        widget1 = QWidget(form);
+        widget1_layout = QHBoxLayout();
+        widget1.setLayout(widget1_layout);
+        for control in controls:
+            widget1_layout.addWidget( control );
+        return widget1;
     @staticmethod
     def widget_tab(tab, titulo):
         page = QWidget(tab);

@@ -11,6 +11,9 @@ from api.fsseguro import FsSeguro
 
 from classes.conhecimento import Conhecimento;
 from form.form_edit_conhecimento import FormEditarConhecimento
+from form.ui.combobox import ComboBox;
+
+CACHE_CMB_NIVEL = 'painel_conhecimento.cmb_nivel';
 
 class PainelConhecimento(QtWidgets.QWidget):
     def __init__( self, xmpp_var ):
@@ -20,7 +23,8 @@ class PainelConhecimento(QtWidgets.QWidget):
         self.lista_conhecimento = [];
         form_layout = QVBoxLayout( self );
         widget_pesquisa = QWidget();
-        self.cmb_nivel = QComboBox(); 
+        self.cmb_nivel = ComboBox(self, CACHE_CMB_NIVEL, configuracao=self.xmpp_var.cliente.configuracao);
+        self.cmb_nivel.currentIndexChanged.connect(self.botao_listar_conhecimento_click); # mesmo evento do botao de atualizar
         form_pesquisa = QHBoxLayout( widget_pesquisa );
         form_pesquisa.addWidget( QLabel("Nível", self) );
         form_pesquisa.addWidget( self.cmb_nivel );
@@ -48,11 +52,6 @@ class PainelConhecimento(QtWidgets.QWidget):
         
         widget_acesso = QWidget();
         form_acesso = QHBoxLayout( widget_acesso );
-        
-        #self.b6 = QPushButton("Acessar conhecimento")
-        #self.b6.setGeometry(10,0,32,32)
-        #self.b6.clicked.connect( self.botao_acessar_conhecimento_click )
-        #form_acesso.addWidget( self.b6 );
         form_acesso.addStretch();
 
         self.b4 = QPushButton("Novo conhecimento")
@@ -65,7 +64,6 @@ class PainelConhecimento(QtWidgets.QWidget):
 
         self.thread_enviador = threading.Thread(target = self.atualizar_conhecimento, args=());
         self.thread_enviador.start();
-    
     def atualizar_conhecimento( self ):
         while True:
             try:
@@ -104,28 +102,22 @@ class PainelConhecimento(QtWidgets.QWidget):
                 self.table.setItem( index, 0, QTableWidgetItem( buffer.titulo ) );
     
     def botao_listar_conhecimento_click(self):
-        self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "listar", {"id_nivel" : self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id } );
+        self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "listar", 
+            {"id_nivel" : self.cmb_nivel.getSelected().key } );
 
     def atualizar_tela(self):
-        self.cmb_nivel.clear();
-        if len(self.xmpp_var.grupo.niveis) > 0:
-            for nivel in self.xmpp_var.grupo.niveis:
-                self.cmb_nivel.addItem(nivel.nome);
-            self.cmb_nivel.setCurrentIndex(0);
-            self.botao_listar_conhecimento_click();
+        self.cmb_nivel.addArrayObject(self.xmpp_var.grupo.niveis, "id", "nome");
+        self.botao_listar_conhecimento_click(); # listar 
     
     #def botao_acessar_conhecimento_click(self):
     def table_conhecimento_double(self):
         row = self.table.currentRow();
         f = FormEditarConhecimento( self.xmpp_var.cliente, self.xmpp_var, self.lista_conhecimento[ row ] );
         f.exec();
-        #self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "carregar", {"id" : self.lista_conhecimento[row]["id"] } );
-    
+
     def botao_novo_conhecimento_click(self):
         conhecimento = Conhecimento();
         conhecimento.titulo = "Novo conhecimento";
         conhecimento.id_cliente = self.xmpp_var.cliente.id;
         conhecimento.id_nivel = self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id;
         self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "novo", conhecimento.toJson() );
-        #self.lista_conhecimento = [];
-        #self.table.clearContents();

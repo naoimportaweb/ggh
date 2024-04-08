@@ -11,7 +11,7 @@ from classes.atividade_resposta import AtividadeResposta;
 class FormAtividadeResposta(QDialog):
     def __init__(self, xmpp_var, atividade, index_resposta=None, parent=None):
         super(FormAtividadeResposta, self).__init__(parent)
-        self.setWindowTitle("Grupo")
+        self.setWindowTitle("Responder Atividade")
         self.setGeometry(400, 400, 800, 500)
         self.form_main = parent;
         self.xmpp_var = xmpp_var;

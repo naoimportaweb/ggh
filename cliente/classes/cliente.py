@@ -4,6 +4,7 @@ import base64
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
 from api.fsseguro import FsSeguro;
+from classes.singleton.configuracao import Configuracao;
 
 def criar_diretorio_se_nao_existe(diretorio):
     if not os.path.exists( diretorio ):
@@ -28,11 +29,13 @@ class Cliente:
         self.tags = None;
         self.pontuacao_data_processamento = None;
         self.fs = FsSeguro( chave_local );
+        self.configuracao = None;
         
         self.path_cliente = self.grupo.path_grupo + "/clientes/" + hashlib.md5( jid.encode("utf-8") ).hexdigest();
         if not os.path.exists( self.path_cliente ):
             os.makedirs( self.path_cliente );
-        
+        self.configuracao = Configuracao( self.path_cliente, self.fs );
+
         self.path_public_key = self.path_cliente + "/public_key.txt";
         self.path_private_key = self.path_cliente + "/private_key.txt";
         self.path_mensagens = self.path_cliente + "/mensagens";
@@ -43,7 +46,7 @@ class Cliente:
         criar_diretorio_se_nao_existe(self.path_atividade);
         
         if not os.path.exists( self.path_private_key ):
-            #p rint("\033[91mATENÇÃO:\033[0m\033[96mNão existe o caminho: "+ self.path_private_key +"\033[0m");
+            print("\033[91mATENÇÃO:\033[0m\033[96mNão existe o caminho: "+ self.path_private_key +"\033[0m");
             self.criar_chaves();
         self.private_key = RSA.importKey( self.fs.ler_binario( self.path_private_key ) );
         self.public_key = self.fs.ler_binario(self.path_public_key).decode("utf-8");

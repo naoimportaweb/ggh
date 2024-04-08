@@ -39,7 +39,6 @@ class PainelOperacao(QtWidgets.QWidget):
             self.btn_novo = QPushButton("Novo item")
             self.btn_novo.clicked.connect(self.btn_novo_click); 
             form_layout.addWidget( self.btn_novo );
-        
         self.setLayout(form_layout);
     
     def cmb_nivel_selected(self):

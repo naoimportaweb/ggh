@@ -12,7 +12,7 @@ from classes.mural import Mural;
 class FormMuralVer(QDialog):
     def __init__(self, xmpp_var, mural, parent=None):
         super(FormMuralVer, self).__init__(parent)
-        self.setWindowTitle("Grupo")
+        self.setWindowTitle("Ver Mural")
         self.setGeometry(400, 400, 800, 500)
         self.form_main = parent;
         self.xmpp_var = xmpp_var;

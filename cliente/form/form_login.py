@@ -8,6 +8,7 @@ from PySide6 import QtWidgets;
 
 from classes.conexao.xmpp_client import XMPPCliente;
 from classes.conexao.sessao import Sessao;
+from classes.singleton.configuracao import Configuracao;
 
 class FormLogin(QDialog):
     def __init__(self, parent=None):
@@ -53,7 +54,6 @@ class FormLogin(QDialog):
 
         layout.addRow(self.pushButton);
         self.setLayout(layout);
-        
     
     def action_btn_entrar(self):
         self.pushButton.setDisabled( False );

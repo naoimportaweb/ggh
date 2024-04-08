@@ -27,7 +27,7 @@ class FormEditarConhecimento(QDialog):
         self.cliente = cliente;
         self.xmpp_var = xmpp_var;
         self.conhecimento = conhecimento;
-        self.setWindowTitle("Conhecimento");
+        self.setWindowTitle("Editar Conhecimento");
         self.setGeometry(400, 400, 800, 500);
         self.main_layout = QVBoxLayout( self );
 

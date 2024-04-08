@@ -13,7 +13,7 @@ from classes.atividade_resposta import AtividadeResposta;
 class FormAtividadeCorrigir(QDialog):
     def __init__(self, xmpp_var, correcao, parent=None):
         super(FormAtividadeCorrigir, self).__init__(parent)
-        self.setWindowTitle("Grupo")
+        self.setWindowTitle("Corrigir Atividade")
         self.setGeometry(400, 400, 800, 500)
         self.form_main = parent;
         self.xmpp_var = xmpp_var;

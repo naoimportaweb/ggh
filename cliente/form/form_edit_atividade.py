@@ -17,14 +17,13 @@ class FormEditarAtividade(QDialog):
         self.cliente = cliente;
         self.xmpp_var = xmpp_var;
         self.atividade = atividade;
-        self.setWindowTitle("Atividade");
+        self.setWindowTitle("Editar atividade");
         self.setGeometry(400, 400, 800, 500);
         self.main_layout = QVBoxLayout( self );
         self.textEditAtividade = None;
         self.table = None;
         tab =       QTabWidget();        
-        self.cmb_nivel = QComboBox(); 
-        self.main_layout.addWidget( self.cmb_nivel );
+        
         self.main_layout.addWidget(tab);
         if atividade.id_cliente == self.cliente.id and self.xmpp_var.cliente.posso_tag("atividade_criar") and self.atividade.id_status == 0:
             self.widget_botton = QWidget();
@@ -64,13 +63,6 @@ class FormEditarAtividade(QDialog):
             page_recomendacao_questao.setLayout(page_recomendacao_questao_layout);
             tab.addTab(page_recomendacao_questao,'Recomendação Correção');
             self.page_recomendacao_questao_layout(  page_recomendacao_questao_layout, self.atividade);
-        index = 0;
-        for i in range(len(self.xmpp_var.grupo.niveis)):
-            self.cmb_nivel.addItem(self.xmpp_var.grupo.niveis[i].nome);
-            if self.atividade.id_nivel != None and self.atividade.id_nivel == self.xmpp_var.grupo.niveis[i].id:
-                index = i;
-        self.cmb_nivel.setCurrentIndex(index);
-
         self.showMaximized();
     
     def layout_operacao(self, layout, atividade):
@@ -115,12 +107,14 @@ class FormEditarAtividade(QDialog):
     def layout_atividade(self, layout, atividade):
         label = QLabel("Atividade", self);
         self.titulo = QLineEdit(self);
-
-        page = QWidget(self);
-        page_layout = QHBoxLayout();
-        page.setLayout(page_layout);
-        page_layout.addWidget(label);
-        page_layout.addWidget(self.titulo);
+        self.cmb_nivel = QComboBox(); 
+        
+        widget0 = Utilitario.widget_layout(self, [label, self.titulo]);
+        widget1 = Utilitario.widget_layout(self, [QLabel("Nível"), self.cmb_nivel]);
+        widget1.layout().addStretch();
+        
+        layout.addWidget( widget0 );
+        layout.addWidget( widget1 );
         
         if self.xmpp_var.cliente.id == self.atividade.id_cliente:
             btn_aprovar = QPushButton("Aprovar")
@@ -133,15 +127,22 @@ class FormEditarAtividade(QDialog):
             btn_aprovar.setStyleSheet( "background-color: green;  color: black");
             btn_editar.setStyleSheet(  "background-color: yellow; color: black");
             if self.atividade.id_status == 0:
-                page_layout.addWidget(btn_aprovar);
-                page_layout.addWidget(btn_reprovar);
+                widget0.layout().addWidget(btn_aprovar);
+                widget0.layout().addWidget(btn_reprovar);
             elif self.atividade.id_status == 1:
-                page_layout.addWidget(btn_aprovar);
-                page_layout.addWidget(btn_editar);
+                widget0.layout().addWidget(btn_aprovar);
+                widget0.layout().addWidget(btn_editar);
             elif self.atividade.id_status == 2:
-                page_layout.addWidget(btn_reprovar);
-                page_layout.addWidget(btn_editar);
-        layout.addWidget( page );
+                widget0.layout().addWidget(btn_reprovar);
+                widget0.layout().addWidget(btn_editar);
+        
+        index = 0;
+        for i in range(len(self.xmpp_var.grupo.niveis)):
+            self.cmb_nivel.addItem(self.xmpp_var.grupo.niveis[i].nome);
+            if self.atividade.id_nivel != None and self.atividade.id_nivel == self.xmpp_var.grupo.niveis[i].id:
+                index = i;
+        self.cmb_nivel.setCurrentIndex(index);
+        #layout.addWidget( page );
 
         self.textEditAtividade = QTextEdit(self);
         self.textEditAtividade.setPlainText( atividade.atividade );

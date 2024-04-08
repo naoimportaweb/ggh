@@ -8,9 +8,11 @@ from PySide6 import QtWidgets;
 from PySide6.QtGui import QPalette;
 from PySide6.QtCore import Qt;
 from api.fsseguro import FsSeguro
-
+from form.ui.combobox import ComboBox;
 from classes.atividade import Atividade;
 from form.form_edit_atividade import FormEditarAtividade
+
+CACHE_CMB_NIVEL = 'painel_atividade.cmb_nivel';
 
 class PainelAtividade(QtWidgets.QWidget):
     def __init__( self, xmpp_var ):
@@ -20,7 +22,8 @@ class PainelAtividade(QtWidgets.QWidget):
         self.lista_atividade = [];
         form_layout = QVBoxLayout( self );
         widget_pesquisa = QWidget();
-        self.cmb_nivel = QComboBox(); 
+        self.cmb_nivel = ComboBox(self, CACHE_CMB_NIVEL, configuracao=self.xmpp_var.cliente.configuracao); # QComboBox(); 
+        self.cmb_nivel.currentIndexChanged.connect(self.cmb_nivel_selected)
         form_pesquisa = QHBoxLayout( widget_pesquisa );
         form_pesquisa.addWidget( QLabel("Nível", self) );
         form_pesquisa.addWidget( self.cmb_nivel );
@@ -82,7 +85,6 @@ class PainelAtividade(QtWidgets.QWidget):
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "AtividadeComando" and (conteudo_js["funcao"] == "salvar" or conteudo_js["funcao"] == "criar" or conteudo_js["funcao"] == "atividade_aprovar_reprovar" ):
-            #self.lista_atividade = [];
             self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
         elif conteudo_js["comando"] == "AtividadeComando" and conteudo_js["funcao"] == "listar" :
             self.atualizar_atividade();
@@ -93,18 +95,11 @@ class PainelAtividade(QtWidgets.QWidget):
     def atualizar_tela(self):
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
         self.b4.setEnabled(self.xmpp_var.cliente.posso_tag("atividade_criar"));
-        self.cmb_nivel.clear();
-        if len(self.xmpp_var.grupo.niveis) > 0:
-            for nivel in self.xmpp_var.grupo.niveis:
-                self.cmb_nivel.addItem(nivel.nome);
-            self.cmb_nivel.setCurrentIndex(0);
-            self.botao_listar_atividade_click();
+        self.cmb_nivel.addArrayObject(self.xmpp_var.grupo.niveis, "id", "nome");
+        self.botao_listar_atividade_click();
     
-    #def botao_acessar_atividade_click(self):
-    #    row = self.table.currentRow();
-    #    f = FormEditarAtividade( self.xmpp_var.cliente, self.xmpp_var, self.lista_atividade[ row ] );
-    #    f.exec();
-    #    #self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "carregar", {"id" : self.lista_atividade[row]["id"] } );
+    def cmb_nivel_selected(self):
+        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
     
     def botao_novo_atividade_click(self):
         atividade = Atividade();

@@ -12,7 +12,7 @@ from form.funcoes import Utilitario;
 class FormOperacaoAdicionar(QDialog):
     def __init__(self, xmpp_var, operacao, parent=None):
         super(FormOperacaoAdicionar, self).__init__(parent)
-        self.setWindowTitle("Operação")
+        self.setWindowTitle("Adicionar Operação")
         self.setGeometry(400, 400, 800, 500)
         self.form_main = parent;
         self.xmpp_var = xmpp_var;

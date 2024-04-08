@@ -9,6 +9,7 @@ from PySide6.QtCore import Qt;
 from classes.mural import Mural;
 from form.form_mural_adicionar import FormMuralAdicionar;
 from form.form_mural_ver import FormMuralVer;
+from form.funcoes import Utilitario;
 
 class PainelMural(QtWidgets.QWidget):
     def __init__( self, xmpp_var ):
@@ -34,7 +35,10 @@ class PainelMural(QtWidgets.QWidget):
         if xmpp_var.cliente.posso_tag("mural_criar"):
             self.btn_novo = QPushButton("Novo item")
             self.btn_novo.clicked.connect(self.btn_novo_click); 
-            form_layout.addWidget( self.btn_novo );
+            laytou_botao = Utilitario.widget_layout(self, [self.btn_novo]);
+            laytou_botao.layout().insertStretch(0);
+            form_layout.addWidget( laytou_botao );
+
         self.setLayout(form_layout);
 
     def atualizar_tela(self):
@@ -65,4 +69,4 @@ class PainelMural(QtWidgets.QWidget):
         f = FormMuralVer(self.xmpp_var, self.mensagens[row]);
         f.exec();
 
-
+#insertStretch(0)

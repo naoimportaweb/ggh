@@ -14,7 +14,7 @@ from classes.grupo import Grupo;
 class FormImportar(QDialog):
     def __init__(self, parent=None):
         super(FormImportar, self).__init__(parent)
-        self.setWindowTitle("Grupo")
+        self.setWindowTitle("Importar configuração")
         self.setGeometry(400, 400, 800, 500)
         self.form_main = parent;
         self.main_layout = QVBoxLayout( );
