@@ -5,7 +5,7 @@ sys.path.append("../"); # estamos em /form,
 from PySide6.QtGui import QPalette;
 from PySide6.QtCore import Qt;
 from PySide6 import QtWidgets;
-from PySide6.QtWidgets import QGridLayout,QTextEdit, QTabWidget, QLineEdit, QDialog, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QTableWidget, QTableWidgetItem, QLabel, QAbstractItemView, QHeaderView;
+from PySide6.QtWidgets import QComboBox, QGridLayout,QTextEdit, QTabWidget, QLineEdit, QDialog, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QTableWidget, QTableWidgetItem, QLabel, QAbstractItemView, QHeaderView;
 from form.form_atividade_resposta import FormAtividadeResposta
 
 from form.funcoes import Utilitario;
@@ -23,6 +23,8 @@ class FormEditarAtividade(QDialog):
         self.textEditAtividade = None;
         self.table = None;
         tab =       QTabWidget();        
+        self.cmb_nivel = QComboBox(); 
+        self.main_layout.addWidget( self.cmb_nivel );
         self.main_layout.addWidget(tab);
         if atividade.id_cliente == self.cliente.id and self.xmpp_var.cliente.posso_tag("atividade_criar") and self.atividade.id_status == 0:
             self.widget_botton = QWidget();
@@ -62,6 +64,13 @@ class FormEditarAtividade(QDialog):
             page_recomendacao_questao.setLayout(page_recomendacao_questao_layout);
             tab.addTab(page_recomendacao_questao,'Recomendação Correção');
             self.page_recomendacao_questao_layout(  page_recomendacao_questao_layout, self.atividade);
+        index = 0;
+        for i in range(len(self.xmpp_var.grupo.niveis)):
+            self.cmb_nivel.addItem(self.xmpp_var.grupo.niveis[i].nome);
+            if self.atividade.id_nivel != None and self.atividade.id_nivel == self.xmpp_var.grupo.niveis[i].id:
+                index = i;
+        self.cmb_nivel.setCurrentIndex(index);
+
         self.showMaximized();
     
     def layout_operacao(self, layout, atividade):
@@ -206,5 +215,6 @@ class FormEditarAtividade(QDialog):
         self.atividade.pontos_maximo =             int(self.txt_pontos_maximo.text());
         self.atividade.pontos_correcao_maximo    = int(self.txt_pontos_corretor_maximo.text());
         self.atividade.instrucao_correcao = self.txt_recomendacao.toPlainText();
+        self.atividade.id_nivel                  = self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id;
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "salvar", self.atividade.toJson() );
 #

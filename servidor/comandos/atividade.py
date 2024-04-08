@@ -42,8 +42,8 @@ class AtividadeComando:
             return {"status" : False, "erro" : "A atividade não é sua para você alterar."};
         if resposta_banco["id_status"] != 0:
             return {"status" : False, "erro" : "A atividade não pode ser salva pois está em produção ou cancelada."};
-        sql = "UPDATE atividade SET titulo=%s, atividade=%s, execucoes=%s, tentativas=%s, instrucao_correcao=%s, instrucao=%s, pontos_correcao_maximo=%s,     pontos_maximo=%s where id=%s";
-        values = [js["titulo"], js["atividade"], js["execucoes"], js["tentativas"], js["instrucao_correcao"], js["instrucao"], js["pontos_correcao_maximo"],  js["pontos_maximo"], js["id"]];
+        sql = "UPDATE atividade SET id_nivel=%s, titulo=%s, atividade=%s, execucoes=%s, tentativas=%s, instrucao_correcao=%s, instrucao=%s, pontos_correcao_maximo=%s,     pontos_maximo=%s where id=%s";
+        values = [js["id_nivel"], js["titulo"], js["atividade"], js["execucoes"], js["tentativas"], js["instrucao_correcao"], js["instrucao"], js["pontos_correcao_maximo"],  js["pontos_maximo"], js["id"]];
         my.execute(sql, values);
         return {"status" : True, "atividade" : js };
 
