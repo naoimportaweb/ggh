@@ -1,7 +1,7 @@
 
 # criar tabelas e campos.
 CREATE TABLE cliente ( id varchar(255) NOT NULL, jid varchar(255) unique, id_nivel varchar(255), public_key LONGTEXT, apelido varchar(255) unique, pontuacao int,
-  pontuacao_data_processamento datetime, chave_simetrica_criptografada LONGTEXT,  PRIMARY KEY(id) );
+  pontuacao_data_processamento datetime, chave_simetrica_criptografada LONGTEXT, chave_servidor varchar(255)  PRIMARY KEY(id) );
 
 CREATE TABLE grupo ( id varchar(255) NOT NULL, jid varchar(255) unique, nome varchar(255), descricao TEXT, PRIMARY KEY(id) );
 

@@ -20,3 +20,5 @@ class ClienteCadastroComando:
         js = mensagem.toJson();
         cliente.tags =          js["tags"];
         return cliente.tags;
+    def logoff(self, cliente, grupo, mensagem):
+        return mensagem.toJson();

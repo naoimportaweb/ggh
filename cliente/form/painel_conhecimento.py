@@ -12,6 +12,7 @@ from api.fsseguro import FsSeguro
 from classes.conhecimento import Conhecimento;
 from form.form_edit_conhecimento import FormEditarConhecimento
 from form.ui.combobox import ComboBox;
+from form.funcoes import Utilitario;
 
 CACHE_CMB_NIVEL = 'painel_conhecimento.cmb_nivel';
 
@@ -35,19 +36,7 @@ class PainelConhecimento(QtWidgets.QWidget):
         form_pesquisa.addStretch();
         form_layout.addWidget(widget_pesquisa);
 
-        #https://www.pythontutorial.net/pyqt/pyqt-qtablewidget/
-        self.table = QTableWidget(self)
-        self.table.doubleClicked.connect(self.table_conhecimento_double)
-        colunas = [{"Título" : "", "Status" : ""}];
-        self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
-        self.table.resizeColumnsToContents()
-        self.table.setColumnCount(2)
-        self.table.setHorizontalHeaderLabels(colunas[0].keys());
-        self.table.setRowCount(0)
-        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers);
-        header = self.table.horizontalHeader() 
-        header.setSectionResizeMode(0, QHeaderView.Stretch)
-        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        self.table = Utilitario.widget_tabela(self, ["Título", "Status"], [QHeaderView.Stretch, QHeaderView.ResizeToContents ], double_click=self.table_conhecimento_double)
         form_layout.addWidget(self.table);
         
         widget_acesso = QWidget();

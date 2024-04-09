@@ -58,12 +58,7 @@ class XMPPServer:
                     mensagem = self.grupo.lista_envio.pop(0);
                     if mensagem != None:
                         if not self.connection.isConnected(): self.connection.reconnectAndReauth()
-                        #p rint("Enviado:", mensagem.comando.comando);
-                        #p rint(" [+] from:", self.grupo.jid ," to:", mensagem.jid_to);
                         mensagem.enviar( self.connection );
-                        #msg_xmpp = xmpp.Message( to=mensagem.jid_to , body=mensagem.toString() );
-                        #msg_xmpp.setAttr('type', 'chat');
-                        #self.connection.send( msg_xmpp );
                         time.sleep(0.1);
             except KeyboardInterrupt:
                 sys.exit(1);
@@ -99,7 +94,6 @@ class XMPPServer:
             message = Mensagem( cliente,  user, self.grupo.jid ); # cliente, jid_from, jid_to
             if message.fromString( text ):
                 js = message.toJson( );
-                #p rint("Chegou: ", js["comando"], js["funcao"]);
                 MyClass = getattr(importlib.import_module(js["modulo"]), js["comando"])
                 instance = MyClass()
                 retorno_metodo = getattr(instance, js["funcao"])( cliente, self.grupo, message );

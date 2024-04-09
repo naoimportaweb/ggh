@@ -7,12 +7,16 @@ from PySide6.QtWidgets import QGridLayout,QTextEdit, QTabWidget, QLineEdit, QDia
 
 class Utilitario():
     @staticmethod
-    def widget_linha(form, layout, controls):
+    def widget_linha(form, layout, controls, stretch_inicio=False, stretch_fim=False):
         widget1 = QWidget(form);
         widget1_layout = QHBoxLayout();
         widget1.setLayout(widget1_layout);
+        if stretch_inicio:
+            widget1_layout.addStretch();
         for control in controls:
             widget1_layout.addWidget( control );
+        if stretch_fim:
+            widget1_layout.addStretch();
         layout.addWidget(widget1);
     def widget_layout(form, controls):
         widget1 = QWidget(form);

@@ -14,7 +14,7 @@ class Cliente:
         self.id = hashlib.md5( jid.encode() ).hexdigest() ;
         self.jid = jid;
         self.public_key = public_key;
-        self.chave_servidor = str( uuid.uuid5(uuid.NAMESPACE_URL, str(time.time())) )[0:16];
+        self.chave_servidor = None;
         self.grupo = grupo;
         self.pontuacao = 0;
         self.id_nivel = "";
@@ -24,8 +24,17 @@ class Cliente:
         self.path_cliente = self.grupo.path_grupo + "/clientes/" + hashlib.md5( self.jid.encode() ).hexdigest();
         self.tags = [];
     
+    def definir_chave_servidor(self):
+        my = MysqlHelp();
+        self.chave_servidor = str( uuid.uuid5(uuid.NAMESPACE_URL, str(time.time())) )[0:16];
+        sql = "UPDATE cliente SET chave_servidor=%s where id=%s";
+        my.execute(sql, [ self.chave_servidor, self.id ])
     def fromJson(self, js):
         self.id = js["id"];
+        if js["chave_servidor"] != None and js["chave_servidor"] != "":
+            self.chave_servidor = js["chave_servidor"];
+        else:
+            self.definir_chave_servidor();
         self.jid = js["jid"];
         self.id_nivel = js["id_nivel"];
         self.public_key = js["public_key"];

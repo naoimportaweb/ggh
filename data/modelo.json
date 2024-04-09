@@ -2,7 +2,7 @@
     {"nome" : "operacao_status", "fields" : ["id", "nome"]},
     {"nome" : "operacao", "fields" : ["id", "id_nivel", "sigla", "nome", "id_grupo", "id_operacao_status", "data_inicio", "data_fim", "missao", "foco"]},
     {"nome" : "operacao_atividade", "fields" : ["id_atividade", "id_operacao"]},
-    {"nome" : "cliente", "fields" : ["id", "jid", "public_key", "apelido", "pontuacao", "pontuacao_data_processamento", "id_nivel"]},
+    {"nome" : "cliente", "fields" : ["id", "jid", "public_key", "apelido", "pontuacao", "pontuacao_data_processamento", "id_nivel", "chave_servidor"]},
     {"nome" : "grupo", "fields" : ["id", "jid", "nome", "descricao"]},
     {"nome" : "grupo_cliente", "fields" : ["id_grupo", "id_cliente"]},
     {"nome" : "mural", "fields" : ["id", "id_grupo", "id_cliente", "titulo", "mensagem", "data", "id_nivel", "id_destinatario", "sequencia"]},

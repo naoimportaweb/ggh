@@ -39,30 +39,11 @@ class ConhecimentoComando:
         js = mensagem.toJson();
         if not cliente.posso_nivel( js["id_nivel"] ):
             return {"lista" : [] };
-        sql = "select co.*, cos.nome as nome_status from conhecimento as co inner join cliente as cl on co.id_cliente = cl.id inner join conhecimento_status as cos on co.id_status = cos.id where ( co.id_cliente <> %s and co.id_nivel= %s and co.id_status <> 0 ) or (co.id_cliente = %s and co.id_nivel= %s)";
-        values = [ cliente.id, js["id_nivel"], cliente.id, js["id_nivel"] ];
+        sql = "select * from nivel where id=%s";
+        nivel = my.datatable(sql, [js["id_nivel"]])[0];
+        sql = "select co.*, cos.nome as nome_status from conhecimento as co inner join cliente as cl on co.id_cliente = cl.id inner join conhecimento_status as cos on co.id_status = cos.id where ( co.id_cliente <> %s and co.id_nivel in (select id from nivel where posicao <= %s) and co.id_status <> 0 ) or (co.id_cliente = %s)";
+        values = [ cliente.id, nivel["posicao"] , cliente.id ];
         return {"lista" : my.datatable(sql, values) };
-    
-    #def aprovar(self, cliente, grupo, mensagem):
-    #    my = MysqlHelp();
-    #    js = mensagem.toJson();
-    #    #TODO: validar permissao: aprovador_conhecimento
-    #    sql = "SELECT * FROM conhecimento where id = %s";
-    #    values = [ js["id"] ];
-    #    conhecimento = my.datatable(sql, values)[0];
-    #    if conhecimento["status"] != 1:
-    #        return {"status" : False, "erro" : "Não está aguardando aprovação"};
-    #    #sql = "SELECT tg.* FROM tag  as tg inner join tag_cliente as tgc on tg.id = tgc.id_tag where tg.sigla = 'aprovador_conhecimento' and tgc.id_cliente =  %s";
-    #    #values = [ cliente.id ];
-    #    #tag = my.datatable(sql, values);
-    #    #if len(tag) == 0:
-    #    #    return {"status" : False, "erro" : "Não tem permissão para aprovar."};
-    #    if not cliente.posso_tag("aprovador_conhecimento"):
-    #        return {"status" : False, "erro" : "Não tem permissão para aprovar."};
-    #    sql = "UPDATE conhecimento set ultima_alteracao = %s, status = %s where id = %s";
-    #    values = [ time.time(), 2, js["id"] ];
-    #    my.execute(sql, values);
-    #    return {"status" : True, "conhecimento" : js };
     
     def salvar(self, cliente, grupo, mensagem):
         my = MysqlHelp();

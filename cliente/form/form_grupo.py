@@ -120,6 +120,8 @@ class FormGrupo(QtWidgets.QWidget):
             if conteudo_js["versao"] != self.xmpp_var.dados["versao"]:
                 print("\033[41mAtenção, a versão do servidor é incompatível com a versão do cliente. A versão do servidor é: " + conteudo_js["versao"] + " \033[0m");
                 self.close();
+        elif conteudo_js["comando"] == "ClienteCadastroComando" and conteudo_js["funcao"] == "logoff":
+            self.close();
         for buffer in self.widgets:
             buffer.evento_mensagem(de, texto, message, conteudo_js);
     

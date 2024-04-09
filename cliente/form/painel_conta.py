@@ -8,6 +8,7 @@ from PySide6.QtCore import Qt;
 
 from api.chachahelp import ChaChaHelper;
 from api.SteganoHelper import SteganoHelper;
+from form.funcoes import Utilitario;
 
 class PainelConta(QtWidgets.QWidget):
     def __init__( self, xmpp_var ):
@@ -18,28 +19,13 @@ class PainelConta(QtWidgets.QWidget):
         tab = QTabWidget();  
         self.main_layout.addWidget(tab);   
         
-        page_dados = QWidget(tab);
-        page_dados_layout = QVBoxLayout();
-        page_dados.setLayout(page_dados_layout);
-        tab.addTab(page_dados,'Dados');
+        page_dados_layout = Utilitario.widget_tab(tab, "Dados");
         self.layout_dados( page_dados_layout );
-
-        page_login = QWidget(tab);
-        page_login_layout = QVBoxLayout();
-        page_login.setLayout(page_login_layout);
-        tab.addTab(page_login,'Autenticação');
+        page_login_layout = Utilitario.widget_tab(tab, "Autenticação")
         self.layout_login( page_login_layout );
-
-        page_tags = QWidget(tab);
-        page_tags_layout = QVBoxLayout();
-        page_tags.setLayout(page_tags_layout);
-        tab.addTab(page_tags,'TAGs');
+        page_tags_layout = Utilitario.widget_tab(tab, "TAGs")
         self.layout_tag( page_tags_layout );
-
-        page_niveis = QWidget(tab);
-        page_niveis_layout = QVBoxLayout();
-        page_niveis.setLayout(page_niveis_layout);
-        tab.addTab(page_niveis,'Níveis');
+        page_niveis_layout = Utilitario.widget_tab(tab, "Níveis")
         self.layout_nivel( page_niveis_layout );
 
         self.setLayout(self.main_layout);
@@ -73,53 +59,31 @@ class PainelConta(QtWidgets.QWidget):
             self.recarregar_tags();
     
     def layout_tag(self, layout):
-        widget = QWidget(self);
-        widget_layout = QHBoxLayout();
-        widget.setLayout(widget_layout);
-        widget_layout.addStretch();
         btn_atualizar_tag = QPushButton("Atualizar as TAGs")
         btn_atualizar_tag.clicked.connect(self.btn_atualizar_tag_click); 
-        widget_layout.addWidget( btn_atualizar_tag );
-        layout.addWidget(widget);
-
-        self.table = QTableWidget(self)
-        colunas = [{"sigla" : "", "Título" : ""}];
-        self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
-        self.table.resizeColumnsToContents();
-        self.table.setColumnCount(2);
-        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers);
-        self.table.setHorizontalHeaderLabels(colunas[0].keys());
-        header = self.table.horizontalHeader() 
-        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QHeaderView.Stretch);
+        Utilitario.widget_linha(self, layout, [btn_atualizar_tag], stretch_inicio=True );
+        self.table = Utilitario.widget_tabela(self, ["Sigla", "Título"], tamanhos=[QHeaderView.ResizeToContents, QHeaderView.Stretch]);
         layout.addWidget(self.table);
 
+
     def layout_nivel(self, layout):
-        self.table1 = QTableWidget(self)
-        colunas = [{"Nome" : ""}];
-        self.table1.setSelectionBehavior(QAbstractItemView.SelectRows); 
-        self.table1.resizeColumnsToContents();
-        self.table1.setColumnCount(1);
-        self.table1.setEditTriggers(QAbstractItemView.NoEditTriggers);
-        self.table1.setHorizontalHeaderLabels(colunas[0].keys());
-        header = self.table1.horizontalHeader() 
-        header.setSectionResizeMode(0, QHeaderView.Stretch);
+        self.table1 = Utilitario.widget_tabela(self, ["Nome"], [QHeaderView.Stretch]);
         layout.addWidget(self.table1);
     
     def layout_dados(self, layout):
-        widget = QWidget(self);
-        widget_layout = QHBoxLayout();
-        widget.setLayout(widget_layout);
-        widget_layout.addWidget(QLabel("Apelido", self));
+        lb_label_buffer = QLabel("Apelido: ", self);
         self.lb_apelido = QLabel("<b>" + self.xmpp_var.cliente.apelido + "</b>", self );
-        widget_layout.addWidget(self.lb_apelido);
         btn_rename = QPushButton("Gerar novo apelido")
         btn_rename.clicked.connect(self.widget_layout_click); 
-        widget_layout.addWidget( btn_rename );
-        widget_layout.addStretch();
-        layout.addWidget(widget);
+        Utilitario.widget_linha(self, layout, [ lb_label_buffer, self.lb_apelido, btn_rename ], stretch_fim=True);
+        btn_logoff = QPushButton("Logoff")
+        btn_logoff.clicked.connect(self.btn_logoff_click); 
+        Utilitario.widget_linha(self, layout, [ btn_logoff ], stretch_fim=True);
         layout.addStretch();
-
+    
+    def btn_logoff_click(self):
+        self.xmpp_var.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastroComando", "logoff", {});
+    
     def widget_layout_click(self):
         self.xmpp_var.adicionar_mensagem( "comandos.cliente_cadastro" ,"ClienteCadastroComando", "alterar_nome", {});
         return;

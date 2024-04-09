@@ -18,3 +18,9 @@ class ClienteCadastroComando:
     def atualizar_tags(self, cliente, grupo, mensagem):
         cliente.carregar_tag();
         return {"status" : True, "tags" : cliente.tags};
+    def logoff(self, cliente, grupo, mensagem):
+        my = MysqlHelp();
+        sql = "update cliente set chave_servidor = %s where id=%s";
+        my.execute(sql, [None, cliente.id]);
+        grupo.logoff( cliente.jid );
+        return {"status" : True};

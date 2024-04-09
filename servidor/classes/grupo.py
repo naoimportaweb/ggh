@@ -53,6 +53,9 @@ class Grupo:
             self.clientes[ jid ] = cliente_buffer;
         return self.clientes[ jid ];
     
+    def logoff(self, jid):
+        self.clientes.pop(jid, None);
+    
     def add_envio(self, cliente, modulo, comando, funcao, data={}, retorno="", criptografia="&1&", id=None):
         comando  = Comando( modulo, comando, funcao, data );
         mensagem = Mensagem( cliente, self.jid, cliente.jid, comando=comando, criptografia=criptografia, id=id );
