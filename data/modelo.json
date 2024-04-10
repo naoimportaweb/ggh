@@ -2,7 +2,7 @@
     {"nome" : "operacao_status", "fields" : ["id", "nome"]},
     {"nome" : "operacao", "fields" : ["id", "id_nivel", "sigla", "nome", "id_grupo", "id_operacao_status", "data_inicio", "data_fim", "missao", "foco"]},
     {"nome" : "operacao_atividade", "fields" : ["id_atividade", "id_operacao"]},
-    {"nome" : "cliente", "fields" : ["id", "jid", "public_key", "apelido", "pontuacao", "pontuacao_data_processamento", "id_nivel", "chave_servidor"]},
+    {"nome" : "cliente", "fields" : ["id", "jid", "public_key", "apelido", "pontuacao", "pontuacao_data_processamento", "id_nivel", "chave_servidor", "data_cadastro", "data_acesso"]},
     {"nome" : "grupo", "fields" : ["id", "jid", "nome", "descricao"]},
     {"nome" : "grupo_cliente", "fields" : ["id_grupo", "id_cliente"]},
     {"nome" : "mural", "fields" : ["id", "id_grupo", "id_cliente", "titulo", "mensagem", "data", "id_nivel", "id_destinatario", "sequencia"]},
@@ -13,5 +13,5 @@
     {"nome" : "mensagem", "fields" : ["id", "id_remetente", "id_destinatario", "mensagem_criptografada", "chave_simetrica_criptografada", "data_hora_envio", "ordem"]},
     {"nome" : "mensagem_nivel", "fields" : ["id_nivel", "id_mensagem"]},
     {"nome" : "atividade", "fields" : ["id", "id_status", "id_cliente", "id_grupo", "id_nivel", "titulo", "execucoes",  "tentativas", "instrucao_correcao", "data_maxima", "instrucao", "pontos_maximo", "pontos_correcao_maximo"]},
-    {"nome" : "atividade_cliente", "fields" : ["id", "id_status", "id_atividade", "id_cliente", "resposta", "id_avaliador", "data", "pontos", "data_avaliador", "consideracao_avaliador"]}
+    {"nome" : "atividade_cliente", "fields" : ["id", "chave_publica", "id_status", "id_atividade", "id_cliente", "resposta", "id_avaliador", "data", "pontos", "data_avaliador", "consideracao_avaliador"]}
 ]

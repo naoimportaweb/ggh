@@ -47,7 +47,11 @@ class Cliente:
     def existo(self):
         my = MysqlHelp();
         return len(my.datatable( "select id from cliente where jid = %s", [ self.jid ] )) > 0;
-
+    
+    def registra_entrada(self):
+        my = MysqlHelp();
+        return len(my.datatable( "UPDATE cliente set data_acesso = %s where id=%s", [ datetime.now().isoformat(), self.id ] )) > 0;
+    
     def carregar(self):
         try:
             if not self.existo():
@@ -80,8 +84,8 @@ class Cliente:
             
             nivel_inicial = my.datatable("SELECT * FROM nivel WHERE posicao = %s and id_grupo = %s",[ 0, self.grupo.id ])[0];
 
-            sqls.append("INSERT INTO cliente (id, jid, public_key, apelido, pontuacao, pontuacao_data_processamento, id_nivel) values( %s, %s, %s, %s, %s, %s, %s)");
-            valuess.append(  [ self.id, self.jid, self.public_key, my.chave_string("cliente", "apelido", 8 ) , self.pontuacao, self.pontuacao_data_processamento, nivel_inicial["id"] ]  );
+            sqls.append("INSERT INTO cliente (id, jid, public_key, apelido, pontuacao, pontuacao_data_processamento, id_nivel, data_cadastro, data_acesso) values( %s, %s, %s, %s, %s, %s, %s, %s, %s)");
+            valuess.append(  [ self.id, self.jid, self.public_key, my.chave_string("cliente", "apelido", 8 ) , self.pontuacao, self.pontuacao_data_processamento, nivel_inicial["id"], self.pontuacao_data_processamento, self.pontuacao_data_processamento ]  );
 
             sqls.append("INSERT INTO grupo_cliente(id_cliente, id_grupo) values (%s, %s)");
             valuess.append( [ self.id, self.grupo.id ] );

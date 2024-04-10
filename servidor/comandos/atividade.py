@@ -8,7 +8,7 @@ class AtividadeComando:
     def listar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql = "select atv.* from atividade as atv inner join nivel as ni on atv.id_nivel = ni.id where ( atv.id_cliente = %s ) or ( ni.posicao <= ( select posicao from nivel where id_grupo=%s and id=%s  and atv.id_status = 2 ))";
+        sql = "select atv.*, ni.nome as nome_nivel from atividade as atv inner join nivel as ni on atv.id_nivel = ni.id where ( atv.id_cliente = %s ) or ( ni.posicao <= ( select posicao from nivel where id_grupo=%s and id=%s  and atv.id_status = 2 ))";
         atividades = my.datatable(sql, [ cliente.id , grupo.id, cliente.id_nivel ] );
         for i in range(len(atividades)):
             sql = "select * from atividade_cliente where id_atividade = %s and id_cliente=%s";
@@ -75,8 +75,8 @@ class AtividadeComando:
         if resposta_banco["id_status"] != 2:
             return {"status" : False, "erro" : "A atividade não está em uso."};
 
-        sql = "INSERT INTO atividade_cliente(id, id_atividade, id_cliente, resposta, data ) values(%s, %s, %s, %s, %s)";
-        values = [my.chave_string("atividade_cliente", "id", 20 ), js["id_atividade"], cliente.id, js["resposta"],  datetime.now().isoformat() ];
+        sql = "INSERT INTO atividade_cliente(id, id_atividade, id_cliente, resposta, data, chave_publica ) values(%s, %s, %s, %s, %s, %s)";
+        values = [my.chave_string("atividade_cliente", "id", 20 ), js["id_atividade"], cliente.id, js["resposta"],  datetime.now().isoformat(), my.chave_string("atividade_cliente", "chave_publica", 30 ) ];
         my.execute(sql, values);
         return {"status" : True, "resposta" : js , "lista" : self.carregar_uma_atividade(js["id"], cliente) };
     

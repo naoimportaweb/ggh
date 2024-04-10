@@ -14,6 +14,7 @@ class AtividadeResposta:
         self.consideracao_avaliador = None;
         self.resposta = None;
         self.id_status = 0;
+        self.chave_publica = None;
 
     def fromJson(self, js):
         self.id = js["id"];
@@ -25,6 +26,8 @@ class AtividadeResposta:
         self.data_avaliador = js["data_avaliador"];
         self.consideracao_avaliador = js["consideracao_avaliador"];
         self.resposta = js["resposta"]; 
+        if js.get("chave_publica") != None:
+            self.chave_publica = js["chave_publica"];
         if js.get("id_status") != None:
             self.id_status = js["id_status"];
     
@@ -44,4 +47,4 @@ class AtividadeResposta:
     def toJson(self):
         return {"id" : self.id, "id_atividade" : self.id_atividade, "id_cliente" : self.id_cliente, "id_avaliador" : self.id_avaliador,
                  "data" : self.data, "pontos" : self.pontos, "data_avaliador" : self.data_avaliador, "consideracao_avaliador" : self.consideracao_avaliador,
-                 "resposta" : self.resposta, "id_status" : self.id_status};    
+                 "resposta" : self.resposta, "id_status" : self.id_status, "chave_publica" : self.chave_publica};    

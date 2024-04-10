@@ -44,7 +44,8 @@ class Grupo:
         for cliente in datatable:
             cliente_buffer = Cliente( cliente["id"], self ); 
             cliente_buffer.fromJson( cliente );
-            self.clientes[ cliente["jid"] ] =  cliente_buffer; #{ "id" : cliente["id"], "jid" : cliente["jid"], "apelido" : cliente["apelido"] };
+            cliente_buffer.registra_entrada(); # registra que entrou
+            self.clientes[ cliente["jid"] ] =  cliente_buffer;
     
     def cliente(self, jid):
         if self.clientes.get( jid ) == None:

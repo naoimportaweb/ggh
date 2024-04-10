@@ -25,6 +25,7 @@ class Utilitario():
         for control in controls:
             widget1_layout.addWidget( control );
         return widget1;
+    
     @staticmethod
     def widget_tab(tab, titulo):
         page = QWidget(tab);
@@ -32,6 +33,7 @@ class Utilitario():
         page.setLayout(page_layout);
         tab.addTab( page, titulo );
         return page_layout;
+    
     @staticmethod
     def widget_tabela(form, colunas, tamanhos=None, double_click=None):
         table = QTableWidget(form)

@@ -1,7 +1,16 @@
 
+#alter table atividade_cliente add column chave_publica varchar(255);
+#alter table cliente add column data_cadastro datetime;
+#alter table cliente add column data_acesso datetime;
+#update cliente set data_acesso='2000-01-01 00:00:00';
+#update cliente set data_cadastro='2000-01-01 00:00:00';
+#update atividade_cliente set chave_publica='11111111111111111111';
+
+
 # criar tabelas e campos.
 CREATE TABLE cliente ( id varchar(255) NOT NULL, jid varchar(255) unique, id_nivel varchar(255), public_key LONGTEXT, apelido varchar(255) unique, pontuacao int,
-  pontuacao_data_processamento datetime, chave_simetrica_criptografada LONGTEXT, chave_servidor varchar(255)  PRIMARY KEY(id) );
+  pontuacao_data_processamento datetime, chave_simetrica_criptografada LONGTEXT, chave_servidor varchar(255), data_cadastro DATETIME, data_acesso DATETIME
+    PRIMARY KEY(id) );
 
 CREATE TABLE grupo ( id varchar(255) NOT NULL, jid varchar(255) unique, nome varchar(255), descricao TEXT, PRIMARY KEY(id) );
 
@@ -41,7 +50,7 @@ CREATE TABLE atividade(id varchar(255) NOT NULL, id_cliente varchar(255) NOT NUL
 
 CREATE TABLE atividade_cliente( id varchar(255) NOT NULL, id_atividade varchar(255) NOT NULL,
   id_cliente VARCHAR(255) NOT NULL, resposta LONGTEXT, id_avaliador VARCHAR(255) DEFAULT NULL,
-  data DATETIME NOT NULL, id_status INT default 0,
+  data DATETIME NOT NULL, id_status INT default 0, chave_publica varchar(255),
   pontos INT DEFAULT NULL, data_avaliador DATETIME DEFAULT NULL, consideracao_avaliador LONGTEXT DEFAULT NULL,
   PRIMARY KEY(id) );
 
