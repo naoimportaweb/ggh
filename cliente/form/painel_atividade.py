@@ -11,6 +11,7 @@ from api.fsseguro import FsSeguro
 from form.ui.combobox import ComboBox;
 from classes.atividade import Atividade;
 from form.form_edit_atividade import FormEditarAtividade
+from form.funcoes import Utilitario;
 
 CACHE_CMB_NIVEL = 'painel_atividade.cmb_nivel';
 
@@ -34,33 +35,13 @@ class PainelAtividade(QtWidgets.QWidget):
         form_pesquisa.addStretch();
         form_layout.addWidget(widget_pesquisa);
 
-        #https://www.pythontutorial.net/pyqt/pyqt-qtablewidget/
-        self.table = QTableWidget(self)
-        self.table.doubleClicked.connect(self.table_atividade_double)
-        colunas = [{"Título" : "", "Nível" : "" , "Status" : ""}];
-        self.table.setSelectionBehavior(QAbstractItemView.SelectRows); 
-        self.table.resizeColumnsToContents();
-        self.table.setColumnCount(3);
-        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers);
-        self.table.setHorizontalHeaderLabels(colunas[0].keys());
-        header = self.table.horizontalHeader() 
-        header.setSectionResizeMode(0, QHeaderView.Stretch)
-        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        self.table.setRowCount(0)
+        self.table = Utilitario.widget_tabela(self, ["Título", "Nível", "Status"], tamanhos=[QHeaderView.Stretch, QHeaderView.ResizeToContents, QHeaderView.ResizeToContents], double_click=self.table_atividade_double);
         form_layout.addWidget(self.table);
-        
-        widget_acesso = QWidget();
-        form_acesso = QHBoxLayout( widget_acesso );
-        form_acesso.addStretch();
-
         self.b4 = QPushButton("Nova atividade")
         self.b4.setGeometry(10,0,32,32)
         self.b4.clicked.connect( self.botao_novo_atividade_click )
         self.b4.setEnabled(False);
-        form_acesso.addWidget( self.b4 );
-
-        form_layout.addWidget(widget_acesso);
+        Utilitario.widget_linha(self, form_layout, [self.b4], stretch_inicio=True );
         self.setLayout(form_layout);
 
     def table_atividade_double(self):
@@ -72,13 +53,6 @@ class PainelAtividade(QtWidgets.QWidget):
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
 
     def atualizar_atividade( self ):
-        #lista_buffer = os.listdir(  self.xmpp_var.cliente.path_atividade  );
-        #self.lista_atividade = [];
-        #for buffer_nome_atividade in lista_buffer:
-        #    buffer_Atividade = Atividade( );
-        #    buffer_Atividade.carregar( self.xmpp_var.cliente.chave_local, self.xmpp_var.cliente.path_atividade + "/" + buffer_nome_atividade );
-        #    if buffer_Atividade.id_nivel == self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id:
-        #        self.lista_atividade.append( buffer_Atividade );
         self.table.setRowCount( len(  self.lista_atividade  ) );
         for i in range(len(self.lista_atividade)):
             self.table.setItem( i, 0, QTableWidgetItem( self.lista_atividade[i].titulo          ) );

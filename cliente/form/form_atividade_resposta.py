@@ -52,14 +52,6 @@ class FormAtividadeResposta(QDialog):
             btn_salvar = QPushButton("Responder");
             btn_salvar.clicked.connect(self.btn_click_salvar); 
             Utilitario.widget_linha(self, layout, [btn_salvar], stretch_inicio=True);
-            #widget_botton = QWidget();
-            #botton_layout = QHBoxLayout();
-            #widget_botton.setLayout( botton_layout );
-            #btn_salvar = QPushButton("Responder")
-            #btn_salvar.clicked.connect(self.btn_click_salvar); 
-            #botton_layout.addStretch();
-            #botton_layout.addWidget( btn_salvar );
-            #layout.addWidget(widget_botton);
         
     def layout_atividade(self, layout):
         self.txt_atividade = QTextEdit(self);
@@ -79,9 +71,6 @@ class FormAtividadeResposta(QDialog):
         if self.index_resposta != None:
             if self.xmpp_var.cliente.posso_tag("atividade_corrigir") and self.atividade.respostas[self.index_resposta].id_status == 0:
                 self.txt_comentario.setPlainText(self.atividade.respostas[self.index_resposta].consideracao_avaliador);
-                #widget_botton = QWidget();
-                #botton_layout = QHBoxLayout();
-                #widget_botton.setLayout( botton_layout );
                 btn_aprovar = QPushButton("APROVAR")
                 btn_reprovar = QPushButton("REPROVAR")
                 btn_reprovar.setStyleSheet("background-color: red; color: black");
@@ -91,12 +80,7 @@ class FormAtividadeResposta(QDialog):
                 self.cb_pontos = QComboBox(self);
                 for i in range( self.atividade.pontos_maximo ):
                     self.cb_pontos.addItem('Ponto: ' + str(i + 1));
-                #botton_layout.addWidget( btn_reprovar );
-                #botton_layout.addStretch();
-                #botton_layout.addWidget(self.cb_pontos);
-                #botton_layout.addWidget( btn_aprovar );
                 Utilitario.widget_linha(self, layout, [btn_reprovar, btn_aprovar], stretch_inicio=True);
-                #layout.addWidget(widget_botton);
             if self.atividade.respostas[self.index_resposta].id_status == 1:
                 self.txt_comentario.setPlainText( "REPROVADO\n\n" + self.atividade.respostas[self.index_resposta].consideracao_avaliador);
             elif self.atividade.respostas[self.index_resposta].id_status == 2:

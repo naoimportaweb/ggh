@@ -14,6 +14,9 @@ class Utilitario():
         if stretch_inicio:
             widget1_layout.addStretch();
         for control in controls:
+            if type(control).__name__ == type("").__name__:
+                widget1_layout.addStretch();
+                continue;
             widget1_layout.addWidget( control );
         if stretch_fim:
             widget1_layout.addStretch();
