@@ -5,7 +5,7 @@ sys.path.append("../"); # estamos em /form,
 from PySide6.QtGui import QPalette, QFont;
 from PySide6.QtCore import Qt;
 from PySide6 import QtWidgets;
-from PySide6.QtWidgets import QGridLayout,QTextEdit, QTabWidget, QLineEdit, QDialog, QHBoxLayout, QVBoxLayout, QWidget, QVBoxLayout, QComboBox, QPushButton, QTableWidget, QTableWidgetItem, QLabel, QAbstractItemView, QHeaderView;
+from PySide6.QtWidgets import QFileDialog, QGridLayout,QTextEdit, QTabWidget, QLineEdit, QDialog, QHBoxLayout, QVBoxLayout, QWidget, QVBoxLayout, QComboBox, QPushButton, QTableWidget, QTableWidgetItem, QLabel, QAbstractItemView, QHeaderView;
 from form.text_edit import TextEdit;
 
 #FONT_SIZES = [7, 8, 9, 10, 11, 12, 13, 14, 18, 24, 36, 48, 64, 72, 96, 144, 288]
