@@ -48,8 +48,6 @@ class FormEditarConhecimento(QDialog):
         page_tag_layout = QGridLayout();
         page_tag.setLayout(page_tag_layout);
         tab.addTab(page_tag,'TAGs');
-
-
         
         if self.xmpp_var.cliente.id == conhecimento.id_cliente and conhecimento.id_status == 0:
             self.b5 = QPushButton("Salvar conhecimento")

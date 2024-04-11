@@ -13,6 +13,7 @@ class ComboBox (QComboBox):
         self.em_carregamento = False;
         self.cache_name = cache_name;
         self.valores = [];
+        self.objetos = [];
         self.configuracao = configuracao;
         self.currentIndexChanged.connect(self.__interno_selected)
 
@@ -21,10 +22,15 @@ class ComboBox (QComboBox):
             return;
         self.configuracao.setValor(self.cache_name, self.currentIndex());
     
+    def getObject(self):
+        if self.currentIndex() < 0:
+            return None;
+        return self.objetos[self.currentIndex()];
     def addArrayObject(self, js, key, value):
         self.valores = [];
         for item in js:
             self.valores.append( ItemValor(getattr(item,  key), getattr(item, value)) );
+        self.objetos = js;
         self.redesenhar();
     def getSelected(self):
         if self.currentIndex() < 0:

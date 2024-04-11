@@ -8,7 +8,7 @@ class AtividadeComando:
     def listar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql = "select atv.*, ni.nome as nome_nivel from atividade as atv inner join nivel as ni on atv.id_nivel = ni.id where ( atv.id_cliente = %s ) or ( ni.posicao <= ( select posicao from nivel where id_grupo=%s and id=%s  and atv.id_status = 2 ))";
+        sql = "select atv.*, ni.nome as nome_nivel, ni.posicao as posicao_nivel from atividade as atv inner join nivel as ni on atv.id_nivel = ni.id where ( atv.id_cliente = %s ) or ( ni.posicao <= ( select posicao from nivel where id_grupo=%s and id=%s  and atv.id_status = 2 ))";
         atividades = my.datatable(sql, [ cliente.id , grupo.id, cliente.id_nivel ] );
         for i in range(len(atividades)):
             sql = "select * from atividade_cliente where id_atividade = %s and id_cliente=%s";

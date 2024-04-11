@@ -22,6 +22,7 @@ class Atividade:
         self.pontos_correcao_maximo = 1;
         self.operacoes = [];
         self.nome_nivel = None;
+        self.posicao_nivel = 0;
     
     def fromJson(self, js ):
         self.id = js["id"];
@@ -37,6 +38,8 @@ class Atividade:
         self.pontos_maximo = js["pontos_maximo"];
         self.id_status = js["id_status"];
         self.atividade = js.get("atividade");
+        if js.get("posicao_nivel") != None:
+            self.posicao_nivel = js["posicao_nivel"];
         if js.get("nome_nivel") != None:
             self.nome_nivel = js["nome_nivel"];
         if js.get("operacoes") != None:
