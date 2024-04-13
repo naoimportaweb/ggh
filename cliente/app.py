@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, inspect, time, json;
+import sys, os, inspect, time, json, requests;
 import threading
 
 CURRENTDIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())));
@@ -18,6 +18,7 @@ from form.form_login  import FormLogin;
 from form.form_login_importar import FormImportar;
 from form.form_painel import FormPainel;
 from form.form_grupo  import FormGrupo;
+from form.form_proxy import FormProxy;
 from form.form_edit_conhecimento import FormEditarConhecimento
 
 from PySide6.QtCore import Qt
@@ -33,15 +34,23 @@ class MDIWindow(QMainWindow):
         self.setWindowTitle("Grupo")
         self.mdiArea = QMdiArea()
         self.setCentralWidget( self.mdiArea )
+        self.statusbar = StatusClass( self );
         bar = self.menuBar()
         file = bar.addMenu("Grupos")
-        self.statusbar = StatusClass( self );
+        tool = bar.addMenu("Ferramentas")
+        helpm = bar.addMenu("Ferramentas")
         newAct = QAction('Conectar em um grupo com login', self);
         file.addAction(newAct);
         newAct.triggered.connect(self.action_connect);
         newAct2 = QAction('Conectar em um grupo com chave', self);
         file.addAction(newAct2);
         newAct2.triggered.connect(self.action_connect_key);
+        newAct3 = QAction('Proxy', self);
+        newAct3.triggered.connect(self.action_connect_proxy);
+        tool.addAction(newAct3);
+        newAct4 = QAction('Sobre', self);
+        helpm.addAction(newAct4);
+        self.setWindowTitle("Grupo ..::: " + requests.get('https://api.ipify.org').text + " :::..")
     
     def carregar(self, xmpp_var):
         xmpp_var.iniciar();
@@ -63,9 +72,15 @@ class MDIWindow(QMainWindow):
     def action_connect(self, q):
         f = FormLogin( self );
         f.exec();
+
     def action_connect_key(self):
         f = FormImportar(self);
         f.exec();
+    
+    def action_connect_proxy(self):
+        f = FormProxy(self);
+        f.exec();
+        self.setWindowTitle("Grupo ..::: " + requests.get('https://api.ipify.org').text + " :::..")
 
 class StatusClass():
     def __init__(self, layout):

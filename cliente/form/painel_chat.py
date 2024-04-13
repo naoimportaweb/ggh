@@ -19,7 +19,7 @@ from api.rsahelp import RsaHelper;
 class ThreadAtualizacaoChat(QObject):
     result= Signal(int)
     def __init__(self, parent=None, **kwargs):
-        super().__init__(parent, **kwargs)
+        super().__init__()
     
     @Slot()
     def start(self): print("Iniciando atualização de chat a cada 5 segundos.")

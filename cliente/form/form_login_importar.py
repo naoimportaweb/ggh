@@ -1,4 +1,4 @@
-import sys, os, json;
+import sys, os, json, traceback;
 
 sys.path.append("../"); # estamos em /form, 
 
@@ -72,7 +72,6 @@ class FormImportar(QDialog):
             fs = FsSeguro( chave );
             path_file_key = self.arquivo(filtro="Key File (*.gif)");
             js = fs.ler_json( path_file_key );
-
             if js.get("jid") == None:
                 raise Exception("Não foi possível descriptografar o arquivo.")
             grupo = Grupo( js["jid_grupo"] );
@@ -88,4 +87,5 @@ class FormImportar(QDialog):
             else:
                 QMessageBox.information(self, "Proxy não existe", "O proxy não funcionou, veja o manual.", QMessageBox.StandardButton.Ok);
         except:
-                 QMessageBox.information(self, "Falha", "Confirme se digitou a chave correta e se tem conectividade com a Internet.", QMessageBox.StandardButton.Ok);    
+                traceback.print_exc();
+                QMessageBox.information(self, "Falha", "Confirme se digitou a chave correta e se tem conectividade com a Internet.", QMessageBox.StandardButton.Ok);    

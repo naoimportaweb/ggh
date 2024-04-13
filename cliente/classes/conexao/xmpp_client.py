@@ -40,14 +40,14 @@ class XMPPCliente:
         self.cliente.password = password;
 
     def proxy(self, protocol, ip, port):
-        ip_sem_tunel_proxy = requests.get('https://api.ipify.org').text;
+        if ip == "" or protocol == "" or port == "":
+            return True;
         proxy = protocol + "://"+ ip +":" + str( port );
         os.environ['http_proxy'] = proxy
         os.environ['https_proxy'] = proxy
         os.environ['HTTP_PROXY'] = proxy
         os.environ['HTTPS_PROXY'] = proxy
-        ip_com_tunel_proxy = requests.get('https://api.ipify.org').text;
-        return ip_com_tunel_proxy != ip_sem_tunel_proxy;
+        return True;
 
     def conectar(self):
         jid = xmpp.protocol.JID( self.cliente.jid );
