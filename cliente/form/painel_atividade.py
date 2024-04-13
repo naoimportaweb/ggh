@@ -45,23 +45,19 @@ class PainelAtividade(QtWidgets.QWidget):
         self.setLayout(form_layout);
 
     def table_atividade_double(self):
-        row = self.table.currentRow();
         self.ativo = False;
-        f = FormEditarAtividade( self.xmpp_var.cliente, self.xmpp_var, self.lista_atividade[ row ] );
+        f = FormEditarAtividade( self.xmpp_var.cliente, self.xmpp_var, self.table.get() );
         f.exec();
         self.ativo = True;
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
 
     def atualizar_atividade( self ):
-        #self.table.setRowCount( len(  self.lista_atividade  ) );
-        adicionado = 0;
+        self.table.cleanList();
         for i in range(len(self.lista_atividade)):
             if self.lista_atividade[i].posicao_nivel <= self.cmb_nivel.getObject().posicao:
-                self.table.setRowCount( adicionado + 1 );
-                self.table.setItem( adicionado, 0, QTableWidgetItem( self.lista_atividade[i].titulo          ) );
-                self.table.setItem( adicionado, 1, QTableWidgetItem( self.lista_atividade[i].nome_nivel      ) );
-                self.table.setItem( adicionado, 2, QTableWidgetItem( self.lista_atividade[i].getStatus()     ) ); #nome_nivel
-                adicionado += 1;
+                self.table.add( [ self.lista_atividade[i].titulo , 
+                                  self.lista_atividade[i].nome_nivel, 
+                                  self.lista_atividade[i].getStatus() ], self.lista_atividade[i] );
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "AtividadeComando" and (conteudo_js["funcao"] == "salvar" or conteudo_js["funcao"] == "criar" or conteudo_js["funcao"] == "atividade_aprovar_reprovar" ):

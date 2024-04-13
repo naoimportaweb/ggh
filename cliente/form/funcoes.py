@@ -4,6 +4,7 @@ from PySide6.QtCore import Qt;
 from PySide6 import QtWidgets;
 from PySide6.QtWidgets import QGridLayout,QTextEdit, QTabWidget, QLineEdit, QDialog, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QTableWidget, QTableWidgetItem, QLabel, QAbstractItemView, QHeaderView;
 
+from form.ui.table import Table;
 
 class Utilitario():
     @staticmethod
@@ -39,7 +40,7 @@ class Utilitario():
     
     @staticmethod
     def widget_tabela(form, colunas, tamanhos=None, double_click=None):
-        table = QTableWidget(form)
+        table = Table(form)
         if double_click != None:
             table.doubleClicked.connect( double_click );
         js = {};
