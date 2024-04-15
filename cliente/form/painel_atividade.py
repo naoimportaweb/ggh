@@ -35,7 +35,8 @@ class PainelAtividade(QtWidgets.QWidget):
         form_pesquisa.addStretch();
         form_layout.addWidget(widget_pesquisa);
 
-        self.table = Utilitario.widget_tabela(self, ["Título", "Nível", "Status"], tamanhos=[QHeaderView.Stretch, QHeaderView.ResizeToContents, QHeaderView.ResizeToContents], double_click=self.table_atividade_double);
+        self.table = Utilitario.widget_tabela(self, ["Título", "Nível", "Pontos", "Respostas", "Status"], 
+            tamanhos=[QHeaderView.Stretch, QHeaderView.ResizeToContents, QHeaderView.ResizeToContents, QHeaderView.ResizeToContents, QHeaderView.ResizeToContents], double_click=self.table_atividade_double);
         form_layout.addWidget(self.table);
         self.b4 = QPushButton("Nova atividade")
         self.b4.setGeometry(10,0,32,32)
@@ -49,18 +50,23 @@ class PainelAtividade(QtWidgets.QWidget):
         f = FormEditarAtividade( self.xmpp_var.cliente, self.xmpp_var, self.table.get() );
         f.exec();
         self.ativo = True;
-        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
+        #self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
 
     def atualizar_atividade( self ):
         self.table.cleanList();
         for i in range(len(self.lista_atividade)):
             if self.lista_atividade[i].posicao_nivel <= self.cmb_nivel.getObject().posicao:
+                #print(self.lista_atividade[i]);
                 self.table.add( [ self.lista_atividade[i].titulo , 
                                   self.lista_atividade[i].nome_nivel, 
+                                  str(self.lista_atividade[i].pontos_maximo), 
+                                  str(len(self.lista_atividade[i].respostas)),
                                   self.lista_atividade[i].getStatus() ], self.lista_atividade[i] );
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        if conteudo_js["comando"] == "AtividadeComando" and (conteudo_js["funcao"] == "salvar" or conteudo_js["funcao"] == "criar" or conteudo_js["funcao"] == "atividade_aprovar_reprovar" ):
+        if conteudo_js["comando"] == "AtividadeComando" and (conteudo_js["funcao"] == "salvar" or
+           conteudo_js["funcao"] == "criar" or conteudo_js["funcao"] == "atividade_aprovar_reprovar" or 
+           conteudo_js["funcao"] == "associar_operacao" ):
             self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
         elif conteudo_js["comando"] == "AtividadeComando" and conteudo_js["funcao"] == "listar" :
             self.lista_atividade = [];
@@ -74,10 +80,10 @@ class PainelAtividade(QtWidgets.QWidget):
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
 
     def atualizar_tela(self):
-        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
         self.b4.setEnabled(self.xmpp_var.cliente.posso_tag("atividade_criar"));
         self.cmb_nivel.addArrayObject(self.xmpp_var.grupo.niveis, "id", "nome");
-        self.botao_listar_atividade_click();
+        if len(self.lista_atividade) == 0:
+            self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
     
     def cmb_nivel_selected(self):
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );

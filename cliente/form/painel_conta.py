@@ -45,7 +45,11 @@ class PainelConta(QtWidgets.QWidget):
         for i in range(len(self.xmpp_var.grupo.niveis)):
             if self.xmpp_var.grupo.niveis[i].posicao <= self.xmpp_var.cliente.nivel_posicao:
                 self.table1.setRowCount(adicionado + 1);
-                self.table1.setItem( adicionado, 0, QTableWidgetItem( self.xmpp_var.grupo.niveis[i].nome ) );
+                #self.table1.setItem( adicionado, 0, QTableWidgetItem( self.xmpp_var.grupo.niveis[i].nome ) );
+                self.table1.add( [self.xmpp_var.grupo.niveis[i].nome,
+                                  str(self.xmpp_var.grupo.niveis[i].posicao),
+                                  str(self.xmpp_var.grupo.niveis[i].pontuacao),
+                                  str(self.xmpp_var.grupo.niveis[i].tempo) ], self.xmpp_var.grupo.niveis[i] );
                 adicionado = adicionado + 1;
 
     def atualizar_tela(self):
@@ -67,7 +71,7 @@ class PainelConta(QtWidgets.QWidget):
 
 
     def layout_nivel(self, layout):
-        self.table1 = Utilitario.widget_tabela(self, ["Nome"], [QHeaderView.Stretch]);
+        self.table1 = Utilitario.widget_tabela(self, ["Nome", "Posicao", "Pontos", "Tempo"], [QHeaderView.Stretch, QHeaderView.ResizeToContents, QHeaderView.ResizeToContents, QHeaderView.ResizeToContents]);
         layout.addWidget(self.table1);
     
     def layout_dados(self, layout):

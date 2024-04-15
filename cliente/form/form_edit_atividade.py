@@ -149,17 +149,15 @@ class FormEditarAtividade(QDialog):
         self.titulo.setText( self.atividade.titulo );
         layout.addWidget( self.textEditAtividade );
     
+    def aprovar_reprovar(self, status):
+        self.atividade.id_status = status;
+        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "atividade_aprovar_reprovar", self.atividade.toJson() );
     def btn_click_aprovar(self):
-        self.atividade.id_status = 2;
-        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "atividade_aprovar_reprovar", self.atividade.toJson() );
-    
+        self.aprovar_reprovar(2);
     def btn_click_reprovar(self):
-        self.atividade.id_status = 1;
-        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "atividade_aprovar_reprovar", self.atividade.toJson() );
-    
+        self.aprovar_reprovar(1);
     def btn_click_editar(self):
-        self.atividade.id_status = 0;
-        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "atividade_aprovar_reprovar", self.atividade.toJson() );
+        self.aprovar_reprovar(0);
     
     def atualizar_respostas(self):
         colunas = [{"Título" : "", "Status": "", "Pontos" : "", "Data" : ""}];
@@ -218,4 +216,3 @@ class FormEditarAtividade(QDialog):
         self.atividade.instrucao_correcao = self.txt_recomendacao.toPlainText();
         self.atividade.id_nivel                  = self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id;
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "salvar", self.atividade.toJson() );
-#
