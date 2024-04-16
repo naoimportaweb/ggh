@@ -41,6 +41,7 @@ class PainelConta(QtWidgets.QWidget):
     def recarregar_niveis(self):
         if self.xmpp_var.grupo.niveis == None:
             return;
+        self.table1.cleanList();
         for i in range(len(self.xmpp_var.grupo.niveis)):
             if self.xmpp_var.grupo.niveis[i].posicao <= self.xmpp_var.cliente.nivel_posicao:
                 self.table1.add( [self.xmpp_var.grupo.niveis[i].nome,
