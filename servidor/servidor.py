@@ -33,6 +33,7 @@ class XMPPServer:
         self.connection = None;     # pipe de conexão com servidor XMPP remoto
         self.versao = json.loads( open(ROOT + "/data/versao.json", "r").read() );
         print("..:: ", self.versao["versao"], "::..");
+        print("::.. ", jid_server, "..::");
 
     def conectar(self):
         jid = xmpp.protocol.JID( self.grupo.jid );
@@ -41,7 +42,7 @@ class XMPPServer:
         self.connection.connect( );
         if self.connection.auth(user=jid.getNode(), password=self.password, resource=jid.getResource()) != None:
             print("Conectado :)");
-            self.connection.sendInitPresence();
+            self.connection.sendInitPresence(requestRoster=0);
             self.connection.RegisterHandler('message', self.processar_mensagem);
             time.sleep(5);
             self.thread_recebedor = threading.Thread(target = self.escutar, args=());
@@ -84,11 +85,13 @@ class XMPPServer:
 
     def processar_mensagem(self, conn, mess):
         try:
+            print(mess);
             text = mess.getBody();
             if text == None:
                 print(mess);
                 return;
             user= mess.getFrom().getNode() + "@" + mess.getFrom().getDomain();
+            print(user);
             cliente = self.grupo.cliente( user );
             
             message = Mensagem( cliente,  user, self.grupo.jid ); # cliente, jid_from, jid_to

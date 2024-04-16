@@ -83,7 +83,7 @@ class Cliente:
             self.pontuacao = 0;
             
             nivel_inicial = my.datatable("SELECT * FROM nivel WHERE posicao = %s and id_grupo = %s",[ 0, self.grupo.id ])[0];
-
+            
             sqls.append("INSERT INTO cliente (id, jid, public_key, apelido, pontuacao, pontuacao_data_processamento, id_nivel, data_cadastro, data_acesso) values( %s, %s, %s, %s, %s, %s, %s, %s, %s)");
             valuess.append(  [ self.id, self.jid, self.public_key, my.chave_string("cliente", "apelido", 8 ) , self.pontuacao, self.pontuacao_data_processamento, nivel_inicial["id"], self.pontuacao_data_processamento, self.pontuacao_data_processamento ]  );
 

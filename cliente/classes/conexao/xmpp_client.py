@@ -56,9 +56,11 @@ class XMPPCliente:
         #self.connection.connect(proxy={'host':'127.0.0.1', 'port':'80'}, secure=0,use_srv=True);
         self.connection.connect();
         if self.connection.auth(user=jid.getNode(), password=self.password, resource=jid.getResource()) != None:
-            self.connection.sendInitPresence();
+            self.connection.sendInitPresence(requestRoster=0);
             self.connection.RegisterHandler('message', self.processar_mensagem);
             time.sleep(5);
+            self.connection.sendPresence(jid=self.grupo.jid, typ="subscribed"); #https://stackoverflow.com/questions/8956804/xmpp-bot-accept-new-friend
+            self.connection.sendPresence(jid=self.grupo.jid, typ="subscribe");  #https://stackoverflow.com/questions/8956804/xmpp-bot-accept-new-friend
             self.stop_enviador = False;
             self.stop_recebedor = False;
             self.thread_recebedor = threading.Thread(target = self.escutar, args=());
