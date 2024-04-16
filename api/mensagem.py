@@ -1,11 +1,12 @@
 import sys, os, uuid, json, base64, time;
 import xmpp;
-
+#import zlib; #     https://stackoverflow.com/questions/10450463/how-to-zip-a-string
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
 
 from api.chachahelp import ChaChaHelper;
 
+#
 # versao:
 #00
 
@@ -101,8 +102,8 @@ class Mensagem:
         return retornar;
 
     def enviar(self, connection):
-        #p rint("Enviado: ", self.comando.comando, self.comando.funcao);
         body = self.toString();
+
         if len(body) > self.MAX_SIZE_CHAT:
             partes = int(len(body)/self.MAX_SIZE_CHAT);
             if partes + self.MAX_SIZE_CHAT < len(body):
