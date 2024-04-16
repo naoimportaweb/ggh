@@ -62,7 +62,7 @@ class ConhecimentoComando:
         js = mensagem.toJson();
         if not cliente.posso_tag("aprovador_conhecimento"):
             return {"status" : False, "erro" : "Não tem permissão para aprovar."};
-        sql = "UPDATE conhecimento set ultima_alteracao = %s, id_status = %s where id = %s";
-        values = [ time.time(), js["id_status"], js["id"] ];
+        sql = "UPDATE conhecimento set ultima_alteracao = %s, id_status = %s, pontuacao=%s where id = %s";
+        values = [ time.time(), js["id_status"], js["pontuacao"], js["id"] ];
         my.execute(sql, values);
         return {"status" : True, "conhecimento" : js };

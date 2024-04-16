@@ -7,6 +7,7 @@ from PySide6.QtCore import Qt;
 from PySide6 import QtWidgets;
 from PySide6.QtWidgets import QFileDialog, QGridLayout,QTextEdit, QTabWidget, QLineEdit, QDialog, QHBoxLayout, QVBoxLayout, QWidget, QVBoxLayout, QComboBox, QPushButton, QTableWidget, QTableWidgetItem, QLabel, QAbstractItemView, QHeaderView;
 from form.text_edit import TextEdit;
+from form.funcoes import Utilitario;
 
 #FONT_SIZES = [7, 8, 9, 10, 11, 12, 13, 14, 18, 24, 36, 48, 64, 72, 96, 144, 288]
 #IMAGE_EXTENSIONS = ['.jpg','.png','.bmp']
@@ -27,7 +28,7 @@ class FormEditarConhecimento(QDialog):
         self.cliente = cliente;
         self.xmpp_var = xmpp_var;
         self.conhecimento = conhecimento;
-        self.setWindowTitle("Editar Conhecimento");
+        self.setWindowTitle("Conhecimento");
         self.setGeometry(400, 400, 800, 500);
         self.main_layout = QVBoxLayout( self );
 
@@ -79,9 +80,9 @@ class FormEditarConhecimento(QDialog):
     def layout_aprovacao(self, layout, conhecimento):
         page = QWidget(self);
         page_layout = QHBoxLayout();
+        self.txt_pontuacao = QLineEdit(self);
+        Utilitario.widget_linha(self, page_layout, [QLabel("Pontos:"), self.txt_pontuacao], stretch_fim=True);
         page.setLayout(page_layout);
-        #page_layout.addWidget(label);
-        #page_layout.addWidget(self.titulo);
         self.txt_comentario = QTextEdit(self);
         layout.addWidget( self.txt_comentario );
 
@@ -107,6 +108,7 @@ class FormEditarConhecimento(QDialog):
     
     def mudar_status_conhecimento(self, id_status): # 0 desenv, 1 aguardando, 2 aprovado, 3 reprovado (tabela no banco)
         self.conhecimento.id_status = id_status;
+        self.conhecimento.pontuacao = int(self.txt_pontuacao.text());
         self.xmpp_var.adicionar_mensagem("comandos.conhecimento" ,"ConhecimentoComando", "alterar_status", self.conhecimento.toJson() );
     def btn_click_aprovar(self):
         self.mudar_status_conhecimento(2);

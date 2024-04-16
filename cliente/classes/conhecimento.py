@@ -24,6 +24,7 @@ class Conhecimento(Dado):
         self.id_status = 0;
         self.nome_status = "";
         self.comentario = "";
+        self.pontuacao = 0;
     
     def fromJson(self, js ):
         self.id = js["id"];
@@ -38,9 +39,10 @@ class Conhecimento(Dado):
         self.id_status = self.campo(js, "id_status");
         self.nome_status = self.campo(js, "nome_status");
         self.comentario = self.campo(js, "comentario");
+        self.pontuacao = self.campo(js, "pontuacao");
     
     def toJson(self):
-        return {"id" : self.id, "id_cliente" : self.id_cliente, "id_revisor" : self.id_revisor, "id_nivel" : self.id_nivel, "id_grupo" : self.id_grupo, "titulo" : self.titulo, "tags" : self.tags, "descricao" : self.descricao, "texto" : self.texto, "id_status" : self.id_status, "comentario" : self.comentario};
+        return {"id" : self.id, "id_cliente" : self.id_cliente, "pontuacao" : self.pontuacao, "id_revisor" : self.id_revisor, "id_nivel" : self.id_nivel, "id_grupo" : self.id_grupo, "titulo" : self.titulo, "tags" : self.tags, "descricao" : self.descricao, "texto" : self.texto, "id_status" : self.id_status, "comentario" : self.comentario};
 
     def setHtml(self, html):
         self.texto = html;

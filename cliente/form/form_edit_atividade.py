@@ -17,7 +17,7 @@ class FormEditarAtividade(QDialog):
         self.cliente = cliente;
         self.xmpp_var = xmpp_var;
         self.atividade = atividade;
-        self.setWindowTitle("Editar atividade");
+        self.setWindowTitle("Atividade");
         self.setGeometry(400, 400, 800, 500);
         self.main_layout = QVBoxLayout( self );
         self.textEditAtividade = None;

@@ -1,12 +1,4 @@
 
-#alter table atividade_cliente add column chave_publica varchar(255);
-#alter table cliente add column data_cadastro datetime;
-#alter table cliente add column data_acesso datetime;
-#update cliente set data_acesso='2000-01-01 00:00:00';
-#update cliente set data_cadastro='2000-01-01 00:00:00';
-#update atividade_cliente set chave_publica='11111111111111111111';
-
-
 # criar tabelas e campos.
 CREATE TABLE cliente ( id varchar(255) NOT NULL, jid varchar(255) unique, id_nivel varchar(255), public_key LONGTEXT, apelido varchar(255) unique, pontuacao int,
   pontuacao_data_processamento datetime, chave_simetrica_criptografada LONGTEXT, chave_servidor varchar(255), data_cadastro DATETIME, data_acesso DATETIME
@@ -33,7 +25,7 @@ CREATE TABLE mensagem_nivel ( id_nivel varchar(255) NOT NULL, id_mensagem varcha
 
 CREATE TABLE conhecimento ( id varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL, id_revisor varchar(255) DEFAULT NULL,  id_nivel varchar(255) NOT NULL,
    id_grupo varchar(255) NOT NULL, titulo varchar(255), tags varchar(255), descricao LONGTEXT, comentario LONGTEXT, texto LONGTEXT, id_status int default 0,
-    ultima_alteracao varchar(255),
+    ultima_alteracao varchar(255), pontuacao int DEFAULT 0,
   PRIMARY KEY(id) );
 
 CREATE TABLE conhecimento_tag ( id_tag varchar(255) NOT NULL, id_conhecimento varchar(255) NOT NULL,
