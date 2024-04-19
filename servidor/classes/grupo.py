@@ -67,9 +67,18 @@ class Grupo:
         datatable = my.datatable("select cl.apelido from grupo_cliente as gc inner join cliente as cl on gc.id_cliente = cl.id where gc.id_grupo = %s", [ self.id ]);
         return { "lista" : datatable };
     
-    def niveis(self):
+    def niveis(self, cliente=None):
         my = MysqlHelp();
-        buffer =  my.datatable("select * from nivel as ni where ni.id_grupo = %s order by posicao asc", [ self.id ]);
+        sql = "";
+        values = [];
+        if cliente == None:
+            sql = "select * from nivel as ni where ni.id_grupo = %s order by posicao asc";
+            values.append(self.id);
+        else:
+            sql = "select * from nivel as ni where ni.id_grupo = %s and posicao <= %s order by posicao asc";
+            values.append(self.id);
+            values.append(cliente.nivel_posicao);
+        buffer =  my.datatable(sql, values );
         return buffer; 
     
     def tags(self):

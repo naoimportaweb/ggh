@@ -49,11 +49,20 @@ CREATE TABLE atividade_cliente( id varchar(255) NOT NULL, id_atividade varchar(2
 CREATE TABLE mural(id varchar(255) NOT NULL, id_grupo varchar(255), id_cliente varchar(255), titulo varchar(255), mensagem longtext,
   data DATETIME, id_nivel varchar(255) DEFAULT NULL, id_destinatario varchar(255) DEFAULT NULL, sequencia VARCHAR(255) NOT NULL );
 
-
-
 CREATE TABLE operacao_status (id int not null, nome varchar(255), PRIMARY KEY(id) );
 CREATE TABLE operacao (id varchar(255) NOT NULL, id_nivel varchar(255), sigla varchar(255) unique, nome varchar(255) unique, id_grupo varchar(255), id_operacao_status int, data_inicio datetime, data_fim datetime, missao longtext, foco longtext, PRIMARY KEY(id));
 CREATE TABLE operacao_atividade(id_atividade varchar(255), id_operacao varchar(255), PRIMARY KEY( id_atividade,id_operacao  ));
+
+CREATE TABLE forum_topico (id varchar(255) NOT NULL, id_nivel varchar(255), titulo varchar(255), id_grupo varchar(255), descricao longtext, sequencia int, PRIMARY KEY(id));
+CREATE TABLE forum_thread (id varchar(255) NOT NULL, id_forum_topico varchar(255), titulo varchar(255), id_cliente varchar(255), texto longtext, data_cadastro DATETIME, PRIMARY KEY(id));
+CREATE TABLE forum_resposta (id varchar(255) NOT NULL, id_forum_thread varchar(255), id_cliente varchar(255), texto longtext, data_cadastro DATETIME, PRIMARY KEY(id));
+
+ALTER TABLE forum_topico ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
+ALTER TABLE forum_topico ADD FOREIGN KEY (id_nivel) REFERENCES nivel(id); 
+ALTER TABLE forum_thread ADD FOREIGN KEY (id_forum_topico) REFERENCES forum_topico(id); 
+ALTER TABLE forum_thread ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id); 
+ALTER TABLE forum_resposta ADD FOREIGN KEY (id_forum_thread) REFERENCES forum_thread(id); 
+ALTER TABLE forum_resposta ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id); 
 
 ALTER TABLE operacao ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
 ALTER TABLE operacao ADD FOREIGN KEY (id_operacao_status) REFERENCES operacao_status(id); 
@@ -126,6 +135,7 @@ insert into tag(id, nome, sigla, id_grupo) values ('fd583d0879894266bb8916f9abce
 insert into tag(id, nome, sigla, id_grupo) values ('kd583d0879894266bb8916f9abce53bc', 'Criar Mural',                'mural_criar',            'a639ffc7a87856c52ea8b6a75dff4ff7');
 insert into tag(id, nome, sigla, id_grupo) values ('rd583d0879894266bb8916f9abce53bc', 'Staff',                      'staff',                  'a639ffc7a87856c52ea8b6a75dff4ff7');
 insert into tag(id, nome, sigla, id_grupo) values ('qd583d0879894266bb8916f9abce53bc', 'Criar operações',            'operacao_criar',         'a639ffc7a87856c52ea8b6a75dff4ff7');
+insert into tag(id, nome, sigla, id_grupo) values ('aa583d0879814260bb8916f9abce53bc', 'Criar topico forum',            'forum_criar',         'a639ffc7a87856c52ea8b6a75dff4ff7');
 
 insert into tag_cliente(id_tag, id_cliente) values ('gd583d0879894266bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');
 insert into tag_cliente(id_tag, id_cliente) values ('fd583d0879894266bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');
@@ -133,3 +143,4 @@ insert into tag_cliente(id_tag, id_cliente) values ('kd583d0879894266bb8916f9abc
 insert into tag_cliente(id_tag, id_cliente) values ('kd583d0879894266bb8916f9abce53bb',  '91d0cf8f3883a0dcb338d15a47b326c9');
 insert into tag_cliente(id_tag, id_cliente) values ('rd583d0879894266bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');
 insert into tag_cliente(id_tag, id_cliente) values ('qd583d0879894266bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');
+insert into tag_cliente(id_tag, id_cliente) values ('aa583d0879814260bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');

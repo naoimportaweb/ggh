@@ -2,7 +2,7 @@ import uuid, time;
 
 # servidor
 from classes.mysqlhelp import MysqlHelp
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Cliente executa a segunte sequencia:
 #   1 - Passa um array de níveis e o servidor retorna um array para cada nível de {apelido, chavepublica} de cada cliente.
@@ -15,11 +15,11 @@ class MensagemComando:
     def lista_clientes_niveis(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        #https://stackoverflow.com/questions/60884078/use-a-list-in-prepared-statement
+        data_minima = datetime.now() - timedelta(days=2);
         sql = "select * from nivel where id= %s";
         nivel = my.datatable( sql, [js["nivel"]])[0];
-        sql = "select distinct cl.id as id, cl.apelido as apelido, cl.public_key as public_key, cl.id_nivel as id_nivel from cliente as cl where cl.id_nivel in (select id from nivel where posicao >= %s) ";
-        lista_clientes = my.datatable(sql, [ nivel["posicao"] ]);
+        sql = "select distinct cl.id as id, cl.apelido as apelido, cl.public_key as public_key, cl.id_nivel as id_nivel from cliente as cl where cl.id_nivel in (select id from nivel where posicao >= %s) and cl.data_acesso >= %s ";
+        lista_clientes = my.datatable(sql, [ nivel["posicao"], data_minima.isoformat() ]);
         return {"clientes" : lista_clientes };
 
     def enviar(self, cliente, grupo, mensagem):
@@ -53,7 +53,7 @@ class MensagemComando:
     def listar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql = "select mess.id as id, mess.ordem as ordem, mess.id_remetente as id_remetente, mess.id_destinatario as id_destinatario, mess.mensagem_criptografada as mensagem_criptografada, mess.chave_simetrica_criptografada as chave_simetrica_criptografada,  TO_CHAR(mess.data_hora_envio, 'YY-MM-DD HH24:MI:SS') as  data_hora_envio, messn.id_nivel as id_nivel, rem.apelido as apelido_remetente, des.apelido as apelido_destinatario from mensagem as mess inner join mensagem_nivel as messn on mess.id = messn.id_mensagem inner join cliente as rem on mess.id_remetente = rem.id inner join cliente as des on des.id = mess.id_destinatario where mess.id_destinatario = %s "
+        sql = "select distinct mess.id as id, mess.ordem as ordem, mess.id_remetente as id_remetente, mess.id_destinatario as id_destinatario, mess.mensagem_criptografada as mensagem_criptografada, mess.chave_simetrica_criptografada as chave_simetrica_criptografada,  TO_CHAR(mess.data_hora_envio, 'YY-MM-DD HH24:MI:SS') as  data_hora_envio, messn.id_nivel as id_nivel, rem.apelido as apelido_remetente, des.apelido as apelido_destinatario from mensagem as mess inner join mensagem_nivel as messn on mess.id = messn.id_mensagem inner join cliente as rem on mess.id_remetente = rem.id inner join cliente as des on des.id = mess.id_destinatario where mess.id_destinatario = %s "
         buffers = my.datatable(sql, [ cliente.id ] );
         return { "retorno" : buffers  };
 

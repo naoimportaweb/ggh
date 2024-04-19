@@ -85,13 +85,10 @@ class XMPPServer:
 
     def processar_mensagem(self, conn, mess):
         try:
-            print(mess);
             text = mess.getBody();
             if text == None:
-                print(mess);
                 return;
             user= mess.getFrom().getNode() + "@" + mess.getFrom().getDomain();
-            print(user);
             cliente = self.grupo.cliente( user );
             
             message = Mensagem( cliente,  user, self.grupo.jid ); # cliente, jid_from, jid_to
