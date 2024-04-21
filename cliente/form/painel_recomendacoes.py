@@ -20,6 +20,8 @@ class PainelRecomendacoes(QtWidgets.QWidget):
     def botao_editar_click(self):
         self.xmpp_var.adicionar_mensagem( "comandos.html" ,"HtmlComando", "post",
                                           {"path" : "recomendacao.html", "html" : self.txt_texto.toHtml() } );
+    def parar_tela(self):
+        return;
     def atualizar_tela(self):
         if self.layout_carregado:
             return;

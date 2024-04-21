@@ -78,7 +78,8 @@ class PainelAtividade(QtWidgets.QWidget):
     
     def botao_listar_atividade_click(self):
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
-
+    def parar_tela(self):
+        return;
     def atualizar_tela(self):
         self.b4.setEnabled(self.xmpp_var.cliente.posso_tag("atividade_criar"));
         self.cmb_nivel.addArrayObject(self.xmpp_var.grupo.niveis, "id", "nome");

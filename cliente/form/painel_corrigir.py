@@ -39,6 +39,8 @@ class PainelCorrigir(QtWidgets.QWidget):
     def btn_click(self):
         self.correcoes = [];
         self.atualizar_tela();
+    def parar_tela(self):
+        return;
     def atualizar_tela(self):
         if len(self.correcoes) > 0:
             return;

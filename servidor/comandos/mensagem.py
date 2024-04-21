@@ -26,44 +26,30 @@ class MensagemComando:
         my = MysqlHelp();
         js = mensagem.toJson();
         sql_cliente = "select cl.id, ni.posicao from cliente as cl inner join nivel as ni on ni.id = cl.id_nivel where cl.apelido = %s";
-        
         sql_niveis = "select * from nivel as ni where ni.posicao <= (select posicao from nivel where id = %s )";
         #TODO: REVER LINHA ABAIXO, VEJA QUE CARREGA O CLIENTE QUE SOU EU.....
         cliente_remetente =    my.datatable( sql_cliente, [ js["apelido_remetente"] ] )[0];
-        #cliente_remetente =    my.datatable( sql_cliente, [ cliente.id ] )[0];
         cliente_destinatario = my.datatable( sql_cliente, [ js["apelido_destinatario"] ] )[0];
         niveis = my.datatable( sql_niveis, [ js["nivel"] ] );
         id_mensagem = my.chave_string("mensagem", "id", 20 );
-        sql_insercao_mensagem = "INSERT INTO mensagem(id, ordem, id_remetente, id_destinatario, mensagem_criptografada, chave_simetrica_criptografada, data_hora_envio) values(%s, %s, %s, %s, %s, %s, %s)";
-        sql_insercao_mensagem_velues = [ id_mensagem, str(time.time()) , cliente_remetente["id"], cliente_destinatario["id"], js["mensagem_criptografada"], js["chave_simetrica_criptografada" ], datetime.now().strftime('%Y-%m-%d %H:%M:%S') ];
-        
+        sql_insercao_mensagem = "INSERT INTO mensagem(id, ordem, id_remetente, id_destinatario, mensagem_criptografada, chave_simetrica_criptografada, data_hora_envio, id_nivel) values(%s, %s, %s, %s, %s, %s, %s, %s)";
+        sql_insercao_mensagem_velues = [ id_mensagem, str(time.time()) , cliente_remetente["id"], cliente_destinatario["id"], js["mensagem_criptografada"], js["chave_simetrica_criptografada"], datetime.now().strftime('%Y-%m-%d %H:%M:%S'), js["nivel"] ];
         sqls = [sql_insercao_mensagem];
         valuess = [sql_insercao_mensagem_velues];
-        for nivel in niveis:
-            if int(cliente_remetente["posicao"]) >= int(nivel["posicao"]) and int(cliente_destinatario["posicao"]) >= int(nivel["posicao"]):
-                sql_insercao_mensagem_nivel = "INSERT INTO mensagem_nivel(id_nivel, id_mensagem) values (%s, %s)";
-                sql_insercao_mensagem_nivel_values = [ nivel['id'] , id_mensagem];
-                sqls.append(sql_insercao_mensagem_nivel);
-                valuess.append(sql_insercao_mensagem_nivel_values);
         my.executes(sqls, valuess);
-        for nivel in niveis:
-            grupo.add_envio(cliente, "comandos.mensagem", "MensagemComando", "atualizar", data={"nivel" : nivel["id"]});
+        grupo.add_envio(cliente, "comandos.mensagem", "MensagemComando", "atualizar", data={"nivel" : js["nivel"] });
         return {"resultado" :  True };
 
     def listar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql = "select distinct mess.id as id, mess.ordem as ordem, mess.id_remetente as id_remetente, mess.id_destinatario as id_destinatario, mess.mensagem_criptografada as mensagem_criptografada, mess.chave_simetrica_criptografada as chave_simetrica_criptografada,  TO_CHAR(mess.data_hora_envio, 'YY-MM-DD HH24:MI:SS') as  data_hora_envio, messn.id_nivel as id_nivel, rem.apelido as apelido_remetente, des.apelido as apelido_destinatario from mensagem as mess inner join mensagem_nivel as messn on mess.id = messn.id_mensagem inner join cliente as rem on mess.id_remetente = rem.id inner join cliente as des on des.id = mess.id_destinatario where mess.id_destinatario = %s "
+        sql = "SELECT mess.*, TO_CHAR(mess.data_hora_envio, 'YY-MM-DD HH24:MI:SS') as  data_hora_envio, rem.apelido as apelido_remetente, des.apelido as apelido_destinatario FROM mensagem as mess inner join cliente as rem on mess.id_remetente = rem.id inner join cliente as des on des.id = mess.id_destinatario  where mess.id_destinatario = %s";
         buffers = my.datatable(sql, [ cliente.id ] );
         return { "retorno" : buffers  };
 
     def delete(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        if len( my.datatable("select * from mensagem where id = %s and id_destinatario = %s", [ js["id_mensagem"], cliente.id ])) > 0:
-            sql_nivel_excluir = "delete from mensagem_nivel where id_mensagem = %s";
-            sql_mensagem_excluir = "delete from mensagem where id = %s";
-            sqlss = [sql_nivel_excluir, sql_mensagem_excluir];
-            valuess = [ [js["id_mensagem"]], [js["id_mensagem"]] ];
-            return { "retorno" : my.executes( sqlss, valuess ) };
-        return {"resultado" :  True };
+        sql = "delete from mensagem where id = %s and id_destinatario=%s";
+        values =  [js["id_mensagem"], cliente.id] ;
+        return { "retorno" : my.execute( sql, values ) };

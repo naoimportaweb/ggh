@@ -4,7 +4,7 @@ from PySide6.QtGui import QAction;
 from PySide6.QtWidgets import   QGridLayout,QTextEdit, QLineEdit, QApplication, QScrollArea, QFrame, QMessageBox, QPlainTextEdit, QLabel, QListWidget, QListWidgetItem, QDialog, QLineEdit, QPushButton, QMdiArea, QMainWindow, QHBoxLayout, QVBoxLayout, QMenuBar, QTextBrowser;
 from PySide6.QtWidgets import QSizePolicy, QSizePolicy;
 from PySide6 import QtWidgets;
-from PySide6.QtCore import Qt, QObject
+from PySide6.QtCore import Qt, QObject, QTimer;
 from PySide6.QtCore import  QFileSystemWatcher, QSettings, Signal, Slot, QThread;
 
 from api.fsseguro import FsSeguro
@@ -13,27 +13,6 @@ from Crypto.PublicKey import RSA
 
 from api.chachahelp import ChaChaHelper;
 from api.rsahelp import RsaHelper;
-
-
-#https://gist.github.com/jazzycamel/8abd37bf2d60cce6e01d
-class ThreadAtualizacaoChat(QObject):
-    result= Signal(int)
-    def __init__(self, parent=None, **kwargs):
-        super().__init__()
-    
-    @Slot()
-    def start(self): print("Iniciando atualização de chat a cada 5 segundos.")
-    
-    @Slot(int)
-    def contador(self, n):
-        while True:
-            try:
-                self.result.emit(n);
-            except KeyboardInterrupt:
-                sys.exit(0);
-            except:
-                traceback.print_exc();
-            time.sleep(n);
 
 class WidgetChatTexto(QtWidgets.QWidget):
     def __init__( self, texto, mensagem):
@@ -100,33 +79,16 @@ class PainelChat(QtWidgets.QWidget):
         self.form_layout_chat.addWidget(    self.txt_mensagem              );
         self.form_layout_chat.addWidget(    self.btn_envio);
         self.form_layout.addLayout(         self.form_layout_chat);
-        #THREAD de atualização de chat:
-        self._thread = QThread()
-        self._threaded = ThreadAtualizacaoChat( result = self.evento_atualizacao_chat_tela );
-        self.thread_atualizacao_chat.connect(    self._threaded.contador );
-        self._thread.started.connect( self._threaded.start );
-        self._threaded.moveToThread(  self._thread );
-        qApp.aboutToQuit.connect(     self._thread.quit);
-        self._thread.start();
-        self.thread_atualizacao_chat.emit(5);
-        #THREAD de download de mensagens do XMPP
+        self.timer=QTimer()
+        self.timer.timeout.connect(self.evento_atualizacao_chat_tela)
         self.thread_download_mensagens = threading.Thread(target = self.download_mensagens, args=());
         self.thread_download_mensagens.start();
         #INICIANDO LAYOUT
         self.setLayout( self.form_layout );
 
-    @Slot(int)
-    def evento_atualizacao_chat_tela(self, prime):
-        while True:
-            try:
-                if self.xmpp_var.finalizado == True:
-                    return;
-                self.mensagens( self.area_adicionar_mensagem );
-            except KeyboardInterrupt:
-                sys.exit(0);
-            except:
-                traceback.print_exc();
-            time.sleep(10);
+    @Slot()
+    def evento_atualizacao_chat_tela(self):
+        self.mensagens( self.area_adicionar_mensagem );
 
     def clearLayout(self, layout):
         if layout is not None:
@@ -145,6 +107,7 @@ class PainelChat(QtWidgets.QWidget):
 
     def mensagens(self, layout):
         if self.list_nivel.currentRow() < 0:
+            print("Sem nivel selecionado.");
             return;
         nivel = self.xmpp_var.grupo.niveis[ self.list_nivel.currentRow() ].id;
         rsa = RsaHelper(self.xmpp_var.cliente.public_key, self.xmpp_var.cliente.private_key);
@@ -179,8 +142,6 @@ class PainelChat(QtWidgets.QWidget):
             try:
                 if self.xmpp_var.finalizado == True:
                     return;
-                index = self.list_nivel.currentRow();
-                #if index != -1 and self.ativo:
                 self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", { } );
             except KeyboardInterrupt:
                 sys.exit(0);
@@ -200,17 +161,19 @@ class PainelChat(QtWidgets.QWidget):
             self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "lista_clientes_niveis", {"nivel" : self.xmpp_var.grupo.niveis[self.list_nivel.currentRow()].id } );
             self.txt_mensagem.setDisabled(True);
             self.btn_envio.setDisabled(True);
-    
+    def parar_tela(self):
+        self.timer.stop();
+        return;
     def atualizar_tela(self):
-        self.list_nivel.clear()
-        for nivel in self.xmpp_var.grupo.niveis:
-            item = QListWidgetItem( "Nível: " + nivel.nome)
-            if self.xmpp_var.cliente.nivel_posicao >= nivel.posicao:
+        if self.list_nivel.count() == 0:
+            for nivel in self.xmpp_var.grupo.niveis:
+                item = QListWidgetItem( "Nível: " + nivel.nome)
                 if self.xmpp_var.cliente.nivel_posicao >= nivel.posicao:
-                    self.list_nivel.addItem(item)
-        #self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {} );
-        if self.list_nivel.currentRow() < 0:
-            self.list_nivel.setCurrentRow(0);
+                    if self.xmpp_var.cliente.nivel_posicao >= nivel.posicao:
+                        self.list_nivel.addItem(item)
+            if self.list_nivel.currentRow() < 0:
+                self.list_nivel.setCurrentRow(0);
+        self.timer.start(5000);
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "MensagemComando" and conteudo_js["funcao"] == "lista_clientes_niveis":
@@ -223,12 +186,12 @@ class PainelChat(QtWidgets.QWidget):
                     chacha = ChaChaHelper( chave_simetrica );
                     mensagem_criptografada = base64.b64encode( chacha.encrypt( self.txt_mensagem.toPlainText().strip() ) );
                     envelope = {"apelido_remetente" : self.xmpp_var.cliente.apelido, "apelido_destinatario" : cliente["apelido"],
-                            "nivel" : cliente["id_nivel"], "mensagem_criptografada" : mensagem_criptografada.decode(),
+                            "nivel" : self.xmpp_var.grupo.niveis[ self.list_nivel.currentRow() ].id,
+                             "mensagem_criptografada" : mensagem_criptografada.decode(),
                             "chave_simetrica_criptografada" : chave_simetrica_criptografada };
                     self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "enviar", envelope );
                 except:
                     traceback.print_exc();
-            self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", {} );
             self.txt_mensagem.setPlainText("");
             self.txt_mensagem.setDisabled(False);
             self.btn_envio.setDisabled(False);
@@ -243,4 +206,4 @@ class PainelChat(QtWidgets.QWidget):
                 fs = FsSeguro( self.xmpp_var.cliente.chave_local );
                 if fs.escrever_raw( path_nivel + "/" + mensagem["ordem"], json.dumps( mensagem ) ):
                     self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "delete", {"id_mensagem" : mensagem["id"]} );
-
+            

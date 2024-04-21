@@ -48,7 +48,8 @@ class PainelConta(QtWidgets.QWidget):
                                   str(self.xmpp_var.grupo.niveis[i].posicao),
                                   str(self.xmpp_var.grupo.niveis[i].pontuacao),
                                   str(self.xmpp_var.grupo.niveis[i].tempo) ], self.xmpp_var.grupo.niveis[i] );
-
+    def parar_tela(self):
+        return;
     def atualizar_tela(self):
         self.recarregar_niveis();
         self.recarregar_tags();

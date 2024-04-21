@@ -40,7 +40,8 @@ class PainelMural(QtWidgets.QWidget):
             form_layout.addWidget( laytou_botao );
 
         self.setLayout(form_layout);
-
+    def parar_tela(self):
+        return;
     def atualizar_tela(self):
         self.xmpp_var.adicionar_mensagem( "comandos.mural" ,"MuralComando", "listar", {} );
     

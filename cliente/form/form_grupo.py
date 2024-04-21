@@ -14,6 +14,7 @@ from form.painel_corrigir import PainelCorrigir;
 from form.painel_mural import PainelMural;
 from form.painel_conta import PainelConta;
 from form.painel_operacao import PainelOperacao;
+from form.painel_forum import PainelForum;
 
 class FormGrupo(QtWidgets.QWidget):
     def __init__(self, form_pai, *args, **kwargs):
@@ -33,6 +34,10 @@ class FormGrupo(QtWidgets.QWidget):
         self.b10 = QPushButton("Mural")
         self.b10.clicked.connect( self.botao_mural_click )
         self.layout1.addWidget(self.b10)
+
+        self.b13 = QPushButton("Forum")
+        self.b13.clicked.connect( self.botao_forum_click )
+        self.layout1.addWidget(self.b13)
 
         self.b5 = QPushButton("Regras")
         self.b5.clicked.connect( self.botao_regras_click )
@@ -64,9 +69,12 @@ class FormGrupo(QtWidgets.QWidget):
                 buffer.ativo = True;
                 self.widget_atual = buffer;
             else:
+                buffer.parar_tela();
                 buffer.setParent( None );
                 buffer.ativo = False;
     
+    def botao_forum_click(self):
+        self.ativar_layout_especifico( "PainelForum" );
     def botao_operacoes_click(self):
         self.ativar_layout_especifico( "PainelOperacao" );
     def botao_conta_click(self):
@@ -99,7 +107,6 @@ class FormGrupo(QtWidgets.QWidget):
             self.b9 = QPushButton("Correções")
             self.b9.clicked.connect( self.botao_correcoes_click )
             self.layout1.addWidget(self.b9)
-        #if self.xmpp_var.cliente.posso_tag("operacao_criar"):
         self.b12 = QPushButton("Operações")
         self.b12.clicked.connect( self.botao_operacoes_click )
         self.layout1.addWidget(self.b12)
@@ -108,7 +115,7 @@ class FormGrupo(QtWidgets.QWidget):
 
     def carregar_panel( self ):
         self.widgets = [PainelConta(self.xmpp_var), PainelChat(self.xmpp_var), PainelRegras(self.xmpp_var), PainelRecomendacoes(self.xmpp_var), PainelConhecimento( self.xmpp_var ),
-                       PainelAtividade( self.xmpp_var ), PainelCorrigir(self.xmpp_var), 
+                       PainelAtividade( self.xmpp_var ), PainelCorrigir(self.xmpp_var), PainelForum(self.xmpp_var), 
                        PainelMural(self.xmpp_var), PainelOperacao(self.xmpp_var) ];
         self.widgets[0].ativo = True;
         self.layout.addWidget( self.widgets[0] );

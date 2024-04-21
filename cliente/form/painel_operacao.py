@@ -43,7 +43,8 @@ class PainelOperacao(QtWidgets.QWidget):
     
     def cmb_nivel_selected(self):
         self.xmpp_var.adicionar_mensagem( "comandos.operacao" ,"OperacaoComando", "listar", { "id_nivel" : self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id } );
-    
+    def parar_tela(self):
+        return;
     def atualizar_tela(self):
         if self.cmb_nivel.count() == 0 and len(self.xmpp_var.grupo.niveis) > 0:
             for nivel in self.xmpp_var.grupo.niveis:

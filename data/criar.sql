@@ -16,12 +16,12 @@ CREATE TABLE html ( id varchar(255) NOT NULL, nome varchar(255), id_grupo varcha
 
 CREATE TABLE tag_cliente ( id_cliente varchar(255) NOT NULL, id_tag varchar(255) NOT NULL,  PRIMARY KEY(id_cliente, id_tag) );
 
-CREATE TABLE mensagem( id varchar(255) NOT NULL, id_remetente varchar(255), id_destinatario varchar(255),
+CREATE TABLE mensagem( id varchar(255) NOT NULL, id_remetente varchar(255), id_destinatario varchar(255), id_nivel varchar(255),
   mensagem_criptografada LONGTEXT, chave_simetrica_criptografada LONGTEXT, data_hora_envio datetime, ordem varchar(255),
   PRIMARY KEY(id) );
 
-CREATE TABLE mensagem_nivel ( id_nivel varchar(255) NOT NULL, id_mensagem varchar(255) NOT NULL,
-  PRIMARY KEY(id_nivel, id_mensagem) );
+#CREATE TABLE mensagem_nivel ( id_nivel varchar(255) NOT NULL, id_mensagem varchar(255) NOT NULL,
+#  PRIMARY KEY(id_nivel, id_mensagem) );
 
 CREATE TABLE conhecimento ( id varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL, id_revisor varchar(255) DEFAULT NULL,  id_nivel varchar(255) NOT NULL,
    id_grupo varchar(255) NOT NULL, titulo varchar(255), tags varchar(255), descricao LONGTEXT, comentario LONGTEXT, texto LONGTEXT, id_status int default 0,
@@ -56,6 +56,7 @@ CREATE TABLE operacao_atividade(id_atividade varchar(255), id_operacao varchar(2
 CREATE TABLE forum_topico (id varchar(255) NOT NULL, id_nivel varchar(255), titulo varchar(255), id_grupo varchar(255), descricao longtext, sequencia int, PRIMARY KEY(id));
 CREATE TABLE forum_thread (id varchar(255) NOT NULL, id_forum_topico varchar(255), titulo varchar(255), id_cliente varchar(255), texto longtext, data_cadastro DATETIME, PRIMARY KEY(id));
 CREATE TABLE forum_resposta (id varchar(255) NOT NULL, id_forum_thread varchar(255), id_cliente varchar(255), texto longtext, data_cadastro DATETIME, PRIMARY KEY(id));
+
 
 ALTER TABLE forum_topico ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
 ALTER TABLE forum_topico ADD FOREIGN KEY (id_nivel) REFERENCES nivel(id); 

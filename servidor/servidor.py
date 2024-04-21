@@ -154,18 +154,17 @@ if my.teste( json.loads(open(ROOT + "/data/modelo.json", "r").read()) ) > 0:
 my = None;
 
 # TESTANDO SEU IP, não pode ser o mesmo
-ip_sem_tunel_proxy = requests.get('https://api.ipify.org').text;
-proxy = configuracao["proxy"]["protocol"] + "://"+ configuracao["proxy"]["server"] +":" + str( configuracao["proxy"]["port"] );
-os.environ['http_proxy'] = proxy
-os.environ['https_proxy'] = proxy
-os.environ['HTTP_PROXY'] = proxy
-os.environ['HTTPS_PROXY'] = proxy
-ip_com_tunel_proxy = requests.get('https://api.ipify.org').text;
-if ip_com_tunel_proxy == ip_sem_tunel_proxy:
-    print("\033[95m", "Você não está usando proxy para realizar a conexão." , "\033[0m");
-    sys.exit(1);
-#else:
-#    p rint("\033[95mIP após proxy:", ip_com_tunel_proxy , "\033[0m");
+if configuracao["proxy"]["server"] != "":
+    ip_sem_tunel_proxy = requests.get('https://api.ipify.org').text;
+    proxy = configuracao["proxy"]["protocol"] + "://"+ configuracao["proxy"]["server"] +":" + str( configuracao["proxy"]["port"] );
+    os.environ['http_proxy'] = proxy
+    os.environ['https_proxy'] = proxy
+    os.environ['HTTP_PROXY'] = proxy
+    os.environ['HTTPS_PROXY'] = proxy
+    ip_com_tunel_proxy = requests.get('https://api.ipify.org').text;
+    if ip_com_tunel_proxy == ip_sem_tunel_proxy:
+        print("\033[95m", "Você não está usando proxy para realizar a conexão." , "\033[0m");
+        sys.exit(1);
 
 if __name__ == '__main__': 
     xmpp_var = XMPPServer( configuracao["xmpp"]["account"] , configuracao["xmpp"]["password"] );

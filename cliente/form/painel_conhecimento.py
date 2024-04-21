@@ -93,7 +93,8 @@ class PainelConhecimento(QtWidgets.QWidget):
     def botao_listar_conhecimento_click(self):
         self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "listar", 
             {"id_nivel" : self.cmb_nivel.getSelected().key } );
-
+    def parar_tela(self):
+        return;
     def atualizar_tela(self):
         self.cmb_nivel.addArrayObject(self.xmpp_var.grupo.niveis, "id", "nome");
         self.botao_listar_conhecimento_click(); # listar 
