@@ -38,11 +38,11 @@ class PainelAtividade(QtWidgets.QWidget):
         self.table = Utilitario.widget_tabela(self, ["Título", "Nível", "Pontos", "Respostas", "Status"], 
             tamanhos=[QHeaderView.Stretch, QHeaderView.ResizeToContents, QHeaderView.ResizeToContents, QHeaderView.ResizeToContents, QHeaderView.ResizeToContents], double_click=self.table_atividade_double);
         form_layout.addWidget(self.table);
-        self.b4 = QPushButton("Nova atividade")
-        self.b4.setGeometry(10,0,32,32)
-        self.b4.clicked.connect( self.botao_novo_atividade_click )
-        self.b4.setEnabled(False);
-        Utilitario.widget_linha(self, form_layout, [self.b4], stretch_inicio=True );
+        if self.xmpp_var.cliente.posso_tag("atividade_criar"):
+            self.b4 = QPushButton("Nova atividade")
+            self.b4.setGeometry(10,0,32,32)
+            self.b4.clicked.connect( self.botao_novo_atividade_click )
+            Utilitario.widget_linha(self, form_layout, [self.b4], stretch_inicio=True );
         self.setLayout(form_layout);
 
     def table_atividade_double(self):
@@ -81,7 +81,7 @@ class PainelAtividade(QtWidgets.QWidget):
     def parar_tela(self):
         return;
     def atualizar_tela(self):
-        self.b4.setEnabled(self.xmpp_var.cliente.posso_tag("atividade_criar"));
+        #self.b4.setEnabled(self.xmpp_var.cliente.posso_tag("atividade_criar"));
         self.cmb_nivel.addArrayObject(self.xmpp_var.grupo.niveis, "id", "nome");
         if len(self.lista_atividade) == 0:
             self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );

@@ -126,6 +126,7 @@ class FormGrupo(QtWidgets.QWidget):
         if conteudo_js["comando"] == "AmbienteComando" and conteudo_js["funcao"] == "dados":
             if conteudo_js["versao"] != self.xmpp_var.dados["versao"]:
                 print("\033[41mAtenção, a versão do servidor é incompatível com a versão do cliente. A versão do servidor é: " + conteudo_js["versao"] + " \033[0m");
+                print("Acesse a URL: https://sourceforge.net/projects/ggh/files/ e baixe a versão correta.");
                 self.close();
         elif conteudo_js["comando"] == "ClienteCadastroComando" and conteudo_js["funcao"] == "logoff":
             self.close();

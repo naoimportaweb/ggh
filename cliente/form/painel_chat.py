@@ -142,7 +142,8 @@ class PainelChat(QtWidgets.QWidget):
             try:
                 if self.xmpp_var.finalizado == True:
                     return;
-                self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", { } );
+                if self.ativo:
+                    self.xmpp_var.adicionar_mensagem( "comandos.mensagem" ,"MensagemComando", "listar", { } );
             except KeyboardInterrupt:
                 sys.exit(0);
             except:
@@ -196,7 +197,6 @@ class PainelChat(QtWidgets.QWidget):
             self.txt_mensagem.setDisabled(False);
             self.btn_envio.setDisabled(False);
         if conteudo_js["comando"] == "MensagemComando" and conteudo_js["funcao"] == "listar":
-            # {'retorno': [{'id': 'jitCQ6rIdo9XoTxqqFdN', 'id 
             for mensagem in conteudo_js["retorno"]:
                 path_nivel = self.xmpp_var.cliente.path_mensagens + "/" + mensagem["id_nivel"];
                 if not os.path.exists(path_nivel):
