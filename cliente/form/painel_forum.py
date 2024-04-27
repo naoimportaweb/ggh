@@ -9,6 +9,8 @@ from PySide6.QtCore import Qt;
 from classes.mural import Mural;
 from form.form_mural_adicionar import FormMuralAdicionar;
 from form.form_mural_ver import FormMuralVer;
+from form.painel_forum_topico import PainelForumTopico
+from form.painel_forum_thread import PainelForumThread
 from form.funcoes import Utilitario;
 
 class PainelForum(QtWidgets.QWidget):
@@ -18,16 +20,22 @@ class PainelForum(QtWidgets.QWidget):
         self.ativo = False;
         self.layout_carregado = False;
         self.topicos = [];
-        form_layout = QVBoxLayout( self );
-        self.setLayout(form_layout);
+        self.form_layout = QVBoxLayout( self );
+        self.painel_forum_topico = PainelForumTopico(xmpp_var);
+        self.painel_forum_thread = PainelForumThread(xmpp_var);
+        self.form_layout.addWidget( self.painel_forum_topico );
+        self.form_layout.addWidget( self.painel_forum_thread );
+        self.painel_forum_thread.setParent( None );
+        self.setLayout(self.form_layout);
+    
     def parar_tela(self):
         return;
+    
     def atualizar_tela(self):
-        self.xmpp_var.adicionar_mensagem( "comandos.forum" ,"ForumComando", "listar_topicos", {} );
+        self.painel_forum_topico.atualizar_tela();
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
-        if conteudo_js["comando"] == "ForumComando" and conteudo_js["funcao"] == "listar_topicos":
-            self.topicos = [];
+        self.painel_forum_topico.evento_mensagem(de, texto, message, conteudo_js);
     
     #def btn_novo_click(self):     
     #    f = FormMuralAdicionar( self.xmpp_var );

@@ -53,7 +53,7 @@ CREATE TABLE operacao_status (id int not null, nome varchar(255), PRIMARY KEY(id
 CREATE TABLE operacao (id varchar(255) NOT NULL, id_nivel varchar(255), sigla varchar(255) unique, nome varchar(255) unique, id_grupo varchar(255), id_operacao_status int, data_inicio datetime, data_fim datetime, missao longtext, foco longtext, PRIMARY KEY(id));
 CREATE TABLE operacao_atividade(id_atividade varchar(255), id_operacao varchar(255), PRIMARY KEY( id_atividade,id_operacao  ));
 
-CREATE TABLE forum_topico (id varchar(255) NOT NULL, id_nivel varchar(255), titulo varchar(255), id_grupo varchar(255), descricao longtext, sequencia int, PRIMARY KEY(id));
+CREATE TABLE forum_topico (id varchar(255) NOT NULL, id_nivel varchar(255), titulo varchar(255), id_grupo varchar(255), descricao longtext, sequencia bigint, PRIMARY KEY(id));
 CREATE TABLE forum_thread (id varchar(255) NOT NULL, id_forum_topico varchar(255), titulo varchar(255), id_cliente varchar(255), texto longtext, data_cadastro DATETIME, PRIMARY KEY(id));
 CREATE TABLE forum_resposta (id varchar(255) NOT NULL, id_forum_thread varchar(255), id_cliente varchar(255), texto longtext, data_cadastro DATETIME, PRIMARY KEY(id));
 

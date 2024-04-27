@@ -8,14 +8,15 @@ class ForumComando:
     def listar_topicos(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql = "select * from forum_topico where id_nivel in ( select id from nivel where posicao <= %s and id_grupo=%s) order by sequencia asc";
+        sql = "select topi.*, (select count(*) from forum_thread where id_forum_topico = topi.id) as total from forum_topico as topi where topi.id_nivel in ( select id from nivel where posicao <= %s and id_grupo=%s) order by topi.sequencia asc";
         lista = my.datatable(sql, [ cliente.nivel_posicao, grupo.id ]);
         return {"listar_topicos" : lista };
+
     def criar_topico(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        if not cliente.posso_tag("forum_criar"):
-            return {"status" : False, "erro" : "Não tem permissão para criar um item do fórum."};
+        #if not cliente.posso_tag("forum_criar"):
+        #    return {"status" : False, "erro" : "Não tem permissão para criar um item do fórum."};
         js["id"] = my.chave_string("forum_topico", "id", 30 );
         sql = "INSERT INTO forum_topico(id, id_nivel, titulo, id_grupo, descricao, sequencia) values(%s, %s, %s, %s, %s, %s)";
         data = datetime.now().isoformat();
@@ -23,6 +24,7 @@ class ForumComando:
         values = [js["id"], js["id_nivel"], js["titulo"], grupo.id, js["descricao"], sequencia];
         my.execute(sql, values);
         return {"status" : True, "forum" : js };
+
     def listar_threads(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();

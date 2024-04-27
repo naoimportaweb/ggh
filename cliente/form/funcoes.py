@@ -40,7 +40,14 @@ class Utilitario():
     
     @staticmethod
     def widget_tabela(form, colunas, tamanhos=None, double_click=None):
-        table = Table(form)
+        if tamanhos == None:
+            tamanhos = [];
+            for i in range(len(colunas)):
+                if i == 0:
+                    tamanhos.append(QHeaderView.Stretch);
+                else:
+                    tamanhos.append(QHeaderView.ResizeToContents);
+        table = Table(form);
         if double_click != None:
             table.doubleClicked.connect( double_click );
         js = {};
@@ -50,10 +57,9 @@ class Utilitario():
         table.setColumnCount(len(colunas));
         table.setEditTriggers(QAbstractItemView.NoEditTriggers);
         table.setHorizontalHeaderLabels(js.keys());
-        if tamanhos != None:
-            header = table.horizontalHeader() 
-            for i in range(len(tamanhos)):
-                header.setSectionResizeMode(i, tamanhos[i]);
+        header = table.horizontalHeader() 
+        for i in range(len(tamanhos)):
+            header.setSectionResizeMode(i, tamanhos[i]);
         table.setRowCount(0)
         return table;
 
