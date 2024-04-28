@@ -14,12 +14,13 @@ from form.funcoes import Utilitario;
 
 
 class PainelForumTopico(QtWidgets.QWidget):
-    def __init__( self, xmpp_var ):
+    def __init__( self, xmpp_var, callback ):
         super().__init__();
         self.xmpp_var = xmpp_var;
         self.ativo = False;
+        self.callback = callback;
         self.form_layout = QVBoxLayout( self );
-        self.form_layout.addWidget(QLabel("Topico"));
+        self.form_layout.addWidget(QLabel("Topicos definidos pela Staff"));
         self.topicos = [];
         self.table = Utilitario.widget_tabela(self, ["Título", "-"], double_click=self.table_double_click);
         self.form_layout.addWidget( self.table );
@@ -33,13 +34,15 @@ class PainelForumTopico(QtWidgets.QWidget):
 
     def evento_mensagem(self, de, texto, message, conteudo_js):
         if conteudo_js["comando"] == "ForumComando" and conteudo_js["funcao"] == "listar_topicos":
-            self.topicos = [];
+            self.topicos = conteudo_js["listar_topicos"];
+            self.table.setRowCount(len(self.topicos));
             for i in range(len(self.topicos)):
                 self.table.setItem( i, 0, QTableWidgetItem( self.topicos[i]["titulo"] ) );
-                self.table.setItem( i, 1, QTableWidgetItem( self.topicos[i]["total"] ) );
+                self.table.setItem( i, 1, QTableWidgetItem( str(self.topicos[i]["total"]) ) );
         elif conteudo_js["comando"] == "ForumComando" and conteudo_js["funcao"] == "criar_topico":
         	self.xmpp_var.adicionar_mensagem( "comandos.forum" ,"ForumComando", "listar_topicos", {} );
     def table_double_click(self):
+        self.callback( self.topicos[ self.table.currentRow() ] );
         return;
 
     def callback_novo_topico(self, id_nivel, titulo, descricao, form):

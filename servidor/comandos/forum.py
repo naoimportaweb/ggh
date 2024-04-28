@@ -15,8 +15,8 @@ class ForumComando:
     def criar_topico(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        #if not cliente.posso_tag("forum_criar"):
-        #    return {"status" : False, "erro" : "Não tem permissão para criar um item do fórum."};
+        if not cliente.posso_tag("forum_criar"):
+            return {"status" : False, "erro" : "Não tem permissão para criar um item do fórum."};
         js["id"] = my.chave_string("forum_topico", "id", 30 );
         sql = "INSERT INTO forum_topico(id, id_nivel, titulo, id_grupo, descricao, sequencia) values(%s, %s, %s, %s, %s, %s)";
         data = datetime.now().isoformat();
@@ -28,9 +28,10 @@ class ForumComando:
     def listar_threads(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql = "select * from forum_thread where id_forum_topico=%s order by data_cadastro desc";
+        sql = "select fth.*, (select count(*) from forum_resposta where id_forum_thread = fth.id) as total from forum_thread fth where fth.id_forum_topico=%s order by fth.data_cadastro desc";
         lista = my.datatable(sql, [ js["id_forum_topico"] ]);
         return {"listar_threads" : lista };
+    
     def criar_thread(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
@@ -38,22 +39,31 @@ class ForumComando:
         sql = "INSERT INTO forum_thread(id, id_forum_topico, titulo, id_cliente, texto, data_cadastro) values(%s, %s, %s, %s, %s, %s)";
         data = datetime.now().isoformat();
         sequencia = datetime.now().strftime("%Y%m%d%H%M%S");
-        values = [js["id"], js["id_forum_topico"], js["titulo"], js["id_cliente"], js["texto"], data];
+        values = [js["id"], js["id_forum_topico"], js["titulo"], cliente.id, js["texto"], data];
         my.execute(sql, values);
         return {"status" : True, "forum" : js };
+    
     def listar_respostas(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
-        sql = "select * from forum_resposta where id_forum_thread=%s";
+        sql = "select * from forum_resposta where id_forum_thread=%s order by data_cadastro asc";
         lista = my.datatable(sql, [ js["id_forum_thread"] ]);
         return {"forum_resposta" : lista };
+    
     def criar_resposta(self, cliente, grupo, mensagem):
         my = MysqlHelp();
         js = mensagem.toJson();
         js["id"] = my.chave_string("forum_resposta", "id", 30 );
-        sql = "INSERT INTO forum_resposta(id, id_forum_thread, id_cliente, texto, data_cadastro) values(%s, %s, %s, %s, %s)";
+        sqls = [];
+        values = [];
         data = datetime.now().isoformat();
         sequencia = datetime.now().strftime("%Y%m%d%H%M%S");
-        values = [js["id"], js["id_forum_thread"], js["id_cliente"], js["texto"], data];
-        my.execute(sql, values);
+
+        sqls.append(   "INSERT INTO forum_resposta(id, id_forum_thread, id_cliente, texto, data_cadastro) values(%s, %s, %s, %s, %s)");
+        values.append( [js["id"], js["id_forum_thread"], cliente.id , js["texto"], data]  );
+
+        sqls.append(   "UPDATE forum_thread SET data_cadastro=%s where id=%s");
+        values.append( [data, js["id_forum_thread"]] );
+
+        my.executes(sqls, values);
         return {"status" : True, "forum" : js };
