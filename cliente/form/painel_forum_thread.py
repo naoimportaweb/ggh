@@ -52,7 +52,8 @@ class PainelForumThread(QtWidgets.QWidget):
         self.callback_volta();
     
     def table_double_click(self):
-        self.callback_avanca( self.threads[ self.table.currentRow() ], self.threads[ self.table.currentRow() ]["id"] );
+        thread = self.threads[ self.table.currentRow() ];
+        self.callback_avanca( thread ); # oi item já nao existe mais aqui.
     
     def callback_novo_thread(self, titulo, texto, form):
         self.xmpp_var.adicionar_mensagem( "comandos.forum" ,"ForumComando", "criar_thread", {"id_forum_topico" : self.id_forum_topico, "titulo" : titulo, "texto" : texto} );

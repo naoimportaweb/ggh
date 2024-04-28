@@ -77,13 +77,13 @@ class PainelForumResposta(QtWidgets.QWidget):
             self.area_adicionar_mensagem.addWidget( r );
         return;
     
-    def carregar_thread(self, thread, id_forum_thread):
+    def carregar_thread(self, thread):
         self.clearLayout(self.area_adicionar_mensagem);
-        self.id_forum_thread = id_forum_thread;
+        self.id_forum_thread = thread["id"];
         self.text.setText(       thread["texto"]  );
         self.area_adicionar_mensagem.addWidget( self.text );
         self.lb_titulo.setText( "<b>Thread: </b> " + thread["titulo"] );
-        self.xmpp_var.adicionar_mensagem( "comandos.forum" ,"ForumComando", "listar_respostas", {"id_forum_thread" : id_forum_thread } );
+        self.xmpp_var.adicionar_mensagem( "comandos.forum" ,"ForumComando", "listar_respostas", {"id_forum_thread" : thread["id"] } );
     
     def atualizar_tela(self):
         self.respostas = [];

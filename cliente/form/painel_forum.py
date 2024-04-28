@@ -39,11 +39,11 @@ class PainelForum(QtWidgets.QWidget):
         self.painel_thread.carregar_topico(topico["id"], topico);
         self.painel_topico.setParent( None );
         self.painel_reposta.setParent( None )
-    def carregar_thread(self, thread, id_forum_thread):
+    def carregar_thread(self, thread ):
         self.painel = 2;
         self.form_layout.addWidget( self.painel_reposta );
         self.painel_reposta.atualizar_tela(  );
-        self.painel_reposta.carregar_thread(thread, id_forum_thread);
+        self.painel_reposta.carregar_thread(thread);
         self.painel_topico.setParent( None );
         self.painel_thread.setParent( None );
     def voltar_topico(self):
