@@ -12,7 +12,6 @@ from form.form_mural_ver import FormMuralVer;
 from form.form_forum_novo_topico import FormForumNovoTopico
 from form.funcoes import Utilitario;
 
-
 class PainelForumTopico(QtWidgets.QWidget):
     def __init__( self, xmpp_var, callback ):
         super().__init__();
@@ -24,9 +23,10 @@ class PainelForumTopico(QtWidgets.QWidget):
         self.topicos = [];
         self.table = Utilitario.widget_tabela(self, ["Título", "-"], double_click=self.table_double_click);
         self.form_layout.addWidget( self.table );
-        self.btn_novo = QPushButton("Novo tópico");
-        self.btn_novo.clicked.connect( self.btn_novo_click );
-        Utilitario.widget_linha(self, self.form_layout, [self.btn_novo], stretch_inicio=True);
+        if self.xmpp_var.cliente.posso_tag("forum_criar"):
+            self.btn_novo = QPushButton("Novo tópico");
+            self.btn_novo.clicked.connect( self.btn_novo_click );
+            Utilitario.widget_linha(self, self.form_layout, [self.btn_novo], stretch_inicio=True);
         self.setLayout(self.form_layout);
     
     def atualizar_tela(self):

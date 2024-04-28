@@ -57,6 +57,7 @@ class PainelForumThread(QtWidgets.QWidget):
     def callback_novo_thread(self, titulo, texto, form):
         self.xmpp_var.adicionar_mensagem( "comandos.forum" ,"ForumComando", "criar_thread", {"id_forum_topico" : self.id_forum_topico, "titulo" : titulo, "texto" : texto} );
         form.close();
+        self.xmpp_var.adicionar_mensagem( "comandos.forum" ,"ForumComando", "listar_threads", {"id_forum_topico" : self.id_forum_topico } );
     
     def btn_novo_click(self):
         f = FormForumNovoThread(self.xmpp_var, self.callback_novo_thread);
