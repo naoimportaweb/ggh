@@ -29,6 +29,7 @@ class PainelForumResposta(QtWidgets.QWidget):
 
 
         self.text = QLabel(self);
+        self.text.setTextInteractionFlags(Qt.TextSelectableByMouse);
         
         #self.form_layout.addWidget( self.text );
 
@@ -132,6 +133,7 @@ class WidgetResposta(QtWidgets.QWidget):
         lbl_mensagem.setWordWrap(True);
         lbl_mensagem.setText(resposta["texto"]);
         lbl_mensagem.setGeometry(10,0,32,32)
+        lbl_mensagem.setTextInteractionFlags(Qt.TextSelectableByMouse);
         form_layout_chat.addWidget( lbl_remetente );
         form_layout_chat.addWidget( lbl_mensagem  );
 

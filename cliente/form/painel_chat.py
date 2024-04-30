@@ -32,6 +32,7 @@ class WidgetChatTexto(QtWidgets.QWidget):
         else:
             lbl_remetente.setText( "<b><font color='black'>Remetente: </font><font color='red'>"+ mensagem["apelido_remetente"] +"</font></b>" );
         lbl_mensagem = QLabel(self);
+        lbl_mensagem.setTextInteractionFlags(Qt.TextSelectableByMouse);
         lbl_mensagem.setStyleSheet("color: black");
         lbl_mensagem.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum);
         lbl_mensagem.setWordWrap(True);
