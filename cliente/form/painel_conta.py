@@ -73,6 +73,9 @@ class PainelConta(QtWidgets.QWidget):
         layout.addWidget(self.table1);
     
     def layout_dados(self, layout):
+        Utilitario.widget_linha(self, layout, [ QLabel("<h2>"+ self.xmpp_var.grupo.nome +"</h2>") ], stretch_fim=True);
+        Utilitario.widget_linha(self, layout, [ QLabel( self.xmpp_var.grupo.descricao ) ]);
+
         lb_label_buffer = QLabel("Apelido: ", self);
         self.lb_apelido = QLabel("<b>" + self.xmpp_var.cliente.apelido + "</b>", self );
         btn_rename = QPushButton("Gerar novo apelido")

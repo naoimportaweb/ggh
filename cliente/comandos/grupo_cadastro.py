@@ -13,6 +13,8 @@ class GrupoCadastroComando:
         for tag in js["tags"]:
             grupo.tags.append( Tag( tag ) );
         grupo.id = js["id"];
+        grupo.nome = js["nome"];
+        grupo.descricao = js["descricao"];
         grupo.clientes = js["clientes"];
         grupo.inicializacao = js["inicializacao"];
         return True;

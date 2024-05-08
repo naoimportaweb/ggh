@@ -16,6 +16,8 @@ class Grupo:
         self.inicializacao = inicializacao;
         self.jid = jid;
         self.id = None ;
+        self.nome = "";
+        self.descricao = "";
         
         # os diretórios que serão criados para gestao do servidor
         self.path_home = os.path.expanduser("~/ggh_servidor/")
@@ -40,6 +42,8 @@ class Grupo:
         my = MysqlHelp();
         datatable = my.datatable("select * from grupo where jid = %s", [ self.jid ])[0];
         self.id = datatable["id"];
+        self.nome = datatable["nome"];
+        self.descricao = datatable["descricao"];
         datatable = my.datatable("select cli.* from cliente cli inner join grupo_cliente as grcli on cli.id = grcli.id_cliente where grcli.id_grupo = %s", [ self.jid ]);
         for cliente in datatable:
             cliente_buffer = Cliente( cliente["id"], self ); 

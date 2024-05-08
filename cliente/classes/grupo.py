@@ -14,6 +14,8 @@ class Grupo:
         self.jid = jid_grupo;
         self.niveis = [];
         self.tags = [];
+        self.nome = "";
+        self.descricao = "";
         self.message_list_send = [];
         self.clientes = [];
         self.aguardando_resposta =[];

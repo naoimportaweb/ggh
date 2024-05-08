@@ -4,7 +4,8 @@ import uuid;
 
 class GrupoCadastroComando:    
     def cadastro(self, cliente, grupo, mensagem):
-        retornar = {"id" : grupo.id, "jid" : grupo.jid, "inicializacao" : grupo.inicializacao, "niveis" : grupo.niveis(cliente), "tags" : grupo.tags(), "clientes" : self.lista_clientes(cliente, grupo, mensagem) };
+        retornar = {"id" : grupo.id, "jid" : grupo.jid, "inicializacao" : grupo.inicializacao, "niveis" : grupo.niveis(cliente),
+                    "tags" : grupo.tags(), "clientes" : self.lista_clientes(cliente, grupo, mensagem), "nome" : grupo.nome, "descricao" : grupo.descricao };
         return retornar;
 
     def lista_clientes(self, cliente, grupo, mensagem):
