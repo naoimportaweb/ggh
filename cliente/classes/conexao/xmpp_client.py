@@ -41,6 +41,10 @@ class XMPPCliente:
 
     def proxy(self, protocol, ip, port):
         if ip == "" or protocol == "" or port == "":
+            del os.environ['http_proxy']  ;
+            del os.environ['https_proxy'] ;
+            del os.environ['HTTP_PROXY']  ;
+            del os.environ['HTTPS_PROXY'] ;
             return True;
         proxy = protocol + "://"+ ip +":" + str( port );
         os.environ['http_proxy'] = proxy

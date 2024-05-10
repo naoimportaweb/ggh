@@ -21,6 +21,7 @@ from form.form_grupo  import FormGrupo;
 from form.form_proxy import FormProxy;
 from form.form_edit_conhecimento import FormEditarConhecimento
 
+
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction,  QPalette, QColor;
 from PySide6.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QMdiArea, QMainWindow, QStatusBar, QLabel;
@@ -50,8 +51,12 @@ class MDIWindow(QMainWindow):
         tool.addAction(newAct3);
         newAct4 = QAction('Sobre', self);
         helpm.addAction(newAct4);
+        newAct4.triggered.connect(self.action_sobre);
         self.setWindowTitle("Grupo ..::: " + requests.get('https://api.ipify.org').text + " :::..")
     
+    def action_sobre(self):
+        f = FormIPInfo();
+        f.exec();
     def carregar(self, xmpp_var):
         xmpp_var.iniciar();
         while True:
