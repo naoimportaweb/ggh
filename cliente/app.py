@@ -23,7 +23,7 @@ from form.form_edit_conhecimento import FormEditarConhecimento
 
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction,  QPalette, QColor;
+from PySide6.QtGui import QAction,  QPalette, QColor, QIcon;
 from PySide6.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QMdiArea, QMainWindow, QStatusBar, QLabel;
 from PySide6 import QtWidgets;
 
@@ -32,7 +32,8 @@ from classes.singleton.configuracao import Configuracao;
 class MDIWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Grupo")
+        self.setWindowTitle("Grupo");
+        self.setWindowIcon(QIcon( ROOT + '/img/ico.png'));
         self.mdiArea = QMdiArea()
         self.setCentralWidget( self.mdiArea )
         self.statusbar = StatusClass( self );
