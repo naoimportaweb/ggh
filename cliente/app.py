@@ -40,7 +40,7 @@ class MDIWindow(QMainWindow):
         bar = self.menuBar()
         file = bar.addMenu("Grupos")
         tool = bar.addMenu("Ferramentas")
-        helpm = bar.addMenu("Ferramentas")
+        helpm = bar.addMenu("Ajuda")
         newAct = QAction('Conectar em um grupo com login', self);
         file.addAction(newAct);
         newAct.triggered.connect(self.action_connect);
