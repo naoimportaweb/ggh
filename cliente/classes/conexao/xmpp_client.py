@@ -161,7 +161,7 @@ class XMPPCliente:
                         index_aguardando_resposta = i;
                         break;
                 if index_aguardando_resposta >= 0:
-                    buffer = self.grupo.aguardando_resposta.pop( index_aguardando_resposta );
+                    buffer = self.grupo.aguardando_resposta.pop( index_aguardando_resposta ); #### aqqui tem que fazer o lance da thread ####
                     if buffer.callback != None:
                         if type("") != type(buffer.callback):
                             buffer.callback(message);
