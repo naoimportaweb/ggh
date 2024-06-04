@@ -15,6 +15,7 @@ from form.painel_mural import PainelMural;
 from form.painel_conta import PainelConta;
 from form.painel_operacao import PainelOperacao;
 from form.painel_forum import PainelForum;
+#from form.painel_arquivos import PainelArquivos;
 
 class FormGrupo(QtWidgets.QWidget):
     def __init__(self, form_pai, *args, **kwargs):
@@ -54,6 +55,10 @@ class FormGrupo(QtWidgets.QWidget):
         self.b8 = QPushButton("Atividades")
         self.b8.clicked.connect( self.botao_atividade_click )
         self.layout1.addWidget(self.b8)
+
+        #self.b14 = QPushButton("Arquivos")
+        #self.b14.clicked.connect( self.botao_arquivos_click )
+        #self.layout1.addWidget(self.b14)
         
         self.layout = QHBoxLayout();
         self.layout.addLayout( self.layout1 );
@@ -93,6 +98,8 @@ class FormGrupo(QtWidgets.QWidget):
         self.ativar_layout_especifico( "PainelRecomendacoes" );
     def botao_correcoes_click(self):
         self.ativar_layout_especifico( "PainelCorrigir" );
+    #def botao_arquivos_click(self):
+    #    self.ativar_layout_especifico( "PainelArquivos" );
 
     def set_grupo(self, xmpp_var):
         self.xmpp_var = xmpp_var;

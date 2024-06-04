@@ -1,61 +1,54 @@
 
 # criar tabelas e campos.
 CREATE TABLE cliente ( id varchar(255) NOT NULL, jid varchar(255) unique, id_nivel varchar(255), public_key LONGTEXT, apelido varchar(255) unique, pontuacao int,
-  pontuacao_data_processamento datetime, chave_simetrica_criptografada LONGTEXT, chave_servidor varchar(255), data_cadastro DATETIME, data_acesso DATETIME
-    PRIMARY KEY(id) );
-
+  pontuacao_data_processamento datetime, chave_simetrica_criptografada LONGTEXT, chave_servidor varchar(255), data_cadastro DATETIME, data_acesso DATETIME,
+  PRIMARY KEY(id) );
 CREATE TABLE grupo ( id varchar(255) NOT NULL, jid varchar(255) unique, nome varchar(255), descricao TEXT, PRIMARY KEY(id) );
-
 CREATE TABLE grupo_cliente ( id_grupo varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL,  PRIMARY KEY(id_grupo, id_cliente) );
-
 CREATE TABLE nivel ( id varchar(255) NOT NULL, nome varchar(255), id_grupo varchar(255), posicao int, pontuacao int, tempo int,  PRIMARY KEY(id) );
-
 CREATE TABLE tag ( id varchar(255) NOT NULL, nome varchar(255), sigla varchar(255), id_grupo varchar(255),  PRIMARY KEY(id) );
-
 CREATE TABLE html ( id varchar(255) NOT NULL, nome varchar(255), id_grupo varchar(255), html LONGTEXT,  PRIMARY KEY(id) );
-
 CREATE TABLE tag_cliente ( id_cliente varchar(255) NOT NULL, id_tag varchar(255) NOT NULL,  PRIMARY KEY(id_cliente, id_tag) );
-
 CREATE TABLE mensagem( id varchar(255) NOT NULL, id_remetente varchar(255), id_destinatario varchar(255), id_nivel varchar(255),
   mensagem_criptografada LONGTEXT, chave_simetrica_criptografada LONGTEXT, data_hora_envio datetime, ordem varchar(255),
   PRIMARY KEY(id) );
-
 #CREATE TABLE mensagem_nivel ( id_nivel varchar(255) NOT NULL, id_mensagem varchar(255) NOT NULL,
 #  PRIMARY KEY(id_nivel, id_mensagem) );
-
 CREATE TABLE conhecimento ( id varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL, id_revisor varchar(255) DEFAULT NULL,  id_nivel varchar(255) NOT NULL,
    id_grupo varchar(255) NOT NULL, titulo varchar(255), tags varchar(255), descricao LONGTEXT, comentario LONGTEXT, texto LONGTEXT, id_status int default 0,
     ultima_alteracao varchar(255), pontuacao int DEFAULT 0,
   PRIMARY KEY(id) );
-
 CREATE TABLE conhecimento_tag ( id_tag varchar(255) NOT NULL, id_conhecimento varchar(255) NOT NULL,
   PRIMARY KEY(id_conhecimento, id_tag) );
-
 CREATE TABLE conhecimento_status (id int not null, nome varchar(255), PRIMARY KEY(id) );
-
 CREATE TABLE atividade(id varchar(255) NOT NULL, id_cliente varchar(255) NOT NULL,
   id_grupo varchar(255) NOT NULL, id_nivel varchar(255) NOT  NULL, atividade longtext,
   titulo varchar(255) NOT NULL, execucoes INT DEFAULT 1, tentativas INT DEFAULT 3,
   instrucao_correcao LONGTEXT NOT NULL, data_maxima DATE DEFAULT '2079-06-12',   
   instrucao LONGTEXT NOT NULL, pontos_maximo INT DEFAULT 1, pontos_correcao_maximo INT DEFAULT 1, id_status INT default 0,
  PRIMARY KEY(id) );
-
 CREATE TABLE atividade_cliente( id varchar(255) NOT NULL, id_atividade varchar(255) NOT NULL,
   id_cliente VARCHAR(255) NOT NULL, resposta LONGTEXT, id_avaliador VARCHAR(255) DEFAULT NULL,
   data DATETIME NOT NULL, id_status INT default 0, chave_publica varchar(255),
   pontos INT DEFAULT NULL, data_avaliador DATETIME DEFAULT NULL, consideracao_avaliador LONGTEXT DEFAULT NULL,
   PRIMARY KEY(id) );
-
 CREATE TABLE mural(id varchar(255) NOT NULL, id_grupo varchar(255), id_cliente varchar(255), titulo varchar(255), mensagem longtext,
   data DATETIME, id_nivel varchar(255) DEFAULT NULL, id_destinatario varchar(255) DEFAULT NULL, sequencia VARCHAR(255) NOT NULL );
-
 CREATE TABLE operacao_status (id int not null, nome varchar(255), PRIMARY KEY(id) );
 CREATE TABLE operacao (id varchar(255) NOT NULL, id_nivel varchar(255), sigla varchar(255) unique, nome varchar(255) unique, id_grupo varchar(255), id_operacao_status int, data_inicio datetime, data_fim datetime, missao longtext, foco longtext, PRIMARY KEY(id));
 CREATE TABLE operacao_atividade(id_atividade varchar(255), id_operacao varchar(255), PRIMARY KEY( id_atividade,id_operacao  ));
-
 CREATE TABLE forum_topico (id varchar(255) NOT NULL, id_nivel varchar(255), titulo varchar(255), id_grupo varchar(255), descricao longtext, sequencia bigint, PRIMARY KEY(id));
 CREATE TABLE forum_thread (id varchar(255) NOT NULL, id_forum_topico varchar(255), titulo varchar(255), id_cliente varchar(255), texto longtext, data_cadastro DATETIME, PRIMARY KEY(id));
 CREATE TABLE forum_resposta (id varchar(255) NOT NULL, id_forum_thread varchar(255), id_cliente varchar(255), texto longtext, data_cadastro DATETIME, PRIMARY KEY(id));
+CREATE TABLE arquivo_tipo (id int not null, nome varchar(255), PRIMARY KEY(id) );
+CREATE TABLE arquivo (id varchar(255) not null, nome varchar(255), descricao longtext, urls longtext, id_nivel varchar(255) DEFAULT NULL, id_grupo varchar(255),
+  id_cliente varchar(255), id_arquivo_tipo int, id_aprovador varchar(255) DEFAULT NULL, PRIMARY KEY(id) );
+
+ALTER TABLE arquivo ADD FOREIGN KEY (id_nivel) REFERENCES nivel(id);
+ALTER TABLE arquivo ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
+ALTER TABLE arquivo ADD FOREIGN KEY (id_cliente) REFERENCES cliente(id);  
+ALTER TABLE arquivo ADD FOREIGN KEY (id_aprovador) REFERENCES cliente(id);
+ALTER TABLE arquivo ADD FOREIGN KEY (id_arquivo_tipo) REFERENCES arquivo_tipo(id);  
 
 
 ALTER TABLE forum_topico ADD FOREIGN KEY (id_grupo) REFERENCES grupo(id); 
@@ -127,6 +120,9 @@ insert into conhecimento_status(id, nome) values(1, "Aguardando aprovação");
 insert into conhecimento_status(id, nome) values(2, "Aprovado");
 insert into conhecimento_status(id, nome) values(3, "Reprovado");
 
+insert into arquivo_tipo(id, nome) values(1, "Data Breach");
+insert into arquivo_tipo(id, nome) values(2, "Curso/Video/PDF");
+
 insert into html(id, nome, html, id_grupo) values ('regras.html'      ,'Regras','<html><body>Regras</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
 insert into html(id, nome, html, id_grupo) values ('recomendacao.html','Recomendação','<html><body>Recomendação</body></html>', "a639ffc7a87856c52ea8b6a75dff4ff7");
 
@@ -137,6 +133,8 @@ insert into tag(id, nome, sigla, id_grupo) values ('kd583d0879894266bb8916f9abce
 insert into tag(id, nome, sigla, id_grupo) values ('rd583d0879894266bb8916f9abce53bc', 'Staff',                      'staff',                  'a639ffc7a87856c52ea8b6a75dff4ff7');
 insert into tag(id, nome, sigla, id_grupo) values ('qd583d0879894266bb8916f9abce53bc', 'Criar operações',            'operacao_criar',         'a639ffc7a87856c52ea8b6a75dff4ff7');
 insert into tag(id, nome, sigla, id_grupo) values ('aa583d0879814260bb8916f9abce53bc', 'Criar topico forum',            'forum_criar',         'a639ffc7a87856c52ea8b6a75dff4ff7');
+insert into tag(id, nome, sigla, id_grupo) values ('4260bb8916f9abce53bcaa583d087981', 'Aprovar Arquivo',            'arquivo_aprovar',        'a639ffc7a87856c52ea8b6a75dff4ff7');
+
 
 insert into tag_cliente(id_tag, id_cliente) values ('gd583d0879894266bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');
 insert into tag_cliente(id_tag, id_cliente) values ('fd583d0879894266bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');
@@ -145,3 +143,4 @@ insert into tag_cliente(id_tag, id_cliente) values ('kd583d0879894266bb8916f9abc
 insert into tag_cliente(id_tag, id_cliente) values ('rd583d0879894266bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');
 insert into tag_cliente(id_tag, id_cliente) values ('qd583d0879894266bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');
 insert into tag_cliente(id_tag, id_cliente) values ('aa583d0879814260bb8916f9abce53bc',  '91d0cf8f3883a0dcb338d15a47b326c9');
+insert into tag_cliente(id_tag, id_cliente) values ('4260bb8916f9abce53bcaa583d087981',  '91d0cf8f3883a0dcb338d15a47b326c9');

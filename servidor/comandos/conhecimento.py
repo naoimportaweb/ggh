@@ -14,7 +14,7 @@ class ConhecimentoComando:
         js = mensagem.toJson();
         #TODO: validar permissao: aprovador_conhecimento
         if not cliente.posso_nivel( js["id_nivel"] ):
-        	return {"status" : False };
+            return {"status" : False };
         sql = "INSERT INTO conhecimento (id, id_cliente, id_nivel, id_grupo, titulo, tags, descricao, texto, id_status, id_revisor, ultima_alteracao ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )"
         js["id"] = my.chave_string("conhecimento", "id", 30 );
         js["id_cliente"] = cliente.id;

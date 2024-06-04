@@ -53,7 +53,7 @@ class MDIWindow(QMainWindow):
         newAct4 = QAction('Sobre', self);
         helpm.addAction(newAct4);
         newAct4.triggered.connect(self.action_sobre);
-        self.setWindowTitle("Grupo ..::: " + requests.get('https://api.ipify.org').text + " :::..")
+        self.setWindowTitle("Grupo ..::: @ :::..")
     
     def action_sobre(self):
         f = FormIPInfo();
