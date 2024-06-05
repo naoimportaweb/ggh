@@ -19,6 +19,7 @@ class Cliente:
         self.public_key = None;
         self.private_key = None;
         self.password = None;
+        self.identificacao_unica_servidor = None;
         self.chave_servidor = None;
         self.grupo = grupo;
         self.key_pair = None;
@@ -56,9 +57,8 @@ class Cliente:
             encoded_private_key = base64.b64encode(f.read()).decode("utf-8");
         with open( self.path_public_key ,  "rb") as f:
             encoded_public_key = base64.b64encode(f.read()).decode("utf-8");
-        buffer = {"jid" : self.jid, "public_key" : encoded_public_key, "password" : self.password, "private_key" : encoded_private_key, 
-            "jid_grupo" : self.grupo.jid };
-        return buffer;
+        return {"jid" : self.jid, "public_key" : encoded_public_key, "password" : self.password, "private_key" : encoded_private_key, 
+            "jid_grupo" : self.grupo.jid, "identificacao_unica_servidor" : self.identificacao_unica_servidor };
     def posso_tag(self, sigla):
         if self.tags == None:
             return False;

@@ -10,6 +10,8 @@ from PySide6.QtCore import Qt;
 from api.fsseguro import FsSeguro
 from form.ui.combobox import ComboBox;
 from classes.atividade import Atividade;
+from classes.conexao.monitor_request import MonitorRequest;
+
 from form.form_edit_atividade import FormEditarAtividade
 from form.funcoes import Utilitario;
 
@@ -78,8 +80,10 @@ class PainelAtividade(QtWidgets.QWidget):
     
     def botao_listar_atividade_click(self):
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
+    
     def parar_tela(self):
         return;
+    
     def atualizar_tela(self):
         #self.b4.setEnabled(self.xmpp_var.cliente.posso_tag("atividade_criar"));
         self.cmb_nivel.addArrayObject(self.xmpp_var.grupo.niveis, "id", "nome");
@@ -89,8 +93,28 @@ class PainelAtividade(QtWidgets.QWidget):
     def cmb_nivel_selected(self):
         self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "listar", {} );
     
+    def callback_novo_item(self, mensagem):
+        try:
+            self.ativo = False;
+            buffer_Atividade = Atividade( );
+            buffer_Atividade.fromJson( mensagem.toJson()["atividade"] );
+            f = FormEditarAtividade( self.xmpp_var.cliente, self.xmpp_var, buffer_Atividade );
+            f.exec();
+            self.thread_aguardar.quit();
+            self.thread_aguardar = None;
+            self.ativo = True;
+        except:
+            traceback.print_exc();
+        finally:
+            self.b4.setDisabled(False);
     def botao_novo_atividade_click(self):
-        atividade = Atividade();
-        atividade.titulo = "Nova Atividade";
-        atividade.id_nivel = self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id;
-        self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "criar", atividade.toJson() );
+        try:
+            atividade = Atividade();
+            atividade.titulo = "Nova Atividade";
+            atividade.id_nivel = self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id;
+            request_id = self.xmpp_var.adicionar_mensagem( "comandos.atividade" ,"AtividadeComando", "criar", atividade.toJson() );
+            self.thread_aguardar = MonitorRequest(request_id, self.xmpp_var, self.callback_novo_item);
+        except:
+            traceback.print_exc();
+        finally:
+            self.b4.setDisabled(True);

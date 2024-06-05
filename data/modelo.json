@@ -5,7 +5,7 @@
     {"nome" : "forum_resposta", "fields" : ["id", "id_forum_thread", "id_cliente", "texto", "data_cadastro"]},
     {"nome" : "operacao", "fields" : ["id", "id_nivel", "sigla", "nome", "id_grupo", "id_operacao_status", "data_inicio", "data_fim", "missao", "foco"]},
     {"nome" : "operacao_atividade", "fields" : ["id_atividade", "id_operacao"]},
-    {"nome" : "cliente", "fields" : ["id", "jid", "public_key", "apelido", "pontuacao", "pontuacao_data_processamento", "id_nivel", "chave_servidor", "data_cadastro", "data_acesso"]},
+    {"nome" : "cliente", "fields" : ["id", "jid", "public_key", "apelido", "pontuacao", "identificacao_unica_servidor", "pontuacao_data_processamento", "id_nivel", "chave_servidor", "data_cadastro", "data_acesso"]},
     {"nome" : "grupo", "fields" : ["id", "jid", "nome", "descricao"]},
     {"nome" : "grupo_cliente", "fields" : ["id_grupo", "id_cliente"]},
     {"nome" : "arquivo_tipo", "fields" : ["id", "nome"]},

@@ -19,6 +19,7 @@ class Grupo:
         self.message_list_send = [];
         self.clientes = [];
         self.aguardando_resposta =[];
+        self.processados = [];
         self.path_home = os.path.expanduser("~/ggh_cliente/")
         self.path_grupo = self.path_home + "/" + hashlib.md5( jid_grupo.encode() ).hexdigest();
         self.path_grupo_html = self.path_grupo + "/html";
@@ -39,6 +40,7 @@ class Grupo:
         comando_objeto = Comando(modulo, comando, funcao, data);
         mensagem_objeto = Mensagem( cliente, cliente.jid, self.jid, comando=comando_objeto, criptografia="&2&", callback=callback);
         self.message_list_send.append( mensagem_objeto );
+        return mensagem_objeto;
     
     def importar_cliente(self, js):
         path_cliente = self.path_grupo + "/clientes/" + hashlib.md5( js["jid"].encode("utf-8") ).hexdigest()

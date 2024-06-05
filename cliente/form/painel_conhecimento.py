@@ -9,6 +9,7 @@ from PySide6.QtGui import QPalette;
 from PySide6.QtCore import Qt;
 from api.fsseguro import FsSeguro
 
+from classes.conexao.monitor_request import MonitorRequest;
 from classes.conhecimento import Conhecimento;
 from form.form_edit_conhecimento import FormEditarConhecimento
 from form.ui.combobox import ComboBox;
@@ -104,10 +105,30 @@ class PainelConhecimento(QtWidgets.QWidget):
         row = self.table.currentRow();
         f = FormEditarConhecimento( self.xmpp_var.cliente, self.xmpp_var, self.lista_conhecimento[ row ] );
         f.exec();
-
+    
+    def callback_novo_item(self, mensagem):
+        try:
+            self.ativo = False;
+            buffer = Conhecimento(  );
+            buffer.fromJson( mensagem.toJson()["conhecimento"] );
+            f = FormEditarConhecimento( self.xmpp_var.cliente, self.xmpp_var, buffer );
+            f.exec();
+            self.thread_aguardar.quit();
+            self.thread_aguardar = None;
+            self.ativo = True;
+        except:
+            traceback.print_exc();
+        finally:
+            self.b4.setDisabled(False);
     def botao_novo_conhecimento_click(self):
-        conhecimento = Conhecimento();
-        conhecimento.titulo = "Novo conhecimento";
-        conhecimento.id_cliente = self.xmpp_var.cliente.id;
-        conhecimento.id_nivel = self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id;
-        self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "novo", conhecimento.toJson() );
+        try:
+            conhecimento = Conhecimento();
+            conhecimento.titulo = "Novo conhecimento";
+            conhecimento.id_cliente = self.xmpp_var.cliente.id;
+            conhecimento.id_nivel = self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id;
+            request_id = self.xmpp_var.adicionar_mensagem( "comandos.conhecimento" ,"ConhecimentoComando", "novo", conhecimento.toJson() );
+            self.thread_aguardar = MonitorRequest(request_id, self.xmpp_var, self.callback_novo_item);
+        except:
+            traceback.print_exc();
+        finally:
+            self.b4.setDisabled(True);            

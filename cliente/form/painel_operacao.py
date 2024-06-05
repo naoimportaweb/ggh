@@ -7,6 +7,7 @@ from PySide6.QtGui import QPalette;
 from PySide6.QtCore import Qt;
 
 from classes.operacao import Operacao;
+from classes.conexao.monitor_request import MonitorRequest;
 from form.form_operacao_adicionar import FormOperacaoAdicionar;
 
 class PainelOperacao(QtWidgets.QWidget):
@@ -71,13 +72,29 @@ class PainelOperacao(QtWidgets.QWidget):
             self.atualizar_tabela();
         elif conteudo_js["comando"] == "OperacaoComando" and conteudo_js["funcao"] == "novo":
             self.xmpp_var.adicionar_mensagem( "comandos.operacao" ,"OperacaoComando", "listar", { "id_nivel" : self.xmpp_var.grupo.niveis[0].id } );
-    def btn_novo_click(self):     
+    
+    def callback_nova_operacao(self, mensagem):
         operacao = Operacao();
-        numero = str(time.time());
-        operacao.nome = "Nova operação Número: " + numero;
-        operacao.sigla = "#OpNovo_" + numero;
-        operacao.id_nivel = self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id;
-        self.xmpp_var.adicionar_mensagem( "comandos.operacao" ,"OperacaoComando", "novo", operacao.toJson() );
+        operacao.fromJson( mensagem.toJson()["operacao"] );
+        self.thread_aguardar.quit();
+        f = FormOperacaoAdicionar(self.xmpp_var, operacao);
+        f.exec();
+        self.thread_aguardar = None;
+        self.btn_novo.setDisabled(False);
+
+    def btn_novo_click(self):     
+        try:
+            operacao = Operacao();
+            numero = str(time.time());
+            operacao.nome = "Nova operação Número: " + numero;
+            operacao.sigla = "#OpNovo_" + numero;
+            operacao.id_nivel = self.xmpp_var.grupo.niveis[ self.cmb_nivel.currentIndex() ].id;
+            request_id = self.xmpp_var.adicionar_mensagem( "comandos.operacao" ,"OperacaoComando", "novo", operacao.toJson() );
+            self.thread_aguardar = MonitorRequest(request_id, self.xmpp_var, self.callback_nova_operacao);
+        except:
+            traceback.print_exc();
+        finally:
+            self.btn_novo.setDisabled(True);
     
     def table_operacao_double(self):
         row = self.table.currentRow();

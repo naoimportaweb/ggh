@@ -10,7 +10,7 @@ class ClienteCadastroComando:
         sql = "update cliente set data_acesso = %s where id=%s";
         my.execute(sql, [datetime.now().isoformat(), cliente.id]);
         retornar = { "apelido" : cliente.apelido, "nivel_posicao" : cliente.nivel_posicao, "id_nivel" : cliente.id_nivel, "tags" : cliente.tags, 
-            "pontuacao_data_processamento" : cliente.pontuacao_data_processamento, "pontuacao" : cliente.pontuacao };
+            "pontuacao_data_processamento" : cliente.pontuacao_data_processamento, "pontuacao" : cliente.pontuacao, "identificacao_unica_servidor" : cliente.identificacao_unica_servidor };
         return retornar;
     def alterar_nome(self, cliente, grupo, mensagem):
         my = MysqlHelp();

@@ -16,6 +16,7 @@ class Cliente:
         self.public_key = public_key;
         self.chave_servidor = None;
         self.grupo = grupo;
+        self.identificacao_unica_servidor = None;
         self.pontuacao = 0;
         self.id_nivel = "";
         self.apelido = None;   # vem do banco de dados, tem que iniciar.
@@ -38,6 +39,7 @@ class Cliente:
         self.jid = js["jid"];
         self.id_nivel = js["id_nivel"];
         self.public_key = js["public_key"];
+        self.identificacao_unica_servidor = js["identificacao_unica_servidor"];
         self.apelido = js["apelido"];
         self.pontuacao = js["pontuacao"];
         self.pontuacao_data_processamento = js["pontuacao_data_processamento"];
@@ -84,8 +86,8 @@ class Cliente:
             
             nivel_inicial = my.datatable("SELECT * FROM nivel WHERE posicao = %s and id_grupo = %s",[ 0, self.grupo.id ])[0];
             
-            sqls.append("INSERT INTO cliente (id, jid, public_key, apelido, pontuacao, pontuacao_data_processamento, id_nivel, data_cadastro, data_acesso) values( %s, %s, %s, %s, %s, %s, %s, %s, %s)");
-            valuess.append(  [ self.id, self.jid, self.public_key, my.chave_string("cliente", "apelido", 8 ) , self.pontuacao, self.pontuacao_data_processamento, nivel_inicial["id"], self.pontuacao_data_processamento, self.pontuacao_data_processamento ]  );
+            sqls.append("INSERT INTO cliente (id, jid, public_key, apelido, pontuacao, pontuacao_data_processamento, id_nivel, data_cadastro, data_acesso, identificacao_unica_servidor) values( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)");
+            valuess.append(  [ self.id, self.jid, self.public_key, my.chave_string("cliente", "apelido", 8 ) , self.pontuacao, self.pontuacao_data_processamento, nivel_inicial["id"], self.pontuacao_data_processamento, self.pontuacao_data_processamento, my.chave_string("cliente", "identificacao_unica_servidor", 255 ) ]  );
 
             sqls.append("INSERT INTO grupo_cliente(id_cliente, id_grupo) values (%s, %s)");
             valuess.append( [ self.id, self.grupo.id ] );

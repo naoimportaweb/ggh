@@ -11,6 +11,7 @@ class ClienteCadastroComando:
         cliente.pontuacao_data_processamento = js["pontuacao_data_processamento"];
         cliente.pontuacao =     js["pontuacao"];
         cliente.id_nivel =     js["id_nivel"];
+        cliente.identificacao_unica_servidor = js["identificacao_unica_servidor"];
         return { "apelido" : cliente.apelido };
     def alterar_nome(self, cliente, grupo, mensagem):
         js = mensagem.toJson();

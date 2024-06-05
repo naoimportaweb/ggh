@@ -88,8 +88,9 @@ class XMPPCliente:
     
     def adicionar_mensagem(self, modulo, comando, funcao, data, criptografia="&2&", callback=None):
         self.pausa_enviador = True;
-        self.grupo.adicionar_mensagem(self.cliente, modulo, comando, funcao, data, criptografia=criptografia, callback=callback);
+        buffer_id = self.grupo.adicionar_mensagem(self.cliente, modulo, comando, funcao, data, criptografia=criptografia, callback=callback).id;
         self.pausa_enviador = False;
+        return buffer_id;
 
     # quando loga, tem que atualizar algumas coisas
     def iniciar(self):   
@@ -162,6 +163,7 @@ class XMPPCliente:
                         break;
                 if index_aguardando_resposta >= 0:
                     buffer = self.grupo.aguardando_resposta.pop( index_aguardando_resposta ); #### aqqui tem que fazer o lance da thread ####
+                    self.grupo.processados.append(message); # guardar no histórico.
                     if buffer.callback != None:
                         if type("") != type(buffer.callback):
                             buffer.callback(message);

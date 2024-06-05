@@ -27,7 +27,7 @@ class AtividadeComando:
         sql = "INSERT INTO atividade(id, id_cliente, id_grupo, id_nivel, titulo, atividade, execucoes, tentativas, instrucao_correcao, instrucao, pontos_maximo) values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )";
         values = [js["id"], cliente.id, grupo.id, js["id_nivel"], js["titulo"], js["atividade"], js["execucoes"], js["tentativas"], js["instrucao_correcao"], js["instrucao"], js["pontos_maximo"]];
         my.execute(sql, values);
-        return {"status" : True, "atividade" : js };
+        return {"status" : True, "atividade" : self.atividade( js["id"] ) };
 
     def salvar(self, cliente, grupo, mensagem):
         my = MysqlHelp();
@@ -139,3 +139,11 @@ class AtividadeComando:
         my.execute(sql, values);
         operacao["id"] = "";
         return {"status" : True, "operacao" :  operacao };
+
+    def atividade(self, id):
+        my = MysqlHelp();
+        sql = "select atv.*, ni.nome as nome_nivel, ni.posicao as posicao_nivel from atividade as atv inner join nivel as ni on atv.id_nivel = ni.id where atv.id=%s  order by ni.posicao ASC, ni.nome ASC";
+        atividades = my.datatable(sql, [ id ] );
+        if len(atividades) > 0:
+            return atividades[0];
+        return None;

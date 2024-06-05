@@ -26,7 +26,8 @@ class Operacao():
         self.data_fim = js["data_fim"];
         self.missao = js["missao"];
         self.foco = js["foco"];
-        self.nome_nivel = js["nome_nivel"];
+        if js.get("nome_nivel") != None:
+            self.nome_nivel = js["nome_nivel"];
         if js.get("atividades") != None:
             self.atividades = js["atividades"];
         return True;
