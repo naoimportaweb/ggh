@@ -115,8 +115,9 @@ class XMPPServer:
 
 # Obtendo arquivo de configuração < ========================================================
 configuracao = None;
-if os.path.exists(os.path.expanduser("~/.ggh_server.json")):
-    configuracao =  json.loads( open( os.path.expanduser("~/.ggh_server.json") ).read() ) ;
+path_arquivo_configuracao = os.path.expanduser("~/.ggh_server.json"); 
+if os.path.exists( path_arquivo_configuracao ):
+    configuracao =  json.loads( open( path_arquivo_configuracao ).read() ) ;
 else:
     configuracao = {
         "xmpp" :     { "server" :  "", "account" : "", "password" : ""},
@@ -140,7 +141,7 @@ else:
     configuracao["proxy"]["port"]     = int(input("Informe a porta: ")) ;
 
     if input("DESEJA salvar esta configuração (pressione s para SIM, e n para NÃO): ") == "s":
-        with open(os.path.expanduser("~/.ggh_server.json"), "w") as f:
+        with open( path_arquivo_configuracao , "w") as f:
             f.write( json.dumps( configuracao ) );
 
 # criando tabelas antes de iniciar o servidor
