@@ -1,9 +1,6 @@
 #!/usr/bin/python3
 import  logging, json, os, sys, inspect, base64, uuid, time, threading, importlib, requests;
-import xmpp, time, traceback, os, sys, inspect, traceback, threading, base64, importlib, uuid;
-
-#   https://github.com/xmpppy/xmpppy                                                                        TEORIA
-#   https://stackoverflow.com/questions/16563200/connecting-to-jabber-server-via-proxy-in-python-xmppy      PROXY
+import xmpp, time, traceback, os, sys, inspect, traceback, threading, base64, importlib, uuid, argparse;
 
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
@@ -115,9 +112,12 @@ class XMPPServer:
 
 # Obtendo arquivo de configuração < ========================================================
 configuracao = None;
-path_arquivo_configuracao = os.path.expanduser("~/.ggh_server.json"); 
-if os.path.exists( path_arquivo_configuracao ):
-    configuracao =  json.loads( open( path_arquivo_configuracao ).read() ) ;
+parser = argparse.ArgumentParser(description="Servidor do sistema de grupos");
+parser.add_argument("-f", "--file", nargs="?", const="~/.ggh_server.json", default="~/.ggh_server.json");
+args = parser.parse_args();
+
+if os.path.exists( args.file ):
+    configuracao =  json.loads( open( args.file ).read() ) ;
 else:
     configuracao = {
         "xmpp" :     { "server" :  "", "account" : "", "password" : ""},
@@ -141,7 +141,7 @@ else:
     configuracao["proxy"]["port"]     = int(input("Informe a porta: ")) ;
 
     if input("DESEJA salvar esta configuração (pressione s para SIM, e n para NÃO): ") == "s":
-        with open( path_arquivo_configuracao , "w") as f:
+        with open( args.file , "w") as f:
             f.write( json.dumps( configuracao ) );
 
 # criando tabelas antes de iniciar o servidor
@@ -174,10 +174,11 @@ if __name__ == '__main__':
         xmpp_var.pausa_recebedor = False;
 
 
+# -------------------------------------- DOCUMENTAÇÃO ------------------------------------
 
-
-
-
+#[+] Referencias:
+#   https://github.com/xmpppy/xmpppy                                                                        TEORIA XMPP
+#   https://stackoverflow.com/questions/16563200/connecting-to-jabber-server-via-proxy-in-python-xmppy      PROXY  XMPP
 
 
 
